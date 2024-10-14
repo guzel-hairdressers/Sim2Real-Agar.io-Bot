@@ -1,0 +1,9 @@
+Condition,Friction_mu,Mass_kg,Delay_steps,Success_Rate_pct,Collision_Rate_pct,Mean_Reward
+"Nominal Sim Baseline",0.8,2.0,0,60.00,40.00,63.86
+"Low Friction (Ice / Wet Tile)",0.25,2.0,0,56.00,44.00,55.76
+"High Friction (Dense Carpet)",1.5,2.0,0,52.00,48.00,49.83
+"Heavy Payload (2.5x Mass)",0.8,5.0,0,60.00,40.00,64.29
+"Lightweight Chassis (0.5x Mass)",0.8,1.0,0,52.00,48.00,48.11
+"Microcontroller Latency (1 step)",0.8,2.0,1,60.00,40.00,63.28
+"Severe Wireless Latency (2 steps)",0.8,2.0,2,60.00,40.00,63.97
+"Adverse Compound Real-World Shift",0.35,4.0,2,64.00,36.00,69.72

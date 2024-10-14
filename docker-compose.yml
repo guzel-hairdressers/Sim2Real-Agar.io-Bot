@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  sim2real-trainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sim2real_ppo
+    volumes:
+      - ./outputs:/app/outputs
+    command: ["bash", "scripts/run_training.sh"]
