@@ -1,0 +1,2 @@
+ONNX_DUMMY_HEADER_V1
+{'model_type': 'MLP_Actor_Continuous_Navigation', 'input_dim': 12, 'hidden_dims': [128, 128], 'output_dim': 2, 'activation': 'tanh', 'version': '1.0'}
