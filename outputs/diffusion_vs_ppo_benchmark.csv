@@ -1,0 +1,10 @@
+policy,scenario,delay_steps,success_rate_pct,collision_rate_pct,actuator_jerk,mean_steps,inference_latency_ms
+MSE Behavioral Cloning,Nominal (0-step Delay),0,5.0,95.0,0.0731,56.9,0.0
+PPO (Reinforcement Learning),Nominal (0-step Delay),0,35.0,60.0,0.1963,76.0,0.01
+Diffusion Policy (Receding Horizon DDIM),Nominal (0-step Delay),0,55.0,45.0,0.0898,61.1,0.02
+MSE Behavioral Cloning,Moderate Latency (1-step Delay),1,5.0,95.0,0.0699,61.1,0.0
+PPO (Reinforcement Learning),Moderate Latency (1-step Delay),1,45.0,50.0,0.1697,82.9,0.01
+Diffusion Policy (Receding Horizon DDIM),Moderate Latency (1-step Delay),1,60.0,40.0,0.0886,69.6,0.02
+MSE Behavioral Cloning,High Latency (2-step Delay),2,5.0,95.0,0.0676,58.4,0.0
+PPO (Reinforcement Learning),High Latency (2-step Delay),2,40.0,60.0,0.1873,66.8,0.01
+Diffusion Policy (Receding Horizon DDIM),High Latency (2-step Delay),2,45.0,55.0,0.0925,80.3,0.02
