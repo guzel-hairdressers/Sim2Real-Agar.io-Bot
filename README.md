@@ -4,6 +4,7 @@
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-v1.0-green.svg)](https://gymnasium.farama.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)
 [![Apple MPS](https://img.shields.io/badge/Apple_Silicon-MPS_Accelerated-black.svg)](https://developer.apple.com/metal/pytorch/)
+[![Playable Arena](https://img.shields.io/badge/Playable_Arena-Human_vs_AI_Bots-brightgreen.svg?logo=gamepad)](#62-interactive-playable-arena-human-vs-ai)
 
 A comparative reinforcement learning and generative trajectory modeling study evaluating **Proximal Policy Optimization (PPO)** against **Value-Guided Trajectory Diffusion Policy** in a competitive, partially observable multi-agent environment (POMDP).
 
@@ -142,12 +143,29 @@ The complete 100.0-second match recording (3,000 frames @ 30 FPS, 7.5× real-tim
   <em>Click the preview above to play the full match video recording (<code>outputs/best_player_demo.mp4</code>).</em>
 </p>
 
-### 6.2 Interactive Human Gameplay
-Directly test policy performance by controlling a cellular agent against trained models:
+### 6.2 Interactive Playable Arena (Human vs. AI)
+Test your skills against trained neural champions in real-time at 30 FPS:
+
+#### Option A: Play in Web Browser (Recommended)
+Launch the interactive browser arena (FastAPI + HTML5 Canvas):
+```bash
+python scripts/play_agar_web.py --port 8080
+# -> Open http://localhost:8080 in your browser
+```
+*Source code:* [`scripts/play_agar_web.py`](scripts/play_agar_web.py)
+
+#### Option B: Play in Desktop Window (OpenCV GUI)
 ```bash
 python scripts/play_agar_human.py
 ```
-- **Controls**: `Mouse` (steering & thrust), `SPACEBAR` (tactical split attack), `W` (eject mass pellet), `ESC` (exit & display stats).
+*Source code:* [`scripts/play_agar_human.py`](scripts/play_agar_human.py)
+
+- **Controls**:
+  - `Mouse Move`: Steer heading and regulate speed (distance from cell regulates thrust)
+  - `SPACEBAR`: Tactical split attack (splits cell in two, launching projectile forward)
+  - `W`: Turbo sprint forward
+  - `R`: Respawn / restart match
+  - `ESC` / `Q`: Exit session
 
 ---
 
