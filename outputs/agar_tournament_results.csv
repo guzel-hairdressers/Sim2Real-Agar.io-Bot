@@ -1,0 +1,7 @@
+policy,total_kills,total_deaths,kd_ratio,mean_peak_mass,mean_food_eaten,actuator_jerk,mean_latency_ms
+Diffusion Policy (Agent 1),1,0,1.0,28.2,18.5,0.1127,1.402
+Diffusion Policy (Agent 2),1,2,0.5,28.1,18.0,0.1165,1.343
+Diffusion Policy (Agent 3),1,0,1.0,26.7,15.3,0.1174,1.331
+PPO (Active Learner),0,0,0.0,33.2,26.8,0.0222,0.255
+PPO (Clone 1),2,0,2.0,34.3,25.4,0.0314,0.176
+PPO (Clone 2),0,1,0.0,31.4,24.0,0.0255,0.168
