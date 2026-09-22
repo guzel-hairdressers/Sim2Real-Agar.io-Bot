@@ -147,112 +147,115 @@ class ArenaGameManager:
 
         while self.is_running:
             t0 = time.perf_counter()
+            try:
+                if human_state.reset_requested:
+                    human_state.reset_requested = False
+                    self.obs_dict, _ = self.env.reset(seed=int(time.time()) % 10000)
 
-            if human_state.reset_requested:
-                human_state.reset_requested = False
-                self.obs_dict, _ = self.env.reset(seed=int(time.time()) % 10000)
+                human_player = self.env.players["player_0"]
+                h_action = human_state.get_action(human_player.yaw)
 
-            human_player = self.env.players["player_0"]
-            h_action = human_state.get_action(human_player.yaw)
+                actions = {"player_0": h_action}
+                for pid in ["player_1", "player_2", "player_3", "player_4", "player_5"]:
+                    _, agent, _ = self.competitors[pid]
+                    actions[pid] = agent.predict(self.obs_dict[pid], deterministic=True)
 
-            actions = {"player_0": h_action}
-            for pid in ["player_1", "player_2", "player_3", "player_4", "player_5"]:
-                _, agent, _ = self.competitors[pid]
-                actions[pid] = agent.predict(self.obs_dict[pid], deterministic=True)
+                self.obs_dict, _, _, _, _ = self.env.step(actions)
 
-            self.obs_dict, _, _, _, _ = self.env.step(actions)
+                # Render Frame
+                frame = np.full((total_h, total_w, 3), (11, 15, 25), dtype=np.uint8)
+                main_view = frame[:, :main_w]
+                cam_x, cam_y = human_player.pos
 
-            # Render Frame
-            frame = np.full((total_h, total_w, 3), (11, 15, 25), dtype=np.uint8)
-            main_view = frame[:, :main_w]
-            cam_x, cam_y = human_player.pos
+                def w2s(wx, wy):
+                    return int(main_w / 2.0 + (wx - cam_x) * pixels_per_meter), int(total_h / 2.0 - (wy - cam_y) * pixels_per_meter)
 
-            def w2s(wx, wy):
-                return int(main_w / 2.0 + (wx - cam_x) * pixels_per_meter), int(total_h / 2.0 - (wy - cam_y) * pixels_per_meter)
+                # Arena Grid
+                for gx in np.arange(-self.env.half_arena, self.env.half_arena + 0.1, 2.0):
+                    cv2.line(main_view, w2s(gx, -self.env.half_arena), w2s(gx, self.env.half_arena), (22, 30, 48), 1)
+                for gy in np.arange(-self.env.half_arena, self.env.half_arena + 0.1, 2.0):
+                    cv2.line(main_view, w2s(-self.env.half_arena, gy), w2s(self.env.half_arena, gy), (22, 30, 48), 1)
 
-            # Arena Grid
-            for gx in np.arange(-self.env.half_arena, self.env.half_arena + 0.1, 2.0):
-                cv2.line(main_view, w2s(gx, -self.env.half_arena), w2s(gx, self.env.half_arena), (22, 30, 48), 1)
-            for gy in np.arange(-self.env.half_arena, self.env.half_arena + 0.1, 2.0):
-                cv2.line(main_view, w2s(-self.env.half_arena, gy), w2s(self.env.half_arena, gy), (22, 30, 48), 1)
+                # Arena Wall
+                cv2.rectangle(main_view, w2s(-self.env.half_arena, self.env.half_arena), w2s(self.env.half_arena, -self.env.half_arena), (239, 68, 68), 3)
 
-            # Arena Wall
-            cv2.rectangle(main_view, w2s(-self.env.half_arena, self.env.half_arena), w2s(self.env.half_arena, -self.env.half_arena), (239, 68, 68), 3)
+                # Food
+                for i, (fx, fy) in enumerate(self.env.food_positions):
+                    sx, sy = w2s(fx, fy)
+                    if -10 <= sx < main_w + 10 and -10 <= sy < total_h + 10:
+                        cv2.circle(main_view, (sx, sy), 4, self.food_colors[i % len(self.food_colors)], -1, cv2.LINE_AA)
 
-            # Food
-            for i, (fx, fy) in enumerate(self.env.food_positions):
-                sx, sy = w2s(fx, fy)
-                if -10 <= sx < main_w + 10 and -10 <= sy < total_h + 10:
-                    cv2.circle(main_view, (sx, sy), 4, self.food_colors[i % len(self.food_colors)], -1, cv2.LINE_AA)
+                # Viruses
+                v_rot = frame_idx * 0.04
+                for vx, vy, vr in self.env.viruses:
+                    vsx, vsy = w2s(vx, vy)
+                    v_radius_px = int(vr * pixels_per_meter)
+                    if -50 <= vsx < main_w + 50 and -50 <= vsy < total_h + 50:
+                        draw_spiked_virus(main_view, (vsx, vsy), v_radius_px, spikes=14, angle_offset=v_rot)
 
-            # Viruses
-            v_rot = frame_idx * 0.04
-            for vx, vy, vr in self.env.viruses:
-                vsx, vsy = w2s(vx, vy)
-                v_radius_px = int(vr * pixels_per_meter)
-                if -50 <= vsx < main_w + 50 and -50 <= vsy < total_h + 50:
-                    draw_spiked_virus(main_view, (vsx, vsy), v_radius_px, spikes=14, angle_offset=v_rot)
+                # Players
+                draw_order = sorted(self.competitors.keys(), key=lambda p: (0 if p == "player_0" else 1, self.env.players[p].mass))
+                for pid in draw_order:
+                    player = self.env.players[pid]
+                    name, _, col = self.competitors[pid]
+                    for pc_idx, pc in enumerate(player.pieces):
+                        sx, sy = w2s(pc.pos[0], pc.pos[1])
+                        r_px = max(6, int(pc.radius * pixels_per_meter))
+                        if -150 <= sx < main_w + 150 and -150 <= sy < total_h + 150:
+                            draw_glowing_cell(
+                                main_view,
+                                center=(sx, sy),
+                                radius=r_px,
+                                color_bgr=col,
+                                name=name if pc_idx == 0 else "",
+                                mass=pc.mass,
+                                yaw=player.yaw,
+                                is_primary=(pid == "player_0")
+                            )
 
-            # Players
-            draw_order = sorted(self.competitors.keys(), key=lambda p: (0 if p == "player_0" else 1, self.env.players[p].mass))
-            for pid in draw_order:
-                player = self.env.players[pid]
-                name, _, col = self.competitors[pid]
-                for pc in player.pieces:
-                    sx, sy = w2s(pc.pos[0], pc.pos[1])
-                    r_px = max(6, int(pc.radius * pixels_per_meter))
-                    if -150 <= sx < main_w + 150 and -150 <= sy < total_h + 150:
-                        draw_glowing_cell(
-                            main_view,
-                            center=(sx, sy),
-                            radius=r_px,
-                            color_bgr=col,
-                            name=name if pc == player.pieces[0] else "",
-                            mass=pc.mass,
-                            yaw=player.yaw,
-                            is_primary=(pid == "player_0")
-                        )
+                # HUD Panel (Right Side)
+                hud_view = frame[:, main_w:]
+                cv2.line(frame, (main_w, 0), (main_w, total_h), (30, 41, 59), 2)
+                cv2.putText(hud_view, "AGAR.IO AI ARENA", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (56, 189, 248), 2, cv2.LINE_AA)
+                cv2.putText(hud_view, "HUMAN VS NEURAL CHAMPIONS", (20, 62), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (148, 163, 184), 1, cv2.LINE_AA)
 
-            # HUD Panel (Right Side)
-            hud_view = frame[:, main_w:]
-            cv2.line(frame, (main_w, 0), (main_w, total_h), (30, 41, 59), 2)
-            cv2.putText(hud_view, "AGAR.IO AI ARENA", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (56, 189, 248), 2, cv2.LINE_AA)
-            cv2.putText(hud_view, "HUMAN VS NEURAL CHAMPIONS", (20, 62), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (148, 163, 184), 1, cv2.LINE_AA)
+                # Human Stats Card
+                cv2.rectangle(hud_view, (15, 80), (total_w - main_w - 15, 200), (15, 23, 42), -1)
+                cv2.rectangle(hud_view, (15, 80), (total_w - main_w - 15, 200), (56, 189, 248), 1)
+                cv2.putText(hud_view, "PILOT TELEMETRY", (25, 104), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (56, 189, 248), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, f"MASS: {human_player.mass:.1f} kg", (25, 132), cv2.FONT_HERSHEY_SIMPLEX, 0.52, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(hud_view, f"PIECES: {len(human_player.pieces)}/4", (25, 156), cv2.FONT_HERSHEY_SIMPLEX, 0.40, (203, 213, 225), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, f"KILLS: {human_player.kills} | DEATHS: {human_player.deaths}", (25, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.40, (52, 211, 153), 1, cv2.LINE_AA)
 
-            # Human Stats Card
-            cv2.rectangle(hud_view, (15, 80), (total_w - main_w - 15, 200), (15, 23, 42), -1)
-            cv2.rectangle(hud_view, (15, 80), (total_w - main_w - 15, 200), (56, 189, 248), 1)
-            cv2.putText(hud_view, "PILOT TELEMETRY", (25, 104), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (56, 189, 248), 1, cv2.LINE_AA)
-            cv2.putText(hud_view, f"MASS: {human_player.mass:.1f} kg", (25, 132), cv2.FONT_HERSHEY_SIMPLEX, 0.52, (255, 255, 255), 2, cv2.LINE_AA)
-            cv2.putText(hud_view, f"PIECES: {len(human_player.pieces)}/4", (25, 156), cv2.FONT_HERSHEY_SIMPLEX, 0.40, (203, 213, 225), 1, cv2.LINE_AA)
-            cv2.putText(hud_view, f"KILLS: {human_player.kills} | DEATHS: {human_player.deaths}", (25, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.40, (52, 211, 153), 1, cv2.LINE_AA)
+                # Leaderboard
+                cv2.putText(hud_view, "LIVE LEADERBOARD", (20, 235), cv2.FONT_HERSHEY_SIMPLEX, 0.46, (248, 250, 252), 1, cv2.LINE_AA)
+                ranked_pids = sorted(self.competitors.keys(), key=lambda p: self.env.players[p].mass, reverse=True)
+                for idx, pid in enumerate(ranked_pids):
+                    p_obj = self.env.players[pid]
+                    p_name, _, p_col = self.competitors[pid]
+                    y_pos = 265 + idx * 30
+                    bar_w = int(min(1.0, p_obj.mass / 120.0) * (total_w - main_w - 60))
+                    cv2.rectangle(hud_view, (20, y_pos - 14), (20 + bar_w, y_pos - 2), (26, 36, 56), -1)
+                    cv2.circle(hud_view, (28, y_pos - 8), 4, p_col, -1)
+                    text = f"#{idx+1} {p_name}: {p_obj.mass:.1f}kg"
+                    cv2.putText(hud_view, text, (40, y_pos - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (241, 245, 249), 1, cv2.LINE_AA)
 
-            # Leaderboard
-            cv2.putText(hud_view, "LIVE LEADERBOARD", (20, 235), cv2.FONT_HERSHEY_SIMPLEX, 0.46, (248, 250, 252), 1, cv2.LINE_AA)
-            ranked_pids = sorted(self.competitors.keys(), key=lambda p: self.env.players[p].mass, reverse=True)
-            for idx, pid in enumerate(ranked_pids):
-                p_obj = self.env.players[pid]
-                p_name, _, p_col = self.competitors[pid]
-                y_pos = 265 + idx * 30
-                bar_w = int(min(1.0, p_obj.mass / 120.0) * (total_w - main_w - 60))
-                cv2.rectangle(hud_view, (20, y_pos - 14), (20 + bar_w, y_pos - 2), (26, 36, 56), -1)
-                cv2.circle(hud_view, (28, y_pos - 8), 4, p_col, -1)
-                text = f"#{idx+1} {p_name}: {p_obj.mass:.1f}kg"
-                cv2.putText(hud_view, text, (40, y_pos - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (241, 245, 249), 1, cv2.LINE_AA)
+                # Controls Help
+                cv2.putText(hud_view, "CONTROLS:", (20, 480), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (148, 163, 184), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, "- Mouse Move : Steer & Speed", (20, 505), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (203, 213, 225), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, "- SPACEBAR   : Tactical Split", (20, 528), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (203, 213, 225), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, "- W key      : Sprint", (20, 551), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (203, 213, 225), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, "- R key      : Respawn", (20, 574), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (203, 213, 225), 1, cv2.LINE_AA)
 
-            # Controls Help
-            cv2.putText(hud_view, "CONTROLS:", (20, 480), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (148, 163, 184), 1, cv2.LINE_AA)
-            cv2.putText(hud_view, "- Mouse Move : Steer & Speed", (20, 505), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (203, 213, 225), 1, cv2.LINE_AA)
-            cv2.putText(hud_view, "- SPACEBAR   : Tactical Split", (20, 528), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (203, 213, 225), 1, cv2.LINE_AA)
-            cv2.putText(hud_view, "- W key      : Sprint", (20, 551), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (203, 213, 225), 1, cv2.LINE_AA)
-            cv2.putText(hud_view, "- R key      : Respawn", (20, 574), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (203, 213, 225), 1, cv2.LINE_AA)
+                # Encode JPEG
+                _, jpeg = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
+                with self.lock:
+                    self.latest_jpeg = jpeg.tobytes()
 
-            # Encode JPEG
-            _, jpeg = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
-            with self.lock:
-                self.latest_jpeg = jpeg.tobytes()
+                frame_idx += 1
+            except Exception as e:
+                logger.error(f"Error in simulation loop: {e}", exc_info=True)
 
-            frame_idx += 1
             elapsed = time.perf_counter() - t0
             sleep_time = max(0.001, (1.0 / float(self.fps)) - elapsed)
             time.sleep(sleep_time)
@@ -328,12 +331,16 @@ async def serve_index():
     <span>Steer: <strong>Move Mouse</strong></span>
     <span>Split Attack: <strong>SPACEBAR</strong></span>
     <span>Turbo Sprint: <strong>Hold W</strong></span>
-    <span>Respawn: <strong>Press R</strong></span>
+    <button id="btnRespawn" style="background:#0284c7; color:#fff; border:none; padding:3px 10px; border-radius:4px; cursor:pointer; font-family:'JetBrains Mono', monospace; font-size:12px; transition:background 0.15s;">RESPAWN (R)</button>
   </footer>
 
   <script>
     const container = document.getElementById('arenaContainer');
+    const btnRespawn = document.getElementById('btnRespawn');
     let isSprint = false;
+    let isSplitPending = false;
+    let lastDx = 0;
+    let lastDy = 0;
 
     // Center of main game viewport (880px of 1200px)
     const mainViewW = 880;
@@ -354,16 +361,27 @@ async def serve_index():
       const mouseX = (e.clientX - rect.left) * scaleX;
       const mouseY = (e.clientY - rect.top) * scaleY;
 
-      // Distance from center of human follow-cam
-      const dx = mouseX - (mainViewW / 2.0);
-      const dy = mouseY - (mainViewH / 2.0);
-      sendAction(dx, dy, false, isSprint);
+      lastDx = mouseX - (mainViewW / 2.0);
+      lastDy = mouseY - (mainViewH / 2.0);
     });
+
+    // Steady 30 FPS client heartbeat loop
+    setInterval(() => {
+      sendAction(lastDx, lastDy, isSplitPending, isSprint);
+      isSplitPending = false;
+    }, 33);
+
+    if (btnRespawn) {
+      btnRespawn.addEventListener('click', () => {
+        fetch('/reset', { method: 'POST' }).catch(() => {});
+      });
+    }
 
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
-        sendAction(0, 0, true, isSprint);
+        isSplitPending = true;
+        sendAction(lastDx, lastDy, true, isSprint);
       } else if (e.code === 'KeyW') {
         isSprint = true;
       } else if (e.code === 'KeyR') {

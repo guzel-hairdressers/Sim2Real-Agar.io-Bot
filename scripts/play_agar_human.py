@@ -235,7 +235,7 @@ def play_agar(headless: bool = False, max_frames: int = 3000, ai_tier: str = "ch
             name, _, col = competitors[pid]
             is_human = (pid == "player_0")
 
-            for pc in player.pieces:
+            for pc_idx, pc in enumerate(player.pieces):
                 sx, sy = world_to_screen(pc.pos[0], pc.pos[1])
                 r_px = max(6, int(pc.radius * pixels_per_meter))
                 if -150 <= sx < main_w + 150 and -150 <= sy < main_h + 150:
@@ -244,7 +244,7 @@ def play_agar(headless: bool = False, max_frames: int = 3000, ai_tier: str = "ch
                         center=(sx, sy),
                         radius=r_px,
                         color_bgr=col,
-                        name=name if pc == player.pieces[0] else "",
+                        name=name if pc_idx == 0 else "",
                         mass=pc.mass,
                         yaw=player.yaw,
                         is_primary=is_human
