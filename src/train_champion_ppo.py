@@ -26,6 +26,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from envs.agar_env import PartiallyObservableAgarEnv
 from src.heuristic_agent import MasterHeuristicAgarBot
 from src.train_agar_parallel_gpu import env_worker
+from src.tactical_combat_reflex import apply_tactical_combat_reflex
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("ChampionPPO")
@@ -147,11 +148,13 @@ class ChampionPPOAgent:
                 logger.warning(f"Could not load {weights_path}: {e}")
         self.net.eval()
 
-    def predict(self, obs: np.ndarray, deterministic: bool = True) -> np.ndarray:
+    def predict(self, obs: np.ndarray, deterministic: bool = True, apply_reflex: bool = True) -> np.ndarray:
         with torch.no_grad():
             t_obs = torch.tensor(obs, dtype=torch.float32, device=self.device).unsqueeze(0)
             act, _, _, _ = self.net.get_action_and_value(t_obs, deterministic=deterministic)
             action = act.squeeze(0).cpu().numpy()
+        if apply_reflex:
+            return apply_tactical_combat_reflex(action, obs)
         return action
 
 

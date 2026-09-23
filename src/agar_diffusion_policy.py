@@ -20,6 +20,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+from src.tactical_combat_reflex import apply_tactical_combat_reflex
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("AgarDiffusion")
 
@@ -346,7 +348,7 @@ class AgarDiffusionPolicy:
             a_current[:, 2] = np.clip(a_current[:, 2], 0.0, 1.0)
         return a_current
 
-    def predict(self, obs: np.ndarray, deterministic: bool = True) -> np.ndarray:
+    def predict(self, obs: np.ndarray, deterministic: bool = True, apply_reflex: bool = True) -> np.ndarray:
         if len(self.action_buffer) == 0 or self.steps_since_plan >= self.exec_horizon:
             if self.torch_net is not None:
                 trajectory = self.sample_trajectory_torch(obs, steps=self.num_ddim_steps, num_candidates=self.num_candidates)
@@ -358,6 +360,8 @@ class AgarDiffusionPolicy:
         action = self.action_buffer.pop(0).copy()
         self.steps_since_plan += 1
         self.last_action = action.copy()
+        if apply_reflex:
+            return apply_tactical_combat_reflex(action, obs)
         return action
 
     def sample_trajectory_torch(self, obs: np.ndarray, steps: int = 8, num_candidates: int = 4) -> np.ndarray:
