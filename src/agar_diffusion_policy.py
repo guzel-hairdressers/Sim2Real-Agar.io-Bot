@@ -348,7 +348,10 @@ class AgarDiffusionPolicy:
 
     def predict(self, obs: np.ndarray, deterministic: bool = True) -> np.ndarray:
         if len(self.action_buffer) == 0 or self.steps_since_plan >= self.exec_horizon:
-            trajectory = self.sample_trajectory_ddim(obs, steps=self.num_ddim_steps)
+            if self.torch_net is not None:
+                trajectory = self.sample_trajectory_torch(obs, steps=self.num_ddim_steps, num_candidates=self.num_candidates)
+            else:
+                trajectory = self.sample_trajectory_ddim(obs, steps=self.num_ddim_steps)
             self.action_buffer = [trajectory[i] for i in range(len(trajectory))]
             self.steps_since_plan = 0
 

@@ -323,6 +323,44 @@ class PartiallyObservableAgarEnv(gym.Env):
             sampled_pts.append(pt)
         return np.array(sampled_pts, dtype=np.float32)
 
+    def _sample_safe_virus_pos(self, min_clearance: float = 4.5, existing_viruses: Optional[List[Any]] = None) -> np.ndarray:
+        """Samples a fresh virus position with guaranteed clearance from all player cells and existing viruses."""
+        best_cand = None
+        max_min_dist = -1.0
+
+        for _ in range(60):
+            vx = float(self.np_random.uniform(-self.half_arena + 2.5, self.half_arena - 2.5))
+            vy = float(self.np_random.uniform(-self.half_arena + 2.5, self.half_arena - 2.5))
+            cand = np.array([vx, vy], dtype=np.float32)
+
+            min_player_dist = float("inf")
+            for p in self.players.values():
+                for pc in p.pieces:
+                    d = float(np.linalg.norm(cand - pc.pos))
+                    if d < min_player_dist:
+                        min_player_dist = d
+
+            if min_player_dist > max_min_dist:
+                max_min_dist = min_player_dist
+                best_cand = np.array([vx, vy, 0.65], dtype=np.float32)
+
+            # Check clearance from existing viruses
+            v_pool = existing_viruses if existing_viruses is not None else self.viruses
+            too_close_v = False
+            if len(v_pool) > 0:
+                for v in v_pool:
+                    v_arr = np.array(v[:2], dtype=np.float32)
+                    if np.linalg.norm(cand - v_arr) < 2.2:
+                        too_close_v = True
+                        break
+
+            if min_player_dist >= min_clearance and not too_close_v:
+                return np.array([vx, vy, 0.65], dtype=np.float32)
+
+        if best_cand is not None:
+            return best_cand
+        return np.array([0.0, 0.0, 0.65], dtype=np.float32)
+
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None) -> Tuple[Dict[str, np.ndarray], Dict[str, Any]]:
         super().reset(seed=seed)
         self.step_count = 0
@@ -336,15 +374,7 @@ class PartiallyObservableAgarEnv(gym.Env):
             self.arena_size = self.base_arena_size
             self.half_arena = self.arena_size / 2.0
 
-        # Initialize static green virus cells (radius 0.65m)
-        virus_list = []
-        for _ in range(self.num_viruses):
-            vx = self.np_random.uniform(-self.half_arena + 2.5, self.half_arena - 2.5)
-            vy = self.np_random.uniform(-self.half_arena + 2.5, self.half_arena - 2.5)
-            virus_list.append([vx, vy, 0.65])
-        self.viruses = np.array(virus_list, dtype=np.float32)
-
-        # Initialize players in balanced ring formation
+        # Initialize players in balanced ring formation first
         self.players.clear()
         total_init_player_mass = 0.0
         for i, pid in enumerate(self.player_ids):
@@ -355,6 +385,13 @@ class PartiallyObservableAgarEnv(gym.Env):
             total_init_player_mass += init_m
             color = self.player_colors[i % len(self.player_colors)]
             self.players[pid] = PlayerState(pid, pos, color, initial_mass=init_m, max_pieces=self.max_pieces)
+
+        # Initialize static green virus cells with guaranteed player clearance (minimum 4.5m)
+        virus_list = []
+        for _ in range(self.num_viruses):
+            v_cand = self._sample_safe_virus_pos(min_clearance=4.5, existing_viruses=virus_list)
+            virus_list.append(v_cand)
+        self.viruses = np.array(virus_list, dtype=np.float32)
 
         # Allocate food pellets and reserve mass under exact closed-loop mass conservation
         initial_food_count = min(self.num_food, int((self.total_world_mass_cap - total_init_player_mass) / self.pellet_mass))
@@ -632,13 +669,9 @@ class PartiallyObservableAgarEnv(gym.Env):
             if new_pieces:
                 player.pieces.extend(new_pieces)
 
-        # Respawn popped viruses at fresh arena coordinates
+        # Respawn popped viruses with guaranteed clearance away from all players (minimum 4.5m)
         for v_idx in consumed_virus_indices:
-            self.viruses[v_idx] = np.array([
-                self.np_random.uniform(-self.half_arena + 2.5, self.half_arena - 2.5),
-                self.np_random.uniform(-self.half_arena + 2.5, self.half_arena - 2.5),
-                0.65
-            ], dtype=np.float32)
+            self.viruses[v_idx] = self._sample_safe_virus_pos(min_clearance=4.5)
 
         # 4. Multi-piece Predation Consumption (70% absorbed, 30% blasted as radial shrapnel)
         eaten_player_ids = set()

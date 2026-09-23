@@ -22,6 +22,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from envs.agar_env import PartiallyObservableAgarEnv
 from src.heuristic_agent import MasterHeuristicAgarBot
+from src.train_champion_ppo import ChampionPPOAgent
 from src.train_superior_ppo import SuperiorPPOAgent
 from src.agar_diffusion_policy import AgarDiffusionPolicy
 
@@ -54,7 +55,7 @@ def run_benchmark(num_rounds: int = 20, episode_steps: int = 350):
         max_pieces=4
     )
 
-    ppo_agent = SuperiorPPOAgent(weights_path=ppo_weights)
+    ppo_agent = ChampionPPOAgent(weights_path=ppo_weights)
     diff_agent = AgarDiffusionPolicy(
         model_path=diff_weights if os.path.exists(diff_weights) else None,
         critic_path=critic_weights if os.path.exists(critic_weights) else None,
@@ -72,7 +73,7 @@ def run_benchmark(num_rounds: int = 20, episode_steps: int = 350):
         "player_2": ("HEURISTIC-HUNTER", MasterHeuristicAgarBot(pid="player_2", profile="hunter", seed=202)),
         "player_3": ("DIFFUSION-CHAMPION", diff_agent),
         "player_4": ("HEURISTIC-SURVIVOR", MasterHeuristicAgarBot(pid="player_4", profile="survivor", seed=303)),
-        "player_5": ("PPO-CONTENDER", SuperiorPPOAgent(weights_path=ppo_weights)),
+        "player_5": ("PPO-PRODIGY", ChampionPPOAgent(weights_path=ppo_weights)),
     }
 
     names = {pid: info[0] for pid, info in competitor_registry.items()}

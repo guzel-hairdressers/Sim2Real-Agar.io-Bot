@@ -30,7 +30,7 @@ if PROJECT_ROOT not in sys.path:
 
 from envs.agar_env import PartiallyObservableAgarEnv
 from src.heuristic_agent import MasterHeuristicAgarBot
-from src.train_superior_ppo import SuperiorPPOAgent
+from src.train_champion_ppo import ChampionPPOAgent
 from src.agar_diffusion_policy import AgarDiffusionPolicy
 from scripts.render_agar_demo import draw_glowing_cell, draw_spiked_virus
 
@@ -118,7 +118,7 @@ class ArenaGameManager:
         critic_weights = os.path.join(PROJECT_ROOT, "outputs/agar_diffusion_critic_champion.pt")
 
         self.heuristic_apex = MasterHeuristicAgarBot(pid="player_1", profile="apex", seed=101)
-        self.ppo_champ = SuperiorPPOAgent(weights_path=ppo_weights)
+        self.ppo_champ = ChampionPPOAgent(weights_path=ppo_weights)
         self.heuristic_hunter = MasterHeuristicAgarBot(pid="player_3", profile="hunter", seed=202)
         self.diff_champ = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=42)
         self.heuristic_survivor = MasterHeuristicAgarBot(pid="player_5", profile="survivor", seed=303)
