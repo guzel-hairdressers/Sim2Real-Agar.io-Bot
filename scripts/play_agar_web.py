@@ -29,6 +29,7 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from envs.agar_env import PartiallyObservableAgarEnv
+from src.heuristic_agent import MasterHeuristicAgarBot
 from src.train_superior_ppo import SuperiorPPOAgent
 from src.agar_diffusion_policy import AgarDiffusionPolicy
 from scripts.render_agar_demo import draw_glowing_cell, draw_spiked_virus
@@ -116,19 +117,19 @@ class ArenaGameManager:
         diff_weights = os.path.join(PROJECT_ROOT, "outputs/agar_diffusion_champion.pt")
         critic_weights = os.path.join(PROJECT_ROOT, "outputs/agar_diffusion_critic_champion.pt")
 
-        self.ppo_agent_1 = SuperiorPPOAgent(weights_path=ppo_weights)
-        self.ppo_agent_2 = SuperiorPPOAgent(weights_path=ppo_weights)
-        self.diff_agent_1 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=42)
-        self.diff_agent_2 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=105)
-        self.diff_agent_3 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=202)
+        self.heuristic_apex = MasterHeuristicAgarBot(pid="player_1", profile="apex", seed=101)
+        self.ppo_champ = SuperiorPPOAgent(weights_path=ppo_weights)
+        self.heuristic_hunter = MasterHeuristicAgarBot(pid="player_3", profile="hunter", seed=202)
+        self.diff_champ = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=42)
+        self.heuristic_survivor = MasterHeuristicAgarBot(pid="player_5", profile="survivor", seed=303)
 
         self.competitors = {
             "player_0": ("HUMAN (YOU)", None, (0, 215, 255)),
-            "player_1": ("DIFFUSION-01", self.diff_agent_1, (16, 185, 129)),
-            "player_2": ("PPO-CHAMP-01", self.ppo_agent_1, (243, 156, 18)),
-            "player_3": ("DIFFUSION-02", self.diff_agent_2, (236, 72, 153)),
-            "player_4": ("PPO-CHAMP-02", self.ppo_agent_2, (168, 85, 247)),
-            "player_5": ("DIFFUSION-03", self.diff_agent_3, (245, 158, 11)),
+            "player_1": ("HEURISTIC-APEX", self.heuristic_apex, (239, 68, 68)),
+            "player_2": ("PPO-CHAMPION", self.ppo_champ, (243, 156, 18)),
+            "player_3": ("HEURISTIC-HUNTER", self.heuristic_hunter, (236, 72, 153)),
+            "player_4": ("DIFFUSION-CHAMP", self.diff_champ, (16, 185, 129)),
+            "player_5": ("HEURISTIC-SURVIVOR", self.heuristic_survivor, (168, 85, 247)),
         }
 
         # Pastel colors for food pellets

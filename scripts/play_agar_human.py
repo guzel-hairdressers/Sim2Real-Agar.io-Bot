@@ -22,6 +22,7 @@ import numpy as np
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from envs.agar_env import PartiallyObservableAgarEnv
+from src.heuristic_agent import MasterHeuristicAgarBot
 from src.train_agar_parallel_gpu import TorchAgarPPOAgent
 from src.train_superior_ppo import SuperiorPPOAgent
 from src.agar_diffusion_policy import AgarDiffusionPolicy
@@ -100,26 +101,20 @@ def play_agar(headless: bool = False, max_frames: int = 3000, ai_tier: str = "ch
         critic_weights = "outputs/agar_diffusion_critic.pt"
         logger.info(f"Loaded BASELINE Tier AI bots (PPO: {ppo_weights}, Diffusion: {diff_weights})")
 
-    if "champion" in ppo_weights:
-        ppo_agent_1 = SuperiorPPOAgent(weights_path=ppo_weights)
-        ppo_agent_2 = SuperiorPPOAgent(weights_path=ppo_weights)
-    else:
-        ppo_agent_1 = TorchAgarPPOAgent(weights_path=ppo_weights if os.path.exists(ppo_weights) else None)
-        ppo_agent_2 = TorchAgarPPOAgent(weights_path=ppo_weights if os.path.exists(ppo_weights) else None)
-
-    diff_agent_1 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=42)
-    diff_agent_2 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=105)
-    diff_agent_3 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=202)
+    ppo_agent = SuperiorPPOAgent(weights_path=ppo_weights)
+    diff_agent = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=42)
+    heuristic_apex = MasterHeuristicAgarBot(pid="player_1", profile="apex", seed=101)
+    heuristic_hunter = MasterHeuristicAgarBot(pid="player_3", profile="hunter", seed=202)
+    heuristic_survivor = MasterHeuristicAgarBot(pid="player_5", profile="survivor", seed=303)
 
     # Player Roster (Human on player_0)
-    tier_tag = "CHAMP" if ai_tier == "champion" else "BASE"
     competitors = {
-        "player_0": ("HUMAN (YOU)", None, (0, 215, 255)),                     # Electric Gold / Yellow
-        "player_1": (f"DIFF-{tier_tag}-1", diff_agent_1, (16, 185, 129)),      # Emerald Neon
-        "player_2": (f"PPO-{tier_tag}-1", ppo_agent_1, (243, 156, 18)),         # Cyber Cyan
-        "player_3": (f"DIFF-{tier_tag}-2", diff_agent_2, (236, 72, 153)),      # Rose Magenta
-        "player_4": (f"PPO-{tier_tag}-2", ppo_agent_2, (168, 85, 247)),        # Violet Purple
-        "player_5": (f"DIFF-{tier_tag}-3", diff_agent_3, (245, 158, 11)),      # Amber Gold
+        "player_0": ("HUMAN (YOU)", None, (0, 215, 255)),
+        "player_1": ("HEURISTIC-APEX", heuristic_apex, (239, 68, 68)),
+        "player_2": ("PPO-CHAMPION", ppo_agent, (243, 156, 18)),
+        "player_3": ("HEURISTIC-HUNTER", heuristic_hunter, (236, 72, 153)),
+        "player_4": ("DIFFUSION-CHAMP", diff_agent, (16, 185, 129)),
+        "player_5": ("HEURISTIC-SURVIVOR", heuristic_survivor, (168, 85, 247)),
     }
 
     # Food pellet palette
