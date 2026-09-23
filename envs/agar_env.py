@@ -38,7 +38,7 @@ class SubPiece:
     @property
     def max_speed(self) -> float:
         base_speed = 1.7
-        return float(np.clip(base_speed * (15.0 / max(1.0, self.mass)) ** 0.35, 0.45, 2.2))
+        return float(np.clip(base_speed * (15.0 / max(1.0, self.mass)) ** 0.40, 0.22, 2.2))
 
 
 class PlayerState:
@@ -114,7 +114,7 @@ class PlayerState:
     @property
     def max_speed(self) -> float:
         base_speed = 1.7
-        return float(np.clip(base_speed * (15.0 / max(1.0, self.mass)) ** 0.35, 0.45, 2.2))
+        return float(np.clip(base_speed * (15.0 / max(1.0, self.mass)) ** 0.40, 0.22, 2.2))
 
     @property
     def vision_radius(self) -> float:
@@ -208,6 +208,7 @@ class PartiallyObservableAgarEnv(gym.Env):
             (239, 68, 68),    # Crimson Red
             (168, 85, 247),   # Purple / Violet
             (245, 158, 11),   # Amber / Orange
+            (255, 191, 0),    # Gold / Sunflower
         ]
 
         # Action space per agent: [thrust (0.0 to 1.0), steer (-1.0 to 1.0), split_trigger (0.0 to 1.0)]
@@ -406,23 +407,39 @@ class PartiallyObservableAgarEnv(gym.Env):
 
     def _respawn_player(self, pid: str):
         safe_pos = None
-        for _ in range(15):
+        best_cand = None
+        max_min_dist = -1.0
+
+        for _ in range(60):
             candidate = self.np_random.uniform(
                 -self.half_arena + 2.0,
                 self.half_arena - 2.0,
                 size=2
             ).astype(np.float32)
-            too_close = False
+
+            min_dist = float("inf")
             for other_id, other in self.players.items():
-                if other_id != pid and np.linalg.norm(candidate - other.pos) < 3.5:
-                    too_close = True
-                    break
-            if not too_close:
+                if other_id != pid:
+                    d = float(np.linalg.norm(candidate - other.pos))
+                    min_dist = min(min_dist, d)
+
+            min_v_dist = float("inf")
+            if len(self.viruses) > 0:
+                for v in self.viruses:
+                    d_v = float(np.linalg.norm(candidate - v[:2]))
+                    min_v_dist = min(min_v_dist, d_v)
+                    min_dist = min(min_dist, d_v)
+
+            if min_dist > max_min_dist:
+                max_min_dist = min_dist
+                best_cand = candidate
+
+            if min_dist >= 2.4 and min_v_dist >= 3.2:
                 safe_pos = candidate
                 break
 
         if safe_pos is None:
-            safe_pos = self.np_random.uniform(-self.half_arena + 2.0, self.half_arena - 2.0, size=2).astype(np.float32)
+            safe_pos = best_cand if best_cand is not None else np.zeros(2, dtype=np.float32)
 
         p = self.players[pid]
         p.max_pieces = self.max_pieces
@@ -586,10 +603,15 @@ class PartiallyObservableAgarEnv(gym.Env):
             rewards[pid] -= 0.025 * (player.angular_vel ** 2)
             rewards[pid] += 0.02 * thrust
 
-            # Metabolic mass decay with superlinear burn for giant cells
-            if player.mass > 18.0:
-                excess = player.mass - 18.0
-                decay_rate = 0.015 * self.mass_decay_multiplier * ((excess / 12.0) ** 1.15)
+            # Metabolic mass decay with authentic superlinear burn for giant cells (prevents unstoppable 400kg giants)
+            if player.mass > 20.0:
+                excess = player.mass - 20.0
+                base_decay = 0.025 * ((excess / 10.0) ** 1.25)
+                if player.mass > 75.0:
+                    base_decay += 0.08 * (((player.mass - 75.0) / 20.0) ** 1.5)
+                if player.mass > 180.0:
+                    base_decay += 0.45 * (((player.mass - 180.0) / 30.0) ** 1.85)
+                decay_rate = base_decay * self.mass_decay_multiplier
                 decay_amount = min(excess, decay_rate * self.dt)
                 if decay_amount > 0:
                     largest = max(player.pieces, key=lambda p: p.mass)
@@ -624,7 +646,7 @@ class PartiallyObservableAgarEnv(gym.Env):
                 remaining_mask[list(eaten_food_indices)] = False
                 self.food_positions = self.food_positions[remaining_mask]
 
-        # 3. Authentic Agar.io Spiked Virus Popping Mechanics (Explosive Multi-Piece Fragmentation)
+        # 3. Authentic Agar.io Spiked Virus Popping & Shredding Mechanics
         consumed_virus_indices = set()
         for pid, player in self.players.items():
             new_pieces = []
@@ -635,14 +657,18 @@ class PartiallyObservableAgarEnv(gym.Env):
                     v_pos = np.array([vx, vy], dtype=np.float32)
                     dist_v = float(np.linalg.norm(piece.pos - v_pos))
                     if dist_v < (piece.radius + vr):
-                        # Case A: Cell >= 40kg hits virus -> POPS INTO MULTIPLE SUB-PIECES!
-                        if piece.mass >= 40.0:
+                        normal = (piece.pos - v_pos) / max(1e-4, dist_v)
+                        # Case A: Cell >= 36.0kg hits virus
+                        if piece.mass >= 36.0:
                             curr_count = len(player.pieces) + len(new_pieces)
                             num_frags = min(player.max_pieces, player.max_pieces - curr_count + 1)
                             if num_frags >= 2:
+                                # Multi-piece fragmentation burst
                                 frag_m = float(piece.mass / num_frags)
                                 piece.mass = frag_m
                                 piece.merge_cooldown = 12.0
+                                piece.pos = v_pos + normal * (piece.radius + vr + 0.15)
+                                piece.vel = normal * 2.5
 
                                 # Explode radial burst outward
                                 base_ang = player.yaw
@@ -662,10 +688,40 @@ class PartiallyObservableAgarEnv(gym.Env):
                                 rewards[pid] -= 6.0  # Virus popping is a tactical vulnerability
                                 consumed_virus_indices.add(v_idx)
                                 break
-                        else:
-                            # Case B: Small cell (< 40kg) safely bounces or uses virus as shield
-                            normal = (piece.pos - v_pos) / max(1e-4, dist_v)
-                            piece.pos = v_pos + normal * (piece.radius + vr + 0.02)
+                            else:
+                                # Cell already has max pieces (4 clones): VIRUS SHREDS THE PIECE!
+                                # Cannot ghost through: loses 25% mass, suffers violent knockback, and pops virus
+                                loss_m = float(piece.mass * 0.25)
+                                piece.mass -= loss_m
+                                piece.merge_cooldown = max(piece.merge_cooldown, 10.0)
+
+                                # Violent recoil impulse away from virus
+                                piece.pos = v_pos + normal * (piece.radius + vr + 0.30)
+                                piece.vel = normal * 4.8
+
+                                # Eject shredded mass into arena as food pellets around virus
+                                num_debris = max(4, int(loss_m / self.pellet_mass))
+                                debris_pellet_m = num_debris * self.pellet_mass
+                                self.reserve_mass += max(0.0, loss_m - debris_pellet_m)
+
+                                debris_angles = np.linspace(0, 2 * np.pi, num_debris, endpoint=False) + float(self.np_random.uniform(0, 0.5))
+                                debris_pts = []
+                                for d_ang in debris_angles:
+                                    u = np.array([math.cos(d_ang), math.sin(d_ang)], dtype=np.float32)
+                                    pt = np.clip(v_pos + u * float(vr + self.np_random.uniform(0.3, 1.2)), -self.half_arena + 0.4, self.half_arena - 0.4)
+                                    debris_pts.append(pt)
+                                if debris_pts:
+                                    d_arr = np.array(debris_pts, dtype=np.float32)
+                                    if len(self.food_positions) == 0:
+                                        self.food_positions = d_arr
+                                    else:
+                                        self.food_positions = np.vstack([self.food_positions, d_arr])
+
+                                rewards[pid] -= 10.0  # Heavy shred penalty
+                                consumed_virus_indices.add(v_idx)
+                                break
+                        # Case B: Small cell (< 36.0kg) can safely shelter inside or pass through the virus!
+                        # No bounce, no damage - acts as a safe bunker.
             if new_pieces:
                 player.pieces.extend(new_pieces)
 
@@ -699,6 +755,32 @@ class PartiallyObservableAgarEnv(gym.Env):
                 mass_ratio = pred_piece.mass / max(1.0, prey_piece.mass)
                 dist = float(np.linalg.norm(pred_piece.pos - prey_piece.pos))
                 overlap_req = pred_piece.radius + 0.20 * prey_piece.radius
+
+                # Virus Shelter Sanctuary & Impassable Wall Blocking:
+                # 1. Sanctuary: Small cell (< 36kg) sheltering inside or immediately next to a virus is immune
+                # 2. Wall Obstruction: Line segment between predator and prey blocked by virus
+                virus_shielded = False
+                for v_idx, (vx, vy, vr) in enumerate(self.viruses):
+                    if v_idx in consumed_virus_indices:
+                        continue
+                    v_pos = np.array([vx, vy], dtype=np.float32)
+                    d_prey_v = float(np.linalg.norm(prey_piece.pos - v_pos))
+                    if prey_piece.mass < 36.0 and d_prey_v <= (vr + 0.15):
+                        virus_shielded = True
+                        break
+
+                    pred_to_prey = prey_piece.pos - pred_piece.pos
+                    seg_len_sq = float(np.dot(pred_to_prey, pred_to_prey))
+                    if seg_len_sq > 1e-4:
+                        t_seg = max(0.0, min(1.0, float(np.dot(v_pos - pred_piece.pos, pred_to_prey)) / seg_len_sq))
+                        closest_v = pred_piece.pos + t_seg * pred_to_prey
+                        d_line_v = float(np.linalg.norm(v_pos - closest_v))
+                        if d_line_v < (vr * 0.95):
+                            virus_shielded = True
+                            break
+
+                if virus_shielded:
+                    continue
 
                 # Continuous Collision Detection: check trajectory sweep to prevent tunneling during 4.8m/s split lunges
                 seg = pred_piece.pos - pred_piece.prev_pos
@@ -768,7 +850,7 @@ class PartiallyObservableAgarEnv(gym.Env):
         curr_food_count = len(self.food_positions)
         needed_pellets = min(self.max_food - curr_food_count, int(self.reserve_mass / self.pellet_mass))
         if needed_pellets > 0 and (curr_food_count < self.min_food or self.reserve_mass > 25.0):
-            spawn_batch = min(needed_pellets, 8)
+            spawn_batch = min(needed_pellets, 16 if self.reserve_mass > 40.0 else 8)
             new_pts = self._sample_food_from_grid(spawn_batch)
             if len(new_pts) > 0:
                 if len(self.food_positions) == 0:

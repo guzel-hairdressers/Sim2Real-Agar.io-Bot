@@ -94,7 +94,7 @@ class ArenaGameManager:
     def __init__(self):
         self.fps = 30
         self.dt = 1.0 / float(self.fps)
-        self.arena_size = 14.0
+        self.arena_size = 18.0
         self.env = None
         self.competitors = {}
         self.latest_jpeg = None
@@ -105,9 +105,10 @@ class ArenaGameManager:
     def _init_arena(self):
         self.env = PartiallyObservableAgarEnv(
             arena_size=self.arena_size,
-            num_players=6,
-            num_food=150,
-            num_viruses=5,
+            num_players=7,
+            num_food=180,
+            num_viruses=7,
+            total_world_mass=550.0,
             dt=self.dt
         )
         self.obs_dict, _ = self.env.reset(seed=int(time.time()) % 10000)
@@ -117,19 +118,21 @@ class ArenaGameManager:
         diff_weights = os.path.join(PROJECT_ROOT, "outputs/agar_diffusion_champion.pt")
         critic_weights = os.path.join(PROJECT_ROOT, "outputs/agar_diffusion_critic_champion.pt")
 
-        self.heuristic_apex = MasterHeuristicAgarBot(pid="player_1", profile="apex", seed=101)
-        self.ppo_champ = ChampionPPOAgent(weights_path=ppo_weights)
-        self.heuristic_hunter = MasterHeuristicAgarBot(pid="player_3", profile="hunter", seed=202)
-        self.diff_champ = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=2, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=42)
-        self.heuristic_survivor = MasterHeuristicAgarBot(pid="player_5", profile="survivor", seed=303)
+        self.ppo_champ_1 = ChampionPPOAgent(weights_path=ppo_weights)
+        self.ppo_champ_2 = ChampionPPOAgent(weights_path=ppo_weights)
+        self.diff_champ_1 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=3, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=42)
+        self.diff_champ_2 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=3, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=108)
+        self.heuristic_apex = MasterHeuristicAgarBot(pid="player_5", profile="apex", seed=101)
+        self.heuristic_hunter = MasterHeuristicAgarBot(pid="player_6", profile="hunter", seed=202)
 
         self.competitors = {
             "player_0": ("HUMAN (YOU)", None, (0, 215, 255)),
-            "player_1": ("HEURISTIC-APEX", self.heuristic_apex, (239, 68, 68)),
-            "player_2": ("PPO-CHAMPION", self.ppo_champ, (243, 156, 18)),
-            "player_3": ("HEURISTIC-HUNTER", self.heuristic_hunter, (236, 72, 153)),
-            "player_4": ("DIFFUSION-CHAMP", self.diff_champ, (16, 185, 129)),
-            "player_5": ("HEURISTIC-SURVIVOR", self.heuristic_survivor, (168, 85, 247)),
+            "player_1": ("PPO-ALPHA", self.ppo_champ_1, (243, 156, 18)),
+            "player_2": ("PPO-BETA", self.ppo_champ_2, (255, 191, 0)),
+            "player_3": ("DIFFUSION-1", self.diff_champ_1, (16, 185, 129)),
+            "player_4": ("DIFFUSION-2", self.diff_champ_2, (52, 211, 153)),
+            "player_5": ("HEURISTIC-APEX", self.heuristic_apex, (239, 68, 68)),
+            "player_6": ("HEURISTIC-HUNTER", self.heuristic_hunter, (236, 72, 153)),
         }
 
         # Pastel colors for food pellets
@@ -144,7 +147,7 @@ class ArenaGameManager:
         frame_idx = 0
         total_w, total_h = 1200, 675
         main_w = 880
-        pixels_per_meter = 46.0
+        pixels_per_meter = 38.0
 
         while self.is_running:
             t0 = time.perf_counter()
@@ -157,7 +160,7 @@ class ArenaGameManager:
                 h_action = human_state.get_action(human_player.yaw)
 
                 actions = {"player_0": h_action}
-                for pid in ["player_1", "player_2", "player_3", "player_4", "player_5"]:
+                for pid in ["player_1", "player_2", "player_3", "player_4", "player_5", "player_6"]:
                     _, agent, _ = self.competitors[pid]
                     actions[pid] = agent.predict(self.obs_dict[pid], deterministic=True)
 
@@ -180,13 +183,35 @@ class ArenaGameManager:
                 # Arena Wall
                 cv2.rectangle(main_view, w2s(-self.env.half_arena, self.env.half_arena), w2s(self.env.half_arena, -self.env.half_arena), (239, 68, 68), 3)
 
-                # Food
+                # Food Pellets
                 for i, (fx, fy) in enumerate(self.env.food_positions):
                     sx, sy = w2s(fx, fy)
                     if -10 <= sx < main_w + 10 and -10 <= sy < total_h + 10:
                         cv2.circle(main_view, (sx, sy), 4, self.food_colors[i % len(self.food_colors)], -1, cv2.LINE_AA)
 
-                # Viruses
+                draw_order = sorted(self.competitors.keys(), key=lambda p: (0 if p == "player_0" else 1, self.env.players[p].mass))
+
+                # 1. Draw Small Cells (< 36.0kg) that can shelter inside/under viruses
+                for pid in draw_order:
+                    player = self.env.players[pid]
+                    name, _, col = self.competitors[pid]
+                    for pc_idx, pc in enumerate(player.pieces):
+                        if pc.mass < 36.0:
+                            sx, sy = w2s(pc.pos[0], pc.pos[1])
+                            r_px = max(6, int(pc.radius * pixels_per_meter))
+                            if -150 <= sx < main_w + 150 and -150 <= sy < total_h + 150:
+                                draw_glowing_cell(
+                                    main_view,
+                                    center=(sx, sy),
+                                    radius=r_px,
+                                    color_bgr=col,
+                                    name=name if pc_idx == 0 else "",
+                                    mass=pc.mass,
+                                    yaw=player.yaw,
+                                    is_primary=(pid == "player_0")
+                                )
+
+                # 2. Draw Spiked Viruses (drawn over small sheltering cells as camouflage/shield)
                 v_rot = frame_idx * 0.04
                 for vx, vy, vr in self.env.viruses:
                     vsx, vsy = w2s(vx, vy)
@@ -194,52 +219,52 @@ class ArenaGameManager:
                     if -50 <= vsx < main_w + 50 and -50 <= vsy < total_h + 50:
                         draw_spiked_virus(main_view, (vsx, vsy), v_radius_px, spikes=14, angle_offset=v_rot)
 
-                # Players
-                draw_order = sorted(self.competitors.keys(), key=lambda p: (0 if p == "player_0" else 1, self.env.players[p].mass))
+                # 3. Draw Large Cells (>= 36.0kg)
                 for pid in draw_order:
                     player = self.env.players[pid]
                     name, _, col = self.competitors[pid]
                     for pc_idx, pc in enumerate(player.pieces):
-                        sx, sy = w2s(pc.pos[0], pc.pos[1])
-                        r_px = max(6, int(pc.radius * pixels_per_meter))
-                        if -150 <= sx < main_w + 150 and -150 <= sy < total_h + 150:
-                            draw_glowing_cell(
-                                main_view,
-                                center=(sx, sy),
-                                radius=r_px,
-                                color_bgr=col,
-                                name=name if pc_idx == 0 else "",
-                                mass=pc.mass,
-                                yaw=player.yaw,
-                                is_primary=(pid == "player_0")
-                            )
+                        if pc.mass >= 36.0:
+                            sx, sy = w2s(pc.pos[0], pc.pos[1])
+                            r_px = max(6, int(pc.radius * pixels_per_meter))
+                            if -150 <= sx < main_w + 150 and -150 <= sy < total_h + 150:
+                                draw_glowing_cell(
+                                    main_view,
+                                    center=(sx, sy),
+                                    radius=r_px,
+                                    color_bgr=col,
+                                    name=name if pc_idx == 0 else "",
+                                    mass=pc.mass,
+                                    yaw=player.yaw,
+                                    is_primary=(pid == "player_0")
+                                )
 
                 # HUD Panel (Right Side)
                 hud_view = frame[:, main_w:]
                 cv2.line(frame, (main_w, 0), (main_w, total_h), (30, 41, 59), 2)
-                cv2.putText(hud_view, "AGAR.IO AI ARENA", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (56, 189, 248), 2, cv2.LINE_AA)
-                cv2.putText(hud_view, "HUMAN VS NEURAL CHAMPIONS", (20, 62), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (148, 163, 184), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, "AGAR.IO BATTLEGROUND", (20, 36), cv2.FONT_HERSHEY_SIMPLEX, 0.58, (56, 189, 248), 2, cv2.LINE_AA)
+                cv2.putText(hud_view, "2 PPO + 2 DIFF + 2 HEURISTIC + YOU", (20, 56), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (148, 163, 184), 1, cv2.LINE_AA)
 
                 # Human Stats Card
-                cv2.rectangle(hud_view, (15, 80), (total_w - main_w - 15, 200), (15, 23, 42), -1)
-                cv2.rectangle(hud_view, (15, 80), (total_w - main_w - 15, 200), (56, 189, 248), 1)
-                cv2.putText(hud_view, "PILOT TELEMETRY", (25, 104), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (56, 189, 248), 1, cv2.LINE_AA)
-                cv2.putText(hud_view, f"MASS: {human_player.mass:.1f} kg", (25, 132), cv2.FONT_HERSHEY_SIMPLEX, 0.52, (255, 255, 255), 2, cv2.LINE_AA)
-                cv2.putText(hud_view, f"PIECES: {len(human_player.pieces)}/4", (25, 156), cv2.FONT_HERSHEY_SIMPLEX, 0.40, (203, 213, 225), 1, cv2.LINE_AA)
-                cv2.putText(hud_view, f"KILLS: {human_player.kills} | DEATHS: {human_player.deaths}", (25, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.40, (52, 211, 153), 1, cv2.LINE_AA)
+                cv2.rectangle(hud_view, (15, 72), (total_w - main_w - 15, 186), (15, 23, 42), -1)
+                cv2.rectangle(hud_view, (15, 72), (total_w - main_w - 15, 186), (56, 189, 248), 1)
+                cv2.putText(hud_view, "PILOT TELEMETRY", (25, 94), cv2.FONT_HERSHEY_SIMPLEX, 0.40, (56, 189, 248), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, f"MASS: {human_player.mass:.1f} kg", (25, 120), cv2.FONT_HERSHEY_SIMPLEX, 0.50, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(hud_view, f"PIECES: {len(human_player.pieces)}/4", (25, 144), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (203, 213, 225), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, f"KILLS: {human_player.kills} | DEATHS: {human_player.deaths}", (25, 168), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (52, 211, 153), 1, cv2.LINE_AA)
 
                 # Leaderboard
-                cv2.putText(hud_view, "LIVE LEADERBOARD", (20, 235), cv2.FONT_HERSHEY_SIMPLEX, 0.46, (248, 250, 252), 1, cv2.LINE_AA)
+                cv2.putText(hud_view, "LIVE LEADERBOARD", (20, 216), cv2.FONT_HERSHEY_SIMPLEX, 0.44, (248, 250, 252), 1, cv2.LINE_AA)
                 ranked_pids = sorted(self.competitors.keys(), key=lambda p: self.env.players[p].mass, reverse=True)
                 for idx, pid in enumerate(ranked_pids):
                     p_obj = self.env.players[pid]
                     p_name, _, p_col = self.competitors[pid]
-                    y_pos = 265 + idx * 30
-                    bar_w = int(min(1.0, p_obj.mass / 120.0) * (total_w - main_w - 60))
+                    y_pos = 242 + idx * 30
+                    bar_w = int(min(1.0, p_obj.mass / 140.0) * (total_w - main_w - 60))
                     cv2.rectangle(hud_view, (20, y_pos - 14), (20 + bar_w, y_pos - 2), (26, 36, 56), -1)
                     cv2.circle(hud_view, (28, y_pos - 8), 4, p_col, -1)
                     text = f"#{idx+1} {p_name}: {p_obj.mass:.1f}kg"
-                    cv2.putText(hud_view, text, (40, y_pos - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (241, 245, 249), 1, cv2.LINE_AA)
+                    cv2.putText(hud_view, text, (40, y_pos - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (241, 245, 249), 1, cv2.LINE_AA)
 
                 # Controls Help
                 cv2.putText(hud_view, "CONTROLS:", (20, 480), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (148, 163, 184), 1, cv2.LINE_AA)
@@ -320,7 +345,7 @@ async def serve_index():
 </head>
 <body>
   <header>
-    <div><strong style="color:#38bdf8;">AGAR.IO ARENA</strong> // Human Pilot vs. PPO & Trajectory Diffusion</div>
+    <div><strong style="color:#38bdf8;">AGAR.IO BATTLEGROUND</strong> // Human vs. 2 PPO + 2 Diffusion + 2 Heuristics</div>
     <div>STATUS: <span class="badge">LIVE 30 FPS</span></div>
   </header>
 
