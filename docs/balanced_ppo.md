@@ -67,3 +67,35 @@ This follow-up controls seats more carefully; it does not retroactively
 change v8's original failed gate. Preserve accepted weights and reports.
 New fully learned movement uses a distinct checkpoint control enum so an
 old loader fails explicitly instead of silently restoring steering rules.
+
+## Development results and next hypothesis
+
+The first movement continuation completed 120,832 learner transitions.
+Its 30,720-transition checkpoint failed the four-seed, eight-focus-case
+development comparison: mean final mass **32.76 versus 73.58**, full deaths
+**8 versus 0**, wall-contact frames 603 versus 157. It executed 15 splits
+with two recent-projectile captures. Physical violations and nonphysical
+action overrides were both zero. None of this is fresh acceptance evidence;
+no final seeds were consumed. Raw data: `outputs/balanced_v9/dev_30720.json`.
+
+This exposes substantial dependence on the old controller's steering
+assistance. A longer reward horizon alone has not established a successful
+replacement. The next hypothesis is movement distillation before further
+PPO training, rather than asking PPO to relearn basic navigation from a
+poor starting controller.
+
+`src.distill_balanced_movement` fits continuous actions from the v3 neural
+controller plus its movement assistance, using the existing v2 demonstration
+observations (79,800 training and 21,000 held-out rows). Assistance is a
+training-label source only; split labels are excluded, and the split head
+is unchanged. It weights overridden training examples fourfold. Sixty
+epochs achieved held-out weighted MSE 0.03399; this is a fitting metric,
+not match performance. Exact dataset/teacher hashes and original dataset
+seed manifest are embedded in the checkpoint.
+
+The v10 continuation starts from that warm-start and uses 240,000 further
+learner transitions, the same growth/death reward and 20-second discount
+horizon, with new training seeds **6,200,001 + worker*10,000 + episode**.
+Development seeds and all predeclared final seed reserves stay unchanged.
+The warm-start and later checkpoints must pass match evaluation before
+any deployment. The regression suite currently has **94 passing tests**.

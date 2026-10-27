@@ -1,0 +1,119 @@
+{
+  "seed": 6100001,
+  "teacher_sha256": "edbe9776f665c148e3e9a0411ef17345cfccabf6c115c67f1045c03893071da6",
+  "base_sha256": "3281d7f27d00d53571bf410f7357eb4fda9b7eaa6ff5ce4f374cb877c780c9f1",
+  "data_sha256": "5041a6b57d77a8a067b545a4897675f2eb5138493ed7feab20b64d2fbb1980b1",
+  "data_manifest": {
+    "dataset_sha256": "5041a6b57d77a8a067b545a4897675f2eb5138493ed7feab20b64d2fbb1980b1",
+    "shapes": {
+      "obs": [
+        79800,
+        70
+      ],
+      "acts": [
+        79800,
+        3
+      ],
+      "conditions": [
+        25876,
+        70
+      ],
+      "chunks": [
+        25876,
+        16,
+        3
+      ],
+      "returns": [
+        25876
+      ],
+      "val_obs": [
+        21000,
+        70
+      ],
+      "val_acts": [
+        21000,
+        3
+      ],
+      "val_conditions": [
+        6792,
+        70
+      ],
+      "val_chunks": [
+        6792,
+        16,
+        3
+      ],
+      "val_returns": [
+        6792
+      ]
+    },
+    "teacher": "benchmarks/training_tactics_v2_initial.py",
+    "teacher_sha256": "fae91f36d14d1d7395bb4be19fccb1e16245800af7a24b081e1d691191097eaf",
+    "first_episode_replay_exact": true,
+    "constant_critic_validation_mse": 0.5967272520065308,
+    "critic_training_target": "actual discounted 16-step environment reward, no respawn-crossing chunks"
+  },
+  "training_rows": 79800,
+  "heldout_rows": 21000,
+  "epochs": 60,
+  "labels": "v3 continuous neural means with original movement assistance; split label excluded",
+  "split_head_frozen": true,
+  "runtime_movement_overrides": false,
+  "source_hashes": {
+    "src/distill_balanced_movement.py": "a6c6d78f2e98cf0037ea733d2badcf87f9bf6ccdaec94579efbcdd5aff50427f",
+    "src/arena_tactics.py": "648368c367d4381d444de834db390229b08fecbdba92992614adce8ecf603083",
+    "src/train_champion_ppo.py": "cf80816a826cf9a731e2d47041e9a1bfe8416c972bf67be09ccc967100db794b",
+    "src/balanced_policies.py": "fd75c3bc0c45210afae9b0e4e63d7934372af9d7f9cb41f2ea5c8ef78818fc5a"
+  },
+  "history": [
+    {
+      "epoch": 5,
+      "weighted_heldout_mse": 0.03346819430589676
+    },
+    {
+      "epoch": 10,
+      "weighted_heldout_mse": 0.03203882649540901
+    },
+    {
+      "epoch": 15,
+      "weighted_heldout_mse": 0.032641902565956116
+    },
+    {
+      "epoch": 20,
+      "weighted_heldout_mse": 0.03400367125868797
+    },
+    {
+      "epoch": 25,
+      "weighted_heldout_mse": 0.03480727970600128
+    },
+    {
+      "epoch": 30,
+      "weighted_heldout_mse": 0.03292977064847946
+    },
+    {
+      "epoch": 35,
+      "weighted_heldout_mse": 0.03503703325986862
+    },
+    {
+      "epoch": 40,
+      "weighted_heldout_mse": 0.03428232669830322
+    },
+    {
+      "epoch": 45,
+      "weighted_heldout_mse": 0.0345359742641449
+    },
+    {
+      "epoch": 50,
+      "weighted_heldout_mse": 0.0340457409620285
+    },
+    {
+      "epoch": 55,
+      "weighted_heldout_mse": 0.03509443998336792
+    },
+    {
+      "epoch": 60,
+      "weighted_heldout_mse": 0.03399039804935455
+    }
+  ],
+  "best_weighted_heldout_mse": 0.03203882649540901
+}
