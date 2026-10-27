@@ -1,0 +1,26 @@
+{
+  "output": "outputs/learned_risk_v4",
+  "cases": 4000,
+  "seed": 4800001,
+  "horizon": 60,
+  "epochs": 240,
+  "workers": 4,
+  "reuse_data": false,
+  "resume_data": true,
+  "data_sha256": "66e6070c7814f2cff4a75cb79be2200c2a424b5efed4d129652bc9e98fb16f83",
+  "labels": "Measured split-minus-hold utility > 0.03; no risk-heuristic labels",
+  "movement_weights_frozen": true,
+  "sampling": "Uniform observed case prior; weighted BCE; development selection by measured action advantage",
+  "randomness": "Global NumPy reset per branch; cloned environment RNG; seeded policy and opponent RNGs",
+  "preserved_nonvirus_cases": 2300,
+  "curriculum": "v4 reactive rivals, varied masses, distant targets and already split states",
+  "source_hashes": {
+    "src/train_learned_risk.py": "0cea10886629c91b7559c6b056189764e73f9cd1e8dfedbbdb01c4982061ac67",
+    "src/learned_risk.py": "30d272ce16b3a28bc5b44c9930eb20d820c21e9dafc62c5df2b6cdbc885c18cc",
+    "src/train_split_combat.py": "ece9864129ab68aac4d0271796ff478e2024db233858a3c2a9f0c50717c573f5",
+    "envs/agar_env.py": "ff77a8ef2321a4c4768940cf3bda190d1339accac123a435803f23a54f778e3d",
+    "src/arena_policies.py": "fd6af4acb965f1db2cdc7dd8a7ee9707570c51f73fb4532d96bda152bc243118",
+    "src/arena_tactics.py": "648368c367d4381d444de834db390229b08fecbdba92992614adce8ecf603083",
+    "src/heuristic_agent.py": "bf4ab693b7df66397ee837b4508d2db5bd1768d5db5d138720ff3ca354c22bd9"
+  }
+}

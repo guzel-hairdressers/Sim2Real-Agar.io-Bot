@@ -1,0 +1,20 @@
+{
+  "valid_cases": 3897,
+  "requested_cases": 4000,
+  "counts": {
+    "ppo": {
+      "train_cases": 3115,
+      "train_positive": 509,
+      "validation_cases": 782,
+      "validation_positive": 135,
+      "forced_split_extra_death_cases": 198
+    },
+    "diffusion": {
+      "train_cases": 3115,
+      "train_positive": 512,
+      "validation_cases": 782,
+      "validation_positive": 129,
+      "forced_split_extra_death_cases": 199
+    }
+  }
+}
