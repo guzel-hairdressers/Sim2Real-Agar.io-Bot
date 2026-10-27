@@ -34,7 +34,7 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from envs.arena_config import ArenaConfig
-from src.arena_policies import ArenaPPO, ArenaDiffusion
+from src.learned_risk import load_policy
 from src.heuristic_agent import MasterHeuristicAgarBot
 from scripts.render_agar_demo import draw_glowing_cell, draw_spiked_virus
 
@@ -135,10 +135,10 @@ class ArenaGameManager:
             if hashlib.sha256(path.read_bytes()).hexdigest() != entry['sha256']:
                 raise ValueError(f'Deployment checksum mismatch: {name}')
             weights[name] = path
-        self.ppo_champ_1 = ArenaPPO(weights['ppo'])
-        self.ppo_champ_2 = ArenaPPO(weights['ppo'])
-        self.diff_champ_1 = ArenaDiffusion(weights['diffusion'], weights.get('critic'), seed=42)
-        self.diff_champ_2 = ArenaDiffusion(weights['diffusion'], weights.get('critic'), seed=108)
+        self.ppo_champ_1 = load_policy('ppo', weights['ppo'])
+        self.ppo_champ_2 = load_policy('ppo', weights['ppo'])
+        self.diff_champ_1 = load_policy('diffusion', weights['diffusion'], weights.get('critic'), seed=42)
+        self.diff_champ_2 = load_policy('diffusion', weights['diffusion'], weights.get('critic'), seed=108)
         self.heuristic_apex = MasterHeuristicAgarBot(pid="player_5", profile="apex", seed=101)
         self.heuristic_hunter = MasterHeuristicAgarBot(pid="player_6", profile="hunter", seed=202)
 
