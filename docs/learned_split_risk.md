@@ -43,6 +43,14 @@ Utility-only checkpoint selection improved isolated encounters but still hurt di
 
 This remains outcome-supervised learning of the split heads. It is not additional end-to-end PPO optimization or diffusion-policy training. Longer learning targets the requested split behavior while preserving the accepted movement baseline.
 
+## Second on-policy generation
+
+V7 still failed six-match development retention: PPO had six full deaths versus two for v3, while diffusion retained 85.6% of baseline final mass. V8 adds twelve new matches using v7 collection policies, seeds `4840001..4840012`. Split/hold branches run **240 steps / eight seconds**, covering the earliest piece-merge cooldown. Eligible hold states are also sampled every ten seconds, so learning can recover missed opportunities as well as discourage harmful requests. These are data-collection intervals, not execution rules. Other players remain reactive.
+
+The earlier 227 full-match queries remain in replay, separated by their original episode partition. New episodes have their own fitting/validation partition (nine fitting, three validation). The small curated query buffers and the exploratory prefix are versioned; the large initial buffer remains ignored. Refitting uses the frozen collection buffers with `--reuse-data`, so metadata and source hashes describe the final fitting invocation.
+
+The v7 final evaluation was abandoned after development failure, without reading a result report. V8 reserves new final seed families and binds the declared protocol hash into its fitted checkpoints. See [the complete development record](learned_risk_development.md).
+
 ## Controlled randomness and resuming collection
 
 The environment has its own cloned random generator, but virus-fragment launch speed also uses global NumPy randomness. Each split/hold branch now resets that generator as well as the policy/opponent seeds. A regression test exercises actual virus fragmentation and verifies that outcomes no longer depend on the incoming global random state.
@@ -51,11 +59,11 @@ An interrupted collection retained **2,300 complete non-virus cases**. Their obs
 
 ## Validation gates
 
-The [protocol](../outputs/learned_risk_v4/acceptance_protocol.json) was saved before final evaluation:
+The [protocol](../outputs/learned_risk_v8/acceptance_protocol.declared.json) was saved before final evaluation:
 
-1. **Fresh reactive encounters:** 600 requested cases starting at `4900001`. Measure actual free-running policy utility, captures, full deaths and splits against accepted v3 policies. Require at least 550 valid cases and 50 beneficial opportunities per algorithm, mean utility difference ≥−0.03, at most `max(2, floor(0.01 × valid cases))` additional deaths, zero physical violations, and zero nonphysical vetoes. Require at least ten measured useful initial split choices outside the previous heuristic guard.
-2. **Navigation retention:** 12 fresh 60-second matches per algorithm, seeds `5000001 + 37*i`. Two candidates, two accepted v3 agents, three heuristics, shuffled seats. Require mean final mass ≥90% of baseline and no more than two extra total full deaths. This is an engineering tolerance, not statistical noninferiority.
-3. **Current-policy league:** 12 independent matches starting at `5100001`, with two current PPO, two current diffusion and three heuristic agents. This supplies absolute current-capability measurements separately from the retention comparison.
+1. **Fresh reactive encounters:** 600 requested cases starting at `5200001`. Measure actual free-running policy utility, captures, full deaths and splits against accepted v3 policies. Require at least 550 valid cases and 50 beneficial opportunities per algorithm, mean utility difference ≥−0.03, at most `max(2, floor(0.01 × valid cases))` additional deaths, zero physical violations, and zero nonphysical vetoes. Require at least ten measured useful initial split choices outside the previous heuristic guard.
+2. **Navigation retention:** 12 fresh 60-second matches per algorithm, seeds `5300001 + 37*i`. Two candidates, two accepted v3 agents, three heuristics, shuffled seats. Require mean final mass ≥90% of baseline and no more than two extra total full deaths. This is an engineering tolerance, not statistical noninferiority.
+3. **Current-policy league:** 12 independent matches starting at `5400001`, with two current PPO, two current diffusion and three heuristic agents. This supplies absolute current-capability measurements separately from the retention comparison.
 4. **Promotion:** recompute gates from rows; verify declared seeds, model/source hashes, unchanged movement weights and the explicit `learned_risk_physical_only` mode. Historical risk-guarded reports cannot validate this execution path.
 
 ## Reproduce
@@ -71,17 +79,20 @@ python -m src.train_learned_risk --cases 4000 --epochs 240 --workers 4 --resume-
 
 # Full-match corrective learning, after the base collection and fit finish.
 python -m src.refine_match_risk --base outputs/learned_risk_v4 \
-  --output outputs/learned_risk_v7 --episodes 24 --epochs 240 --workers 4 \
-  --selection calibrated_utility
+  --output outputs/learned_risk_v8 --policy-directory outputs/learned_risk_v7 \
+  --prior-corrections outputs/learned_risk_v7/counterfactuals.jsonl \
+  --episodes 12 --seed 4840001 --horizon 240 --sample-holds \
+  --epochs 240 --workers 4 --selection calibrated_utility
+# Add --reuse-data to fit from the versioned v8 query buffer instead of collecting.
 
-python -m src.evaluate_learned_risk --directory outputs/learned_risk_v7 \
-  --output outputs/learned_risk_v7/outcomes.json
-python -m src.evaluate_risk_league --directory outputs/learned_risk_v7 \
-  --mode retention --algorithm ppo --output outputs/learned_risk_v7/ppo_retention.json
-python -m src.evaluate_risk_league --directory outputs/learned_risk_v7 \
-  --mode retention --algorithm diffusion --output outputs/learned_risk_v7/diffusion_retention.json
-python -m src.evaluate_risk_league --directory outputs/learned_risk_v7 \
-  --mode league --output outputs/learned_risk_v7/league.json
+python -m src.evaluate_learned_risk --directory outputs/learned_risk_v8 \
+  --output outputs/learned_risk_v8/outcomes.json
+python -m src.evaluate_risk_league --directory outputs/learned_risk_v8 \
+  --mode retention --algorithm ppo --output outputs/learned_risk_v8/ppo_retention.json
+python -m src.evaluate_risk_league --directory outputs/learned_risk_v8 \
+  --mode retention --algorithm diffusion --output outputs/learned_risk_v8/diffusion_retention.json
+python -m src.evaluate_risk_league --directory outputs/learned_risk_v8 \
+  --mode league --output outputs/learned_risk_v8/league.json
 python scripts/promote_learned_risk.py
 ```
 

@@ -64,7 +64,7 @@ def collect(job):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--base',type=Path,default=ROOT/'outputs/learned_risk_v4')
-    p.add_argument('--output',type=Path,default=ROOT/'outputs/learned_risk_v5');p.add_argument('--episodes',type=int,default=24)
+    p.add_argument('--output',type=Path,required=True);p.add_argument('--episodes',type=int,default=24)
     p.add_argument('--seed',type=int,default=4830001);p.add_argument('--epochs',type=int,default=240)
     p.add_argument('--workers',type=int,default=4);p.add_argument('--reuse-data',action='store_true')
     p.add_argument('--selection',choices=['utility','loss','calibrated_utility'],default='utility')
