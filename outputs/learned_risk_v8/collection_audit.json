@@ -1,0 +1,12 @@
+{
+  "collector_functions_unchanged_from_checkpoint": "6cd0b35",
+  "function_ast_sha256": {
+    "branch": "198e5a36a3c573adc04395c7c4add793fefbf3dfeac2d51e68d8c46ffcd2f57f",
+    "collect": "94c96993768d958dfd922589fa688b85e799bed0504d48d864a220381d680d2d"
+  },
+  "data_sha256": "8cb16981deb1ce21c9df72280d5390839e1bcc067d000b04f0607e30b6733f07",
+  "episodes": 12,
+  "queries": 110,
+  "horizon": 240,
+  "fit": "Clean refit from frozen data with finalized source and declared protocol"
+}
