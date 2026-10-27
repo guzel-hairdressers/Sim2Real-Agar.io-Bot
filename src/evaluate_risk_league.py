@@ -78,7 +78,7 @@ def retention_summary(rows):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v5')
+    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v7')
     p.add_argument('--mode',choices=['retention','league'],required=True);p.add_argument('--algorithm',choices=['ppo','diffusion'])
     p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=2)
     p.add_argument('--steps',type=int,default=1800);p.add_argument('--seeds',type=int,nargs='+')

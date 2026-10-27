@@ -95,7 +95,9 @@ def collect(job):
     return rows
 
 
-def fit(train,validation,seed,epochs):
+def fit(train,validation,seed,epochs,selection_metric='utility'):
+    if selection_metric not in ('utility','loss','calibrated_utility'):
+        raise ValueError('Unknown development selection metric')
     torch.manual_seed(seed);rng=np.random.default_rng(seed);torch.set_num_threads(1)
     model=BinarySplitHead();o=torch.tensor([r['obs'] for r in train],dtype=torch.float32)
     y=torch.tensor([r['label'] for r in train],dtype=torch.float32)
@@ -109,7 +111,7 @@ def fit(train,validation,seed,epochs):
     with torch.no_grad():model.net[-1].bias.fill_(float(np.log(len(pos)/len(neg))))
     vadv=torch.tensor([r['advantage'] for r in validation],dtype=torch.float32)
     vweights=1+torch.clamp(vadv.abs()*2,max=5)
-    best=None;state=None;history=[]
+    best=None;state=None;history=[];candidates=[]
     for epoch in range(epochs):
         losses=[]
         for _ in range(40):
@@ -125,11 +127,17 @@ def fit(train,validation,seed,epochs):
                 score=float((vl*vweights).mean())
                 proposal=logits.sigmoid()>.65
                 gain=float((proposal*vadv).mean())
-            selection=(gain,-score)
+            selection=(gain,-score) if selection_metric=='utility' else (-score,gain)
             if best is None or selection>best:best=selection;state=copy.deepcopy(model.state_dict())
+            if selection_metric=='calibrated_utility':candidates.append((score,gain,copy.deepcopy(model.state_dict())))
             row=dict(epoch=epoch+1,loss=float(np.mean(losses)),validation_weighted_bce=score,
                      validation_policy_advantage=gain,validation_proposals=int(proposal.sum()))
             history.append(row);print(json.dumps(row),flush=True)
+    if selection_metric=='calibrated_utility':
+        # Limit probability overfitting without selecting the trivial no-split
+        # head solely for its loss on a predominantly negative dataset.
+        ceiling=min(c[0] for c in candidates)*1.25
+        state=max((c for c in candidates if c[0]<=ceiling),key=lambda c:(c[1],-c[0]))[2]
     model.load_state_dict(state);return model.eval(),history
 
 

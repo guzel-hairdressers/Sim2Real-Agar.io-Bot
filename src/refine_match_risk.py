@@ -64,6 +64,7 @@ def main():
     p.add_argument('--output',type=Path,default=ROOT/'outputs/learned_risk_v5');p.add_argument('--episodes',type=int,default=24)
     p.add_argument('--seed',type=int,default=4830001);p.add_argument('--epochs',type=int,default=240)
     p.add_argument('--workers',type=int,default=4);p.add_argument('--reuse-data',action='store_true')
+    p.add_argument('--selection',choices=['utility','loss','calibrated_utility'],default='utility')
     args=p.parse_args();args.output.mkdir(parents=True,exist_ok=True);path=args.output/'counterfactuals.jsonl'
     if not args.reuse_data:
         jobs=[(args.seed+i,str(args.base)) for i in range(args.episodes)]
@@ -96,17 +97,18 @@ def main():
         newval=[r for r in corrections if r['algorithm']==algorithm and r['seed']>=newcut]
         gtrain=[r for r in generic if r['algorithm']==algorithm and r['seed'] in generic_train]
         gval=[r for r in generic if r['algorithm']==algorithm and r['seed'] not in generic_train]
-        head,history=fit(train+gtrain*2+newtrain*6,validation+gval*2+newval*6,args.seed+(algorithm=='diffusion'),args.epochs)
+        head,history=fit(train+gtrain*2+newtrain*6,validation+gval*2+newval*6,args.seed+(algorithm=='diffusion'),args.epochs,args.selection)
         if algorithm=='ppo':
             package['state_dict']={k:v for k,v in package['state_dict'].items() if not k.startswith('split_head.')}
             package['state_dict'].update({'split_head.'+k:v for k,v in head.state_dict().items()})
         else:package['split_head_state_dict']=head.state_dict()
-        config=copy.deepcopy(old);config['match_refinement']=dict(seed=args.seed,episodes=args.episodes,horizon=120,
+        config=copy.deepcopy(old);config['base_source_hashes']=copy.deepcopy(old['source_hashes'])
+        config['match_refinement']=dict(seed=args.seed,episodes=args.episodes,horizon=120,selection=args.selection,
             epochs=args.epochs,unique_training_states=len(newtrain),unique_validation_states=len(newval),
             replay_weight=6,generic_training_states=len(gtrain),generic_validation_states=len(gval),generic_replay_weight=2,
             generic_data_sha256=hashlib.sha256(generic_source.read_bytes()).hexdigest() if generic else None,
             data_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),base_model_sha256=hashlib.sha256((args.base/f'{algorithm}.pt').read_bytes()).hexdigest())
-        for file in ('src/refine_match_risk.py','src/refine_learned_risk.py'):
+        for file in ('src/refine_match_risk.py','src/refine_learned_risk.py','src/train_learned_risk.py'):
             config['source_hashes'][file]=hashlib.sha256((ROOT/file).read_bytes()).hexdigest()
         package['risk_training']=config;torch.save(package,args.output/f'{algorithm}.pt')
         report=dict(unique_original_training_states=len(train),unique_full_match_training_states=len(newtrain),

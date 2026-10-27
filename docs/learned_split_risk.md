@@ -35,9 +35,11 @@ The small pilot was rejected: removing risk vetoes while using an insufficiently
 
 The first longer run (`learned_risk_v4`) was **not accepted**. On 187 valid development scenes its mean utility difference from guarded v3 was −0.0138 for PPO and −0.0321 for diffusion. In a small two-match development check diffusion finished with mean mass 29.34 versus 60.13 for v3. More captures did not compensate for mass lost after repeated splits. These are development results, not final test results.
 
-The next candidate (`learned_risk_v5`) adds counterfactual queries at actual physically possible split requests in **24 ordinary seven-agent matches**, seeds `4830001..4830024`. Each query clones the entire world, all controller states, pending action buffers and random generators. It compares splitting now with holding for **120 steps / four seconds**. Other agents keep reacting; the queried actor's subsequent split commands are held in both branches to isolate the immediate decision. The query cannot mutate the real match, and its NumPy random state is restored before normal play continues.
+Corrective training (`learned_risk_v5`, then revised checkpoint selection in `learned_risk_v7`) adds counterfactual queries at actual physically possible split requests in **24 ordinary seven-agent matches**, seeds `4830001..4830024`. Each query clones the entire world, all controller states, pending action buffers and random generators. It compares splitting now with holding for **120 steps / four seconds**. Other agents keep reacting; the queried actor's subsequent split commands are held in both branches to isolate the immediate decision. The query cannot mutate the real match, and its NumPy random state is restored before normal play continues.
 
 Full episodes, rather than adjacent observations, are separated into fitting and development sets (19 fitting, five development episodes). Fitting retains the original curriculum, replays actual-match corrections six times and a completed prefix of exploratory on-policy scenes twice. Replay multipliers are sampling weights, not counts of independent examples. The exploratory prefix is saved as `generic_corrections_used.json` so an interrupted exploratory collection cannot silently change the training data. Both heads are fitted for another 240 epochs; movement/value/critic weights remain frozen.
+
+Utility-only checkpoint selection improved isolated encounters but still hurt diffusion mass retention in development matches. Selecting solely by prediction loss instead chose an underfit diffusion head with no validation split proposals; that experiment was stopped. The final selection criterion maximizes development action advantage among checkpoints whose weighted prediction loss is within 25% of the best observed loss. This balances useful decisions and probability calibration; it never imposes a runtime split veto. The 25% tolerance was chosen during development, before final evaluation.
 
 This remains outcome-supervised learning of the split heads. It is not additional end-to-end PPO optimization or diffusion-policy training. Longer learning targets the requested split behavior while preserving the accepted movement baseline.
 
@@ -69,16 +71,17 @@ python -m src.train_learned_risk --cases 4000 --epochs 240 --workers 4 --resume-
 
 # Full-match corrective learning, after the base collection and fit finish.
 python -m src.refine_match_risk --base outputs/learned_risk_v4 \
-  --output outputs/learned_risk_v5 --episodes 24 --epochs 240 --workers 4
+  --output outputs/learned_risk_v7 --episodes 24 --epochs 240 --workers 4 \
+  --selection calibrated_utility
 
-python -m src.evaluate_learned_risk --directory outputs/learned_risk_v5 \
-  --output outputs/learned_risk_v5/outcomes.json
-python -m src.evaluate_risk_league --directory outputs/learned_risk_v5 \
-  --mode retention --algorithm ppo --output outputs/learned_risk_v5/ppo_retention.json
-python -m src.evaluate_risk_league --directory outputs/learned_risk_v5 \
-  --mode retention --algorithm diffusion --output outputs/learned_risk_v5/diffusion_retention.json
-python -m src.evaluate_risk_league --directory outputs/learned_risk_v5 \
-  --mode league --output outputs/learned_risk_v5/league.json
+python -m src.evaluate_learned_risk --directory outputs/learned_risk_v7 \
+  --output outputs/learned_risk_v7/outcomes.json
+python -m src.evaluate_risk_league --directory outputs/learned_risk_v7 \
+  --mode retention --algorithm ppo --output outputs/learned_risk_v7/ppo_retention.json
+python -m src.evaluate_risk_league --directory outputs/learned_risk_v7 \
+  --mode retention --algorithm diffusion --output outputs/learned_risk_v7/diffusion_retention.json
+python -m src.evaluate_risk_league --directory outputs/learned_risk_v7 \
+  --mode league --output outputs/learned_risk_v7/league.json
 python scripts/promote_learned_risk.py
 ```
 

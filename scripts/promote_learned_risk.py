@@ -24,6 +24,16 @@ def sources(report,required):
         if digest(ROOT/path)!=expected:raise ValueError(f'Evaluated source changed: {path}')
 
 
+def full_match_protocol(report):
+    if report['protocol']['steps_per_match']!=1800 or report['config']['max_steps']!=1800:
+        raise ValueError('Full-match report must cover 1800 steps')
+    for row in report['rows']:
+        if len(row['players'])!=7 or len({p['id'] for p in row['players']})!=7:
+            raise ValueError('Full-match roster is incomplete')
+        if len(row['timeline'])!=60 or row['timeline'][-1]['seconds']!=60:
+            raise ValueError('Full-match timeline is incomplete')
+
+
 def promote(directory,output=None):
     directory=Path(directory)
     protocol=json.loads((directory/'acceptance_protocol.json').read_text())
@@ -45,6 +55,8 @@ def promote(directory,output=None):
     outcome_path=directory/'outcomes.json';outcome=json.loads(outcome_path.read_text())
     if outcome['seed']!=protocol['final_encounter_seed'] or outcome['cases_requested']!=protocol['final_encounter_cases']:
         raise ValueError('Outcome report does not use the declared final seeds')
+    if outcome['horizon']!=protocol['training_horizon_steps']:
+        raise ValueError('Outcome report does not use the declared horizon')
     sources(outcome,common+['src/train_learned_risk.py','src/evaluate_learned_risk.py'])
     summary=outcome_summary(outcome['rows'])
     for algorithm in ('ppo','diffusion'):
@@ -61,6 +73,7 @@ def promote(directory,output=None):
     reports=[outcome_path]
     for algorithm in ('ppo','diffusion'):
         path=directory/f'{algorithm}_retention.json';report=json.loads(path.read_text());reports.append(path)
+        full_match_protocol(report)
         sources(report,common+['src/evaluate_risk_league.py','envs/arena_config.py'])
         if report['mode']!='retention' or report['algorithm']!=algorithm or report['config']['max_steps']<1800:raise ValueError('Invalid full-match retention protocol')
         if report['models'][algorithm]['sha256']!=hashes[algorithm]:raise ValueError('Retention checkpoint hash mismatch')
@@ -70,6 +83,7 @@ def promote(directory,output=None):
         if {r['seed'] for r in report['rows']}!=expected:raise ValueError('Retention seeds differ from declared final test')
         if not retention_summary(report['rows'])['passed']:raise ValueError(f'{algorithm} failed navigation retention')
     league_path=directory/'league.json';league=json.loads(league_path.read_text());reports.append(league_path)
+    full_match_protocol(league)
     sources(league,common+['src/evaluate_risk_league.py','envs/arena_config.py'])
     if league['mode']!='league' or len(league['rows'])<12 or league['config']['max_steps']<1800:raise ValueError('Absolute current-model league is incomplete')
     if {r['seed'] for r in league['rows']}!={protocol['final_league_seed_start']+37*i for i in range(protocol['final_league_matches'])}:raise ValueError('League seeds differ from declared final test')
@@ -85,5 +99,5 @@ def promote(directory,output=None):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v5');args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v7');args=p.parse_args()
     promote(args.directory);print(f'Accepted: {args.directory}/deployment.json')

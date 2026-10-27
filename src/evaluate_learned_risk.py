@@ -96,7 +96,7 @@ def summarize(rows):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v5')
+    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v7')
     p.add_argument('--output',type=Path,required=True);p.add_argument('--cases',type=int,default=600)
     p.add_argument('--seed',type=int,default=4900001);p.add_argument('--horizon',type=int,default=60);p.add_argument('--workers',type=int,default=4)
     args=p.parse_args();jobs=[(list(range(s,min(s+8,args.seed+args.cases))),args.horizon) for s in range(args.seed,args.seed+args.cases,8)];rows=[]
