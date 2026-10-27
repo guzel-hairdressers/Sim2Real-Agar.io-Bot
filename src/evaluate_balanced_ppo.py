@@ -17,9 +17,11 @@ import numpy as np
 import torch
 
 from envs.arena_config import ArenaConfig
+from src.arena_policies import ArenaPPO
 from src.balanced_policies import BalancedPPO, load_policy
 from src.benchmark_showcase import ROOT
 from src.heuristic_agent import MasterHeuristicAgarBot
+from src.learned_risk import LearnedRiskPPO
 
 SOURCES = ['src/evaluate_balanced_ppo.py', 'src/balanced_policies.py',
            'src/learned_risk.py', 'src/arena_policies.py', 'src/arena_tactics.py',
@@ -56,6 +58,8 @@ def world(seed, steps, candidate=None, focus=None):
     # controllers retain steering assistance: unavailable must never mean zero.
     overrides = {pid: 0 if isinstance(policy, BalancedPPO) else None
                  for pid, policy in policies.items()}
+    split_changes = {pid: 0 if isinstance(policy, ArenaPPO) else None
+                     for pid, policy in policies.items()}
     timing = []
     for _ in range(steps):
         before = {pid: p.deaths for pid, p in env.players.items()}
@@ -65,7 +69,7 @@ def world(seed, steps, candidate=None, focus=None):
             action = policy.predict(obs[pid])
             if pid == focus:
                 timing.append((time.perf_counter() - start) * 1000)
-            if isinstance(policy, BalancedPPO):
+            if isinstance(policy, ArenaPPO):
                 # Independently check the emitted command against the raw model.
                 with torch.inference_mode():
                     raw = policy.net.get_action_and_value(
@@ -73,7 +77,9 @@ def world(seed, steps, candidate=None, focus=None):
                 feasible = np.clip(raw, [0, -1, 0], [1, 1, 1])
                 if not env.players[pid].can_split:
                     feasible[2] = 0
-                overrides[pid] += int(not np.allclose(action, feasible, atol=1e-6, rtol=0))
+                split_changes[pid] += int((action[2] > .5) != (feasible[2] > .5))
+                if isinstance(policy, BalancedPPO):
+                    overrides[pid] += int(not np.allclose(action, feasible, atol=1e-6, rtol=0))
             actions[pid] = action
             splits[pid] += int(action[2] > .5 and env.players[pid].can_split)
             violations[pid] += int(action[2] > .5 and not env.players[pid].can_split)
@@ -89,6 +95,11 @@ def world(seed, steps, candidate=None, focus=None):
                          projectile_captures=projectiles[pid],
                          wall_contact_frames=p.wall_contacts,
                          physical_violations=violations[pid],
+                         nonphysical_split_changes=split_changes[pid],
+                         control_mode=('fully_learned' if isinstance(policies[pid], BalancedPPO)
+                                       else 'assisted_movement_learned_split' if isinstance(policies[pid], LearnedRiskPPO)
+                                       else 'historical_assisted' if isinstance(policies[pid], ArenaPPO)
+                                       else 'heuristic'),
                          nonphysical_overrides=overrides[pid])
                for pid, p in env.players.items()}
     return dict(initial_observations_sha256=initial, players=players,
@@ -123,7 +134,8 @@ def summarize(rows):
         result[side] = dict(mean_final_mass=float(np.mean([p['final_mass'] for p in players])),
                             death_free_runs=sum(p['full_deaths'] == 0 for p in players))
         for key in ('full_deaths', 'captures', 'splits', 'projectile_captures',
-                    'wall_contact_frames', 'physical_violations', 'nonphysical_overrides'):
+                    'wall_contact_frames', 'physical_violations', 'nonphysical_overrides',
+                    'nonphysical_split_changes'):
             values = [p[key] for p in players]
             result[side][key] = None if any(v is None for v in values) else sum(values)
     differences = np.array([np.mean([c['candidate']['final_mass'] - c['baseline']['final_mass']
@@ -132,9 +144,16 @@ def summarize(rows):
     result['mean_final_mass_difference'] = float(differences.mean())
     result['mass_difference_seed_bootstrap_95_ci'] = np.percentile(boot, [2.5, 97.5]).tolist()
     c, b = result['candidate'], result['baseline']
-    result['retention_thresholds_met'] = bool(c['mean_final_mass'] >= .9 * b['mean_final_mass']
-        and c['full_deaths'] <= b['full_deaths'] + 2
-        and c['physical_violations'] == 0 and c['nonphysical_overrides'] == 0)
+    result['balance_thresholds_met'] = bool(c['mean_final_mass'] >= .9 * b['mean_final_mass']
+                                          and c['full_deaths'] <= b['full_deaths'] + 2)
+    players = [case['candidate'] for row in rows for case in row['cases']]
+    result['control_contract_verified'] = all(
+        p['control_mode'] in ('fully_learned', 'assisted_movement_learned_split')
+        and p['physical_violations'] == 0 and p['nonphysical_split_changes'] == 0
+        and (p['control_mode'] != 'fully_learned' or p['nonphysical_overrides'] == 0)
+        for p in players)
+    result['retention_thresholds_met'] = bool(result['balance_thresholds_met']
+                                             and result['control_contract_verified'])
     result['passed'] = bool(len(rows) >= 12 and result['paired_focus_cases'] == 24
                              and result['retention_thresholds_met'])
     return result
@@ -169,7 +188,7 @@ def main():
                   candidate_sha256=model_hash,
                   baseline_sha256=sha(ROOT / 'outputs/split_combat_v3/ppo.pt'),
                   source_hashes=hashes, config=asdict(ArenaConfig(max_steps=args.steps)),
-                  control_audit_scope='Raw command equality is audited only for BalancedPPO. Historical assisted controllers: null (not measured).',
+                  control_audit_scope='Split-bit equality is audited for all PPO controllers. Full command equality is audited only for BalancedPPO. Assisted movement full-command counter: null (not measured).',
                   protocol=dict(seeds=args.seeds, steps=args.steps, workers=args.workers,
                                 observation_hz=30, all_observations_processed=True,
                                 roster='Control: four v3 PPO + three heuristics; replace only one focus seat per world',

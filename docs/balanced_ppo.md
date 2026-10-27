@@ -120,3 +120,46 @@ controllers is unmeasured, not evidence of no steering assistance. Those
 controllers explicitly retain it. Growth, death, capture, wall-contact and
 physical-violation measurements cover every focus case. Final reports must
 mark unmeasured control counters unavailable rather than report zero.
+
+## Separate split-learning hypothesis
+
+V10's 61,440-transition checkpoint regressed to 46.02 mass / 3 deaths.
+V8 with its original movement assistance reached 58.21 / 1 on the same
+cases; it also misses the growth threshold. These remain rejected development
+results. The v10 movement run completed 241,664 transitions and awaits its
+final development comparison.
+
+A separate controlled branch, `src.train_balanced_splits`, keeps v8's
+continuous neural weights and historical movement assistance frozen and
+trains **only the split head and critic** with the same 20-second discount
+and balanced growth/death reward. This isolates split learning from the
+regressing movement replacement. It uses 120,000 learner transitions and
+new training seeds **6,300,001 + worker*10,000 + episode**. Actions are still
+subject only to physical split limits; movement assistance cannot change
+the requested split bit. Explicit movement assistance is permitted in this
+branch, as in v8; the user requested learned split risk rather than removal
+of every movement rule.
+
+The stochastic Bernoulli policy is centered on the existing .65 deterministic
+decision boundary, with temperature .25. Unavailable actions contribute zero
+to a policy loss averaged over all transitions. A short initial trial used
+per-minibatch eligible-action normalization; it overweighted rare feasible
+actions and was aborted. Its source/configuration/log are preserved under
+`outputs/balanced_split_v11/aborted_sparse_trial`, never used for acceptance.
+The 512-transition plumbing pilot had no eligible splits: its head remained
+unchanged, continuous actor stayed frozen and critic updated, as expected.
+
+The evaluator now independently compares the emitted split bit with the
+raw neural request for **all** PPO controllers. It measures full command
+equality for the fully learned movement variant, and reports `null` for
+unmeasured historical movement overrides. Both candidate variants must
+retain the neural split bit whenever physically feasible; fully learned
+movement must additionally retain both continuous commands. Growth and
+death thresholds remain unchanged. This distinguishes the requested split
+contract from the optional movement-replacement experiment.
+
+Select checkpoints using development cases only. If a newly trained split
+head passes development retention, test the selected frozen checkpoint on
+the reserved fresh paired seeds and reactive encounter family. A head that
+simply stops splitting must not be presented as improved split capability;
+the encounter gate also requires useful initial splits outside the old guard.

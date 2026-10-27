@@ -1,0 +1,26 @@
+{"steps": 2048, "update": 1, "reward": -0.000277155210402503, "deaths": 1, "eligible_frames": 0, "split_requests": 0, "loss": 0.07333195529645309, "steps_per_second": 255.29629042307346}
+{"steps": 4096, "update": 2, "reward": -0.0003739469258976656, "deaths": 1, "eligible_frames": 1, "split_requests": 1, "loss": 0.4050024456810206, "steps_per_second": 253.52380526481238}
+{"steps": 6144, "update": 3, "reward": 0.000790034162112106, "deaths": 0, "eligible_frames": 2, "split_requests": 1, "loss": 1.0452529421891086, "steps_per_second": 251.31385140026507}
+{"steps": 8192, "update": 4, "reward": 0.0010392747823965984, "deaths": 0, "eligible_frames": 238, "split_requests": 3, "loss": 1.0711677083745599, "steps_per_second": 246.88636751673477}
+{"steps": 10240, "update": 5, "reward": 0.0006140717753252971, "deaths": 0, "eligible_frames": 63, "split_requests": 3, "loss": 2.6234389900928363, "steps_per_second": 244.64261540801783}
+{"steps": 12288, "update": 6, "reward": -0.0022270855408228875, "deaths": 2, "eligible_frames": 157, "split_requests": 6, "loss": 0.7955319886095822, "steps_per_second": 240.7592112912773}
+{"steps": 14336, "update": 7, "reward": -0.001280810894672521, "deaths": 1, "eligible_frames": 120, "split_requests": 8, "loss": 0.9832042013294995, "steps_per_second": 235.04984004071554}
+{"steps": 16384, "update": 8, "reward": 0.0007385462673287015, "deaths": 0, "eligible_frames": 0, "split_requests": 0, "loss": 0.017522740206914023, "steps_per_second": 240.4884531274436}
+Traceback (most recent call last):
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/Users/ruslan_faz/Desktop/Work/Job/ML CV/projects/sim2real-ppo-navigation/src/train_balanced_splits.py", line 188, in <module>
+    main()
+  File "/Users/ruslan_faz/Desktop/Work/Job/ML CV/projects/sim2real-ppo-navigation/src/train_balanced_splits.py", line 114, in main
+    results = [pipe.recv() for pipe in parents]
+  File "/Users/ruslan_faz/Desktop/Work/Job/ML CV/projects/sim2real-ppo-navigation/src/train_balanced_splits.py", line 114, in <listcomp>
+    results = [pipe.recv() for pipe in parents]
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/connection.py", line 255, in recv
+    buf = self._recv_bytes()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/connection.py", line 419, in _recv_bytes
+    buf = self._recv(4)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/connection.py", line 384, in _recv
+    chunk = read(handle, remaining)
+KeyboardInterrupt
