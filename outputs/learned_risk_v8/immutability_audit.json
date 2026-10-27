@@ -1,0 +1,11 @@
+{
+  "frozen_commit": "cc07030",
+  "files_sha256": {
+    "ppo.pt": "39980fc5eae7b6dcf4e7099d31f32449da26934a1d87d01787e6934fcc1d9ceb",
+    "diffusion.pt": "7c88cb79cfafa82a05b363e97e5400421d7077f12b1684f253a2cbbaabb4f5bd",
+    "acceptance_protocol.json": "dda1c06d7776ae7deaaa32fdc3d2948f8879461ea7ca35ea18499e1a93521121"
+  },
+  "unchanged_during_final_evaluation": true,
+  "accepted_deployment_exists": false,
+  "experimental_manifest": "experimental/deployment.json"
+}

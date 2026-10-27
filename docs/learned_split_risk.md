@@ -96,4 +96,70 @@ python -m src.evaluate_risk_league --directory outputs/learned_risk_v8 \
 python scripts/promote_learned_risk.py
 ```
 
-Training inputs are reproducible from the scene generator; raw JSONL buffers are ignored by Git. Preserve shipped reports when rerunning. Once published, these test seeds are public; future development needs a fresh final seed family. The remaining limitations include short outcome horizons, clipped observation features, fixed arena physics, imperfect movement and no demonstrated robot transfer.
+Initial training inputs are reproducible from the scene generator; the large initial raw buffer is ignored by Git. Small curated full-match query buffers are versioned for audit and refitting. Preserve shipped reports when rerunning. Once published, these test seeds are public; future development needs a fresh final seed family. The remaining limitations include short outcome horizons, clipped observation features, fixed arena physics, imperfect movement and no demonstrated robot transfer.
+
+
+## Fresh v8 results and playable candidate
+
+**V8 is experimental and was not promoted.** Both encounter tests and diffusion retention passed. PPO failed the predeclared survival gate, despite higher final mass. The normal port-8080 preview and published showcase remain on accepted v3.
+
+The physical-only candidate is available locally at **[localhost:8081](http://localhost:8081/)**. Reproduce it with:
+
+```bash
+python scripts/play_agar_web.py --port 8081 \
+  --policy-dir outputs/learned_risk_v8/experimental
+```
+
+The experimental page carries a warning and `/status` reports both its split-control mode and failed acceptance status. The [experimental manifest](../outputs/learned_risk_v8/experimental/deployment.json) verifies the exact weights without claiming acceptance.
+
+### Fresh reactive encounters
+
+600 scenes were requested; 585 were valid per policy. The initial decision target is measured over two seconds; training also includes longer four/eight-second consequences. Initial precision/recall are classification measurements for that target, not game win rates.
+
+| Measurement | PPO | Diffusion |
+| --- | ---: | ---: |
+| Known beneficial initial opportunities | 89 | 92 |
+| Initial precision | 73.9% | 69.8% |
+| Initial recall | 38.2% | 40.2% |
+| Useful initial splits outside old heuristic guard | 23 | 23 |
+| Mean utility difference vs guarded v3 | -0.0029 | +0.0045 |
+| Physical violations | 0 | 0 |
+| Nonphysical split vetoes | 0 | 0 |
+
+Utility-difference confidence intervals include zero for both policies. Passing this engineering gate does not establish a general performance improvement. [All encounter rows](../outputs/learned_risk_v8/outcomes.json).
+
+### Twelve-match retention per policy
+
+Two candidates, two guarded-v3 baselines and three reactive heuristics compete in each 60-second match, with shuffled seats. The predeclared gate requires candidate mean final mass ≥90% of baseline and no more than two extra total full deaths.
+
+| Measurement | PPO candidate / baseline | Diffusion candidate / baseline |
+| --- | ---: | ---: |
+| Mean final mass | 62.31 / 57.37 | 54.00 / 41.57 |
+| Full deaths | 7 / 2 | 3 / 1 |
+| Piece captures | 36 / 23 | 19 / 8 |
+| Executed splits | 40 / 1 | 34 / 0 |
+| Acceptance | **Failed: 7 deaths exceeds allowed 4** | **Passed: 3 deaths equals allowed 3** |
+
+Diffusion's pass permits two additional deaths; it is not a survival-improvement claim. Match-bootstrap final-mass difference intervals include zero. [PPO report](../outputs/learned_risk_v8/ppo_retention.json) · [Diffusion report](../outputs/learned_risk_v8/diffusion_retention.json).
+
+### Absolute candidate league
+
+This separate twelve-match league uses two current PPO, two current diffusion and three heuristic agents, with no older policies. Each policy acts at every 30 Hz timestep. Agents compete individually.
+
+| Measurement | PPO | Diffusion | Heuristics |
+| --- | ---: | ---: | ---: |
+| Agent runs | 24 | 24 | 36 |
+| Mean final mass | 58.53 | 51.19 | 27.71 |
+| Piece captures | 35 | 18 | 9 |
+| Full deaths | 4 | 1 | 29 |
+| Executed splits | 51 | 42 | 6 |
+| Recent-projectile captures | 1 | 0 | 0 |
+| Matches with a final-mass leader | 10 | 2 | 0 |
+
+| Death-free agent runs | 20/24 | 23/24 | 16/36 |
+
+Most captures were body contact. The mass-growth objective also rewards mobility/foraging; 51/42 learned splits produced only 1/0 recent-projectile captures in this league, so reliable split attacks remain a limitation. A piece capture is not necessarily a full elimination. Respawns count. The policy groups have unequal slot counts (2/2/3), so final-mass leaders are descriptive rather than an equal-team tournament win rate.
+
+[Full league data, timelines, source/model hashes and configuration](../outputs/learned_risk_v8/league.json). Inference averaged 2.39 ms for PPO and 4.46 ms for diffusion during substantial parallel CPU contention; [timing context](../outputs/learned_risk_v8/timing_context.json) records the other workers. These are wall-clock measurements, not isolated kernel speed or browser FPS.
+
+Weights/protocol were frozen at `cc07030` before these tests; [immutability audit](../outputs/learned_risk_v8/immutability_audit.json). Test seeds are now public and must not be reused as unseen tests after further tuning. The promotion tests verify that editing summary flags cannot hide failed rows. All 88 regression tests passed with one Torch/OpenMP thread, matching the server and evaluation workers.

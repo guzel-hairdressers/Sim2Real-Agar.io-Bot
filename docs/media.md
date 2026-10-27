@@ -28,7 +28,7 @@ Each side begins with the same ordinary arena reset, seed `4200001`: identical p
 | Final mass | 118.0 | 113.8 |
 | Whole-arena captures, including opponents | 14 | 17 |
 
-Every split is a deployed-policy action. The comparison does not force matching split counts or manufacture a favorable result. It illustrates behavior in one starting state; use the [twelve-match benchmark](benchmarks.md) for aggregate measurements. These recordings use the accepted v3 models and their existing safety layer. Physical-only split constraints and longer outcome-based risk training are being developed separately; the footage is not presented as evidence for an unvalidated model.
+Every split is a deployed-policy action. The comparison does not force matching split counts or manufacture a favorable result. It illustrates behavior in one starting state; use the [twelve-match benchmark](benchmarks.md) for aggregate measurements. These recordings use the accepted v3 models and their existing safety layer. The physical-only v8 candidate has now been evaluated separately and remains experimental after a PPO survival-gate failure. These videos continue to show accepted v3; see [v8 results and its optional local preview](learned_split_risk.md#fresh-v8-results-and-playable-candidate).
 
 ## Screenshots of real clashes
 

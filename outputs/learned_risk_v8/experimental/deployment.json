@@ -1,0 +1,36 @@
+{
+  "schema_version": 2,
+  "observation_version": 2,
+  "split_control": "learned_risk_physical_only",
+  "acceptance_status": "experimental_failed_ppo_survival_gate",
+  "promoted": false,
+  "models": {
+    "ppo": {
+      "file": "../ppo.pt",
+      "sha256": "39980fc5eae7b6dcf4e7099d31f32449da26934a1d87d01787e6934fcc1d9ceb"
+    },
+    "diffusion": {
+      "file": "../diffusion.pt",
+      "sha256": "7c88cb79cfafa82a05b363e97e5400421d7077f12b1684f253a2cbbaabb4f5bd"
+    },
+    "critic": {
+      "file": "../../arena_v2_cosine/critic.pt",
+      "sha256": "b7038895092ca19e66b406de3c299e6d90913c8ddb6129e70efefd76909b54ef"
+    }
+  },
+  "evaluations": [
+    "../outcomes.json",
+    "../ppo_retention.json",
+    "../diffusion_retention.json",
+    "../league.json"
+  ],
+  "evaluation_sha256": {
+    "outcomes.json": "6a5c2b2bfe10bca7b054de2c99391def1dd176f0ba756ad852344109e7f793a4",
+    "ppo_retention.json": "d7d915b346d00bdb0657329729f8bd8e42667c805149ba669302e0c9ddccf421",
+    "diffusion_retention.json": "ffa4db46176857a93e2ccd33c5769214cebac93730307d5a6b4af4ada4305a97",
+    "league.json": "1e0ebff1c50473115570268b917bf2eb4f0751ca291116dc887744dfee8c298b"
+  },
+  "failed_gates": [
+    "PPO retention: seven full deaths versus two; allowed maximum four."
+  ]
+}

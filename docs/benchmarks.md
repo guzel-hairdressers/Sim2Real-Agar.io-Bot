@@ -1,6 +1,8 @@
-# Current-model benchmark
+# Accepted v3 benchmark
 
 This benchmark asks what the deployed agents do in the same arena. It contains **no previous-version policies**. The models are the accepted split-combat checkpoints from `3e105b9`, unchanged during this evaluation.
+
+The physical-only v8 candidate has separate [experimental results](learned_split_risk.md#fresh-v8-results-and-playable-candidate) and was not promoted after a PPO survival-gate failure. The numbers below remain accepted-v3 measurements.
 
 ![Growth, death-free runs, captures and inference latency](media/showcase/benchmarks.png)
 

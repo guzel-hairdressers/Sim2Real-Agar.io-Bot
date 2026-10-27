@@ -331,6 +331,8 @@ async def arena_status():
             'error': arena_mgr.last_error, 'observation_version': 2,
             'control_dt': arena_mgr.env.dt, 'simulation_seconds': arena_mgr.env.step_count*arena_mgr.env.dt,
             'processing_capacity_fps': round(arena_mgr.processing_fps, 1),
+            'split_control': arena_mgr.model_manifest.get('split_control', 'legacy_risk_filter'),
+            'acceptance_status': arena_mgr.model_manifest.get('acceptance_status', 'accepted'),
             'models': arena_mgr.model_manifest['models']}
 
 
@@ -369,7 +371,7 @@ async def video_feed():
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_index():
-    return HTMLResponse("""<!DOCTYPE html>
+    page="""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -465,7 +467,10 @@ async def serve_index():
   </script>
 </body>
 </html>
-""")
+"""
+    if arena_mgr.model_manifest.get('acceptance_status','accepted')!='accepted':
+        page=page.replace('<body>','<body><div style="position:fixed;top:0;left:0;right:0;z-index:100;padding:8px;text-align:center;background:#fff4cc;color:#513c00;font:13px sans-serif">Experimental learned splits: survival regression under evaluation.</div>',1)
+    return HTMLResponse(page)
 
 
 def main():

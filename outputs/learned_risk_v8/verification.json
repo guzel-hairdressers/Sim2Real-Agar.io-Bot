@@ -1,0 +1,15 @@
+{
+  "verified_at_utc": "2026-10-27T21:29:01.625705+00:00",
+  "accepted_release": false,
+  "failed_gate": "PPO retention full deaths 7 > 4",
+  "regression_tests": 88,
+  "regression_passed": true,
+  "test_command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests -v",
+  "latency_threshold_unchanged": true,
+  "experimental_local_preview": "http://localhost:8081/",
+  "physical_split_mode_verified": true,
+  "experimental_warning_verified": true,
+  "jpeg_stream_verified": true,
+  "accepted_v3_showcase_integrity_passed": true,
+  "accepted_and_experimental_previews_exact_hashes_verified": true
+}

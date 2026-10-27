@@ -8,7 +8,7 @@ These are development experiments, not final held-out tests. All candidates exec
 | v5: four-second, actual-match corrections; maximize development utility | 187 valid per policy | +0.00704 / +0.00077 | PPO 54.99 / 50.84; diffusion 43.95 / 50.96 | Reject: diffusion retained 86.3% of baseline mass; PPO had five full deaths vs two |
 | v6: same data; minimize prediction loss | Aborted before completion | Not measured to completion | Not measured to completion | Reject: selected diffusion checkpoint proposed no splits on validation observations |
 | v7: maximize utility within 25% of minimum prediction loss | 94 valid per policy | +0.01400 / −0.00328 | PPO 54.28 / 55.54; diffusion 45.06 / 52.63 | Reject: diffusion retained 85.6% of baseline mass; PPO had six full deaths vs two |
-| v8: second on-policy generation; eight-second outcomes and hold-state exploration | Evaluated separately | See candidate reports | See candidate reports | Await final acceptance |
+| v8: second on-policy generation; eight-second outcomes and hold-state exploration | Fresh evaluation reserved separately | See fresh report | PPO 61.31 / 45.42; diffusion 44.11 / 49.31 | Not promoted: fresh PPO deaths 7 / 2; diffusion passed. Development PPO deaths 3 / 3, diffusion 0 / 1 |
 
 The development encounter seed family starts at `4851001`; the six-match development retention seeds are `4950001 + 37*i`, `i=0..5`. Repeated use of these seeds makes them development data. The incomplete v7 final encounter evaluation was stopped after its development retention failure, before any aggregate or per-case outcome report was read. V8 reserves completely different final seeds (`5200001`, `5300001`, `5400001` families). No statement of statistical noninferiority is made from these small development samples.
 
@@ -21,3 +21,10 @@ Longer training is not automatically better. Utility-only selection chose late c
 The simulator's virus fragments use global NumPy randomness in addition to the environment RNG. Paired trials control both; a regression test exercises fragmentation. Full-match corrective queries clone controller buffers and RNGs and restore the live rollout's random state after each pair. These details prevent a spurious split advantage caused by a different random draw or an accidentally mutated world.
 
 See [training and final acceptance protocol](learned_split_risk.md), [rejected initial data and results](../outputs/learned_risk_v4/README.md), and the versioned candidate reports for measured rows. Published old v3 capture-opportunity percentages measure a different risk-guarded system and cannot validate physical-only execution.
+
+## Next hypotheses; not implemented or measured
+
+- For a balanced objective, trace the extra PPO full deaths through longer split/hold outcomes or a terminal-value estimate. Eight seconds reaches the first merge cooldown but does not guarantee re-merging or capture all later vulnerability.
+- Test a split head conditioned on the selected movement/trajectory. The current diffusion split head sees the observation, while its movement also depends on sampled trajectories and a buffered plan. That mismatch is a possible source of poor attack decisions, not a demonstrated explanation.
+- Treat final-mass priority versus survival priority as an explicit training objective. Preserve the failed survival result even if a later growth-oriented profile accepts that tradeoff.
+- Reserve new final seeds after further tuning. Do not restore threat/angle split vetoes, turn a failed row-level result into success by editing its summary, or compare quiet-machine latency with the heavily contended league timing as if load were equal.

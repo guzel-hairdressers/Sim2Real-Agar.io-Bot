@@ -44,6 +44,8 @@ outputs/**/counterfactuals.jsonl
 # Small curated full-match correction sets are retained for audit/replay.
 !outputs/learned_risk_v7/counterfactuals.jsonl
 !outputs/learned_risk_v8/counterfactuals.jsonl
+outputs/learned_risk_pilot/
+outputs/learned_risk_v6/
 outputs/agar_arena_demo.mp4
 
 # Keep key demonstration video and lightweight artifacts

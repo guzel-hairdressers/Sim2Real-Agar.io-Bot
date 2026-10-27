@@ -5,7 +5,7 @@
   "simulation_steps": 21600,
   "policy_decisions": 151200,
   "trace_frames": 901,
-  "local_links_checked": 49,
+  "local_links_checked": 52,
   "model_source_and_data_hashes_verified": true,
   "benchmark_arithmetic_verified": true,
   "identical_comparison_initial_states_verified": true,

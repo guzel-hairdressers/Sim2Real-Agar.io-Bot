@@ -4,6 +4,8 @@
 
 Agents steer through an Agar-style arena, collect food, grow, avoid hazards, and decide when to split to capture smaller opponents. The project brings **PPO**, **action diffusion**, and **rule-based opponents** into the same simulator—and lets you play against the trained agents in a browser.
 
+**Experimental learned splits:** [v8 results and how to try it](docs/learned_split_risk.md#fresh-v8-results-and-playable-candidate). Splits are constrained only by mass, piece capacity and cooldown. Both policies gained mean final mass in fresh retention matches, but PPO had more deaths and failed its survival gate; v8 is **not the accepted default**.
+
 [![Watch the agents navigate and compete](docs/media/showcase/gameplay.gif)](docs/media/showcase/gameplay.mp4)
 
 **[Full 60-second gameplay video at 2×](docs/media/showcase/gameplay.mp4)** · [Screenshots and demo gallery](docs/media.md) · [Benchmark protocol and raw results](docs/benchmarks.md) · [Run locally](#play-against-the-agents)
@@ -31,9 +33,9 @@ The full-arena view and spectator zoom follow real encounters. Capture rings and
 
 **[PPO vs diffusion comparison — 60 seconds at 2×](docs/media/showcase/policy_comparison.mp4)**. Each rollout starts with the same positions, masses, food and hazards, with one learned focus agent and six reactive heuristic opponents. The opponents respond independently as the policies diverge. Zoom views, minimaps and focus-agent counters show captures, deaths and actual splits. This is a qualitative comparison, not a direct duel or an additional benchmark win-rate claim.
 
-## Current capabilities: benchmarks
+## Accepted v3 capabilities: benchmarks
 
-These results describe the **current models**, with no historical agents in the match roster. Twelve fresh 60-second matches each contain two PPO agents, two diffusion agents, and three heuristic opponents, with shuffled seats. Agents compete individually; sharing a policy does not make them a team.
+These results describe the **accepted v3 models**, with no historical agents in the match roster. Twelve fresh 60-second matches each contain two PPO agents, two diffusion agents, and three heuristic opponents, with shuffled seats. Agents compete individually; sharing a policy does not make them a team.
 
 | Metric | PPO | Diffusion | Heuristic opponents |
 | --- | ---: | ---: | ---: |

@@ -1,0 +1,19 @@
+{
+  "league_workers": 2,
+  "concurrent_encounter_workers": 4,
+  "concurrent_retention_workers": 2,
+  "logical_cpu_count": 10,
+  "other_user_processes_running": true,
+  "worker_cpu_percent_sample_at_utc": "2026-10-27 21:06:52",
+  "worker_cpu_percent_sample": [
+    43.2,
+    41.9,
+    46.8,
+    43.0,
+    42.8,
+    58.3,
+    42.7,
+    50.2
+  ],
+  "interpretation": "League inference times are wall-clock under substantial concurrent CPU contention. They include scheduling delays and are not isolated kernel speed or browser FPS."
+}
