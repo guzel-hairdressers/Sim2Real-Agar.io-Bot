@@ -50,6 +50,7 @@ def risk_scene(seed):
 
 
 def outcome(env,policy,seed,split,horizon):
+    np.random.seed(seed)
     env=copy.deepcopy(env);policy.reset(seed=seed)
     initial=env.players['player_0'].mass
     opponents={pid:MasterHeuristicAgarBot(profile='hunter' if pid=='player_2' else 'survivor',seed=seed+i)
@@ -137,19 +138,41 @@ def main():
     p.add_argument('--cases',type=int,default=4000);p.add_argument('--seed',type=int,default=4800001)
     p.add_argument('--horizon',type=int,default=60);p.add_argument('--epochs',type=int,default=240)
     p.add_argument('--workers',type=int,default=4);p.add_argument('--reuse-data',action='store_true')
-    args=p.parse_args();args.output.mkdir(parents=True,exist_ok=True);path=args.output/'counterfactuals.jsonl'
+    p.add_argument('--resume-data',action='store_true',help='Keep complete matching non-virus cases; regenerate virus and unfinished cases')
+    args=p.parse_args()
+    if args.reuse_data and args.resume_data:p.error('Choose either --reuse-data or --resume-data')
+    args.output.mkdir(parents=True,exist_ok=True);path=args.output/'counterfactuals.jsonl'
+    preserved=[];kept=set()
+    if args.resume_data and path.exists():
+        cached=[]
+        for line in path.read_text().splitlines():
+            try:cached.append(json.loads(line))
+            except json.JSONDecodeError:pass  # A terminated writer may leave one partial last line.
+        for seed in sorted({r['seed'] for r in cached}):
+            pair=[r for r in cached if r['seed']==seed]
+            env,_=risk_scene(seed)
+            if len(pair)==2 and len(env.viruses)==0 and all(np.array_equal(np.array(r['obs'],np.float32),env._get_obs('player_0')) for r in pair):
+                preserved.extend(pair);kept.add(seed)
+        print(json.dumps(dict(stage='resume',preserved_nonvirus_cases=len(kept))),flush=True)
     if not args.reuse_data:
-        jobs=[(list(range(s,min(s+16,args.seed+args.cases))),args.horizon) for s in range(args.seed,args.seed+args.cases,16)]
+        pending=[s for s in range(args.seed,args.seed+args.cases) if s not in kept]
+        jobs=[(pending[i:i+16],args.horizon) for i in range(0,len(pending),16)]
         with path.open('w') as f,ProcessPoolExecutor(args.workers,mp_context=mp.get_context('spawn'),initializer=initialize) as pool:
+            for row in preserved:f.write(json.dumps(row)+'\n')
+            f.flush()
             for i,batch in enumerate(pool.map(collect,jobs)):
                 for row in batch:f.write(json.dumps(row)+'\n')
                 f.flush()
                 if i%10==0:print(json.dumps(dict(stage='collect',batches=i+1,total=len(jobs))),flush=True)
     rows=[json.loads(s) for s in path.read_text().splitlines()]
+    rows.sort(key=lambda r:(r['seed'],r['algorithm']))
+    path.write_text(''.join(json.dumps(r,sort_keys=True)+'\n' for r in rows))
     config=dict(vars(args));config['output']=os.path.relpath(args.output.resolve(),ROOT);config['data_sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
     config['labels']='Measured split-minus-hold utility > 0.03; no risk-heuristic labels'
     config['movement_weights_frozen']=True
     config['sampling']='Uniform observed case prior; weighted BCE; development selection by measured action advantage'
+    config['randomness']='Global NumPy reset per branch; cloned environment RNG; seeded policy and opponent RNGs'
+    config['preserved_nonvirus_cases']=len(kept)
     config['curriculum']='v4 reactive rivals, varied masses, distant targets and already split states'
     config['source_hashes']={s:hashlib.sha256((ROOT/s).read_bytes()).hexdigest() for s in (
         'src/train_learned_risk.py','src/learned_risk.py','src/train_split_combat.py','envs/agar_env.py',

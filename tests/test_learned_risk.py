@@ -1,10 +1,13 @@
 import unittest
 from pathlib import Path
 import tempfile
+from unittest.mock import patch
 import numpy as np
 import torch
 from envs.agar_env import PartiallyObservableAgarEnv,SubPiece
 from src.learned_risk import physical_split_filter,load_policy,LearnedRiskPPO,LearnedRiskDiffusion
+from src.train_learned_risk import outcome
+from src.arena_policies import TacticalTeacher
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -18,6 +21,21 @@ def scene(mass=90,other=20,pos=(0,0),target=(1.5,0)):
 
 
 class PhysicalSplitTests(unittest.TestCase):
+    def test_virus_fragmentation_outcome_uses_controlled_randomness(self):
+        env=PartiallyObservableAgarEnv(arena_size=18,num_players=3,num_food=0,num_viruses=0,
+                                     observation_version=2,dt=1/30,max_steps=90)
+        env.reset(seed=79);a,b,c=env.players.values();a.mass,b.mass,c.mass=90,20,20
+        a.pos=np.array([0.,0.],np.float32);a.yaw=0.
+        b.pos=np.array([1.5,0.],np.float32);c.pos=np.array([-8.,-8.],np.float32)
+        env.viruses=np.array([[1.,0.,.65]],np.float32);env.reserve_mass=270.
+        np.random.seed(123)
+        with patch.object(np.random,'uniform',wraps=np.random.uniform) as draws:
+            first=outcome(env,TacticalTeacher(),79,True,60)
+            self.assertGreater(draws.call_count,0)
+        np.random.seed(987)
+        second=outcome(env,TacticalTeacher(),79,True,60)
+        self.assertEqual(first,second)
+
     def test_both_loaded_models_cannot_apply_legacy_risk_veto(self):
         for algorithm,expected in [('ppo',LearnedRiskPPO),('diffusion',LearnedRiskDiffusion)]:
             package=torch.load(ROOT/f'outputs/split_combat_v3/{algorithm}.pt',map_location='cpu',weights_only=True)

@@ -1,0 +1,45 @@
+{
+  "no_virus_rng_invariance_checks": [
+    {
+      "seed": 4800001,
+      "algorithm": "ppo",
+      "identical_with_global_seed_changed": true
+    },
+    {
+      "seed": 4800001,
+      "algorithm": "diffusion",
+      "identical_with_global_seed_changed": true
+    },
+    {
+      "seed": 4800002,
+      "algorithm": "ppo",
+      "identical_with_global_seed_changed": true
+    },
+    {
+      "seed": 4800002,
+      "algorithm": "diffusion",
+      "identical_with_global_seed_changed": true
+    },
+    {
+      "seed": 4800003,
+      "algorithm": "ppo",
+      "identical_with_global_seed_changed": true
+    },
+    {
+      "seed": 4800003,
+      "algorithm": "diffusion",
+      "identical_with_global_seed_changed": true
+    },
+    {
+      "seed": 4800004,
+      "algorithm": "ppo",
+      "identical_with_global_seed_changed": true
+    },
+    {
+      "seed": 4800004,
+      "algorithm": "diffusion",
+      "identical_with_global_seed_changed": true
+    }
+  ],
+  "reason": "Only virus fragmentation uses unseeded global NumPy during env.step; all virus cases are regenerated."
+}

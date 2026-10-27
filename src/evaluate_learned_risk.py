@@ -36,6 +36,7 @@ def probability(policy,algorithm,obs):
 
 
 def simulate(env,policy,algorithm,seed,horizon):
+    np.random.seed(seed)
     env=copy.deepcopy(env);policy.reset(seed=seed);initial=env.players['player_0'].mass
     opponents={pid:MasterHeuristicAgarBot(profile='hunter' if pid=='player_2' else 'survivor',seed=seed+i)
                for i,pid in enumerate(['player_1','player_2'])}
