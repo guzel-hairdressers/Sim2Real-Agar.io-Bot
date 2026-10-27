@@ -1,0 +1,5795 @@
+{
+  "protocol": {
+    "matches": 12,
+    "steps_per_match": 1800,
+    "seconds_per_match": 60.0,
+    "roster": "2 current PPO + 2 current diffusion + 3 heuristics; shuffled seats; no cooperation",
+    "observation_hz": 30,
+    "recording_hz": 15,
+    "all_observations_processed": true,
+    "workers": 2,
+    "confidence_unit": "independent matches; bootstrap 10,000 resamples",
+    "win_definition": "one individual with largest final mass; slots per group are 2/2/3",
+    "latency_definition": "policy.predict including safety checks; CPU under concurrent evaluation load; excludes rendering",
+    "demo_selection": "first requested seed, fixed before outcomes; no selection by score"
+  },
+  "config": {
+    "arena_size": 18.0,
+    "num_players": 7,
+    "num_food": 180,
+    "num_viruses": 7,
+    "total_world_mass": 550.0,
+    "dt": 0.03333333333333333,
+    "max_steps": 1800,
+    "max_pieces": 4,
+    "observation_version": 2
+  },
+  "machine": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "python": "3.9.6",
+    "torch": "2.8.0",
+    "numpy": "1.26.4"
+  },
+  "models": {
+    "ppo": {
+      "file": "ppo.pt",
+      "sha256": "edbe9776f665c148e3e9a0411ef17345cfccabf6c115c67f1045c03893071da6"
+    },
+    "diffusion": {
+      "file": "diffusion.pt",
+      "sha256": "18d3f31b0e88f526295b63ba8f273c86e5aa12a5fa52dfdb0d9e42569a59517c"
+    },
+    "critic": {
+      "file": "../arena_v2_cosine/critic.pt",
+      "sha256": "b7038895092ca19e66b406de3c299e6d90913c8ddb6129e70efefd76909b54ef"
+    }
+  },
+  "source_hashes": {
+    "src/benchmark_showcase.py": "e91ad5c548a1bbebb7cd69a1d748798a3fab9a8c6f40ab2cfab40f9080d4e70b",
+    "envs/agar_env.py": "ff77a8ef2321a4c4768940cf3bda190d1339accac123a435803f23a54f778e3d",
+    "envs/arena_config.py": "3118bb710bd651243cd93bdb210ed182d7c24f6e85d911f141666394c5de19fa",
+    "src/arena_policies.py": "fd6af4acb965f1db2cdc7dd8a7ee9707570c51f73fb4532d96bda152bc243118",
+    "src/arena_tactics.py": "648368c367d4381d444de834db390229b08fecbdba92992614adce8ecf603083",
+    "src/train_champion_ppo.py": "cf80816a826cf9a731e2d47041e9a1bfe8416c972bf67be09ccc967100db794b",
+    "src/split_head.py": "03d06794483b592b2511d098dd1d9f92865bdd6bf7b6e38aca52f589120921a9",
+    "src/agar_diffusion_policy.py": "f82d5da6ad1bc6603329a605518ebc45d2bb57d309d1c273b81a2e5c38589685",
+    "src/heuristic_agent.py": "bf4ab693b7df66397ee837b4508d2db5bd1768d5db5d138720ff3ca354c22bd9"
+  },
+  "trace_sha256": "4d731245b5849a9cc25dc8c5c7bb946235bf9e5b55ef2df86513f33e844c9fc0",
+  "wall_seconds": 140.385545,
+  "summary": {
+    "ppo": {
+      "agent_runs": 24,
+      "agent_minutes": 24.0,
+      "mean_initial_mass": 14.022205314908804,
+      "mean_final_mass": 51.74119433135937,
+      "final_mass_match_bootstrap_95_ci": [
+        45.55949660130135,
+        57.57342950056917
+      ],
+      "zero_death_runs": 20,
+      "full_deaths": 6,
+      "piece_captures": 17,
+      "executed_splits": 1,
+      "projectile_piece_captures": 1,
+      "final_mass_winners": 8,
+      "inference_mean_ms": 0.27886862342591967,
+      "mean_per_match_inference_p95_ms": 0.44211427083334914
+    },
+    "diffusion": {
+      "agent_runs": 24,
+      "agent_minutes": 24.0,
+      "mean_initial_mass": 13.884924716377597,
+      "mean_final_mass": 47.57074631751135,
+      "final_mass_match_bootstrap_95_ci": [
+        40.77006108483262,
+        55.50796497050136
+      ],
+      "zero_death_runs": 21,
+      "full_deaths": 5,
+      "piece_captures": 21,
+      "executed_splits": 1,
+      "projectile_piece_captures": 1,
+      "final_mass_winners": 3,
+      "inference_mean_ms": 0.5254140879629844,
+      "mean_per_match_inference_p95_ms": 1.520875920834308
+    },
+    "heuristic": {
+      "agent_runs": 36,
+      "agent_minutes": 36.0,
+      "mean_initial_mass": 13.996768865431024,
+      "mean_final_mass": 31.489269874767803,
+      "final_mass_match_bootstrap_95_ci": [
+        27.67578783065277,
+        36.18202856509148
+      ],
+      "zero_death_runs": 22,
+      "full_deaths": 20,
+      "piece_captures": 15,
+      "executed_splits": 12,
+      "projectile_piece_captures": 1,
+      "final_mass_winners": 1,
+      "inference_mean_ms": 0.018971129228381862,
+      "mean_per_match_inference_p95_ms": 0.02847926250000299
+    }
+  },
+  "rows": [
+    {
+      "seed": 4100001,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 14.243753623123332,
+          "final_mass": 58.194754652928964,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 1,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 13.18427840996818,
+          "final_mass": 16.0,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 141,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 13.118436241967316,
+          "final_mass": 41.45300183696781,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 27,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 14.182019595741416,
+          "final_mass": 15.0,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 87,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 14.829179997650527,
+          "final_mass": 28.74052351644773,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 258,
+          "executed_splits": 1,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 13.94411636372197,
+          "final_mass": 43.70950786356653,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 177,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 14.171670958169234,
+          "final_mass": 101.44771271046008,
+          "piece_captures": 4,
+          "full_deaths": 0,
+          "wall_contact_frames": 32,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "diffusion",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 14.031276302844642,
+          "diffusion": 14.707712290646283,
+          "heuristic": 14.398492667786707
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 14.531276302844642,
+          "diffusion": 15.957712290646283,
+          "heuristic": 15.065159334453375
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 15.281276302844642,
+          "diffusion": 16.957712290646285,
+          "heuristic": 16.065159334453373
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 16.031276302844642,
+          "diffusion": 17.457712290646285,
+          "heuristic": 17.065159334453373
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 17.031276302844642,
+          "diffusion": 18.92771229064629,
+          "heuristic": 18.04849266778671
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 17.781276302844642,
+          "diffusion": 19.147712290646297,
+          "heuristic": 18.973492667786726
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 18.531276302844642,
+          "diffusion": 19.360212290646302,
+          "heuristic": 19.539626839559503
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 19.280674678340503,
+          "diffusion": 19.800195170583407,
+          "heuristic": 20.105217147065954
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 20.029203492640804,
+          "diffusion": 19.995183017177993,
+          "heuristic": 20.004077201671226
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 20.99569537828467,
+          "diffusion": 21.17432394894085,
+          "heuristic": 20.402536480046944
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 21.723740584928187,
+          "diffusion": 21.591556364123107,
+          "heuristic": 20.966672140034916
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 22.20331045924204,
+          "diffusion": 21.508285429826657,
+          "heuristic": 21.52705214629753
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 22.945955531082063,
+          "diffusion": 21.712639649049258,
+          "heuristic": 21.918572186606756
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 23.43712120834615,
+          "diffusion": 21.913523440585603,
+          "heuristic": 22.81154133834063
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 24.63925694649994,
+          "diffusion": 22.104159960237354,
+          "heuristic": 23.036276754393683
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 25.54695744715244,
+          "diffusion": 22.978149464401934,
+          "heuristic": 23.260786096768367
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 27.18827749321468,
+          "diffusion": 23.864670031431302,
+          "heuristic": 23.63432735620186
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 27.340525493104174,
+          "diffusion": 24.288655767893317,
+          "heuristic": 23.973676592615703
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 27.487308898941592,
+          "diffusion": 25.233297148502913,
+          "heuristic": 24.478901117979564
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 27.91544216271207,
+          "diffusion": 25.455368645556284,
+          "heuristic": 24.849024126747917
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 28.53920270730237,
+          "diffusion": 25.876384221455396,
+          "heuristic": 25.401009454486317
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 29.743184338449694,
+          "diffusion": 26.523805699369888,
+          "heuristic": 25.919596737773745
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 30.16982191366094,
+          "diffusion": 26.880473845432864,
+          "heuristic": 26.955026792505834
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 30.870518761335227,
+          "diffusion": 28.537514752550308,
+          "heuristic": 27.665838276447634
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 31.01023857041349,
+          "diffusion": 28.93462708530268,
+          "heuristic": 28.87193713208264
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 32.14437959616561,
+          "diffusion": 29.06706875116045,
+          "heuristic": 29.74032224623443
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 34.273527665834706,
+          "diffusion": 29.18468056537133,
+          "heuristic": 29.940779273586276
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 30.72324863524831,
+          "diffusion": 29.333598999081122,
+          "heuristic": 33.497104864494695
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 30.936135673571147,
+          "diffusion": 29.723842589901672,
+          "heuristic": 34.07832152062755
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 31.647745153881445,
+          "diffusion": 30.08047805559592,
+          "heuristic": 34.15894236328426
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 32.08387884899951,
+          "diffusion": 29.966590507263213,
+          "heuristic": 34.238936257093016
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 32.77021613908387,
+          "diffusion": 30.035400114823176,
+          "heuristic": 34.37192821498013
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 33.72098028973223,
+          "diffusion": 30.10151032530484,
+          "heuristic": 34.866624692892124
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 33.919898828341026,
+          "diffusion": 30.67650760290415,
+          "heuristic": 35.44253653264029
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 34.30239136816698,
+          "diffusion": 30.530069655360734,
+          "heuristic": 35.51647613037471
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 34.424575840492565,
+          "diffusion": 30.88556585449556,
+          "heuristic": 35.427556105058905
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 34.7952279941155,
+          "diffusion": 31.712993494934466,
+          "heuristic": 35.578108864783474
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 35.16314791804484,
+          "diffusion": 32.27836498043055,
+          "heuristic": 35.5857192802228
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 36.03046501666603,
+          "diffusion": 32.36011382231867,
+          "heuristic": 35.593354929089436
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 35.87186462196877,
+          "diffusion": 33.45735369697904,
+          "heuristic": 36.09902545128383
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 35.721593128351046,
+          "diffusion": 33.808216631586234,
+          "heuristic": 36.2697869253841
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 35.93036704873761,
+          "diffusion": 38.30237100369716,
+          "heuristic": 33.09849164607351
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 37.071551590109024,
+          "diffusion": 38.343036911260555,
+          "heuristic": 33.94869156219224
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 38.968428248583734,
+          "diffusion": 42.579644504558985,
+          "heuristic": 29.982550559458446
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 40.846236688078825,
+          "diffusion": 42.65678043651944,
+          "heuristic": 30.347498391026523
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 41.22486389762159,
+          "diffusion": 42.723745718427345,
+          "heuristic": 30.545099612841835
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 41.56138368097276,
+          "diffusion": 42.553303687836106,
+          "heuristic": 30.907187207131102
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 41.94847292992168,
+          "diffusion": 42.32642946387462,
+          "heuristic": 30.935444565920317
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 42.58112039352599,
+          "diffusion": 42.36045174401365,
+          "heuristic": 31.13041855332391
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 43.48152587897981,
+          "diffusion": 43.14410426502161,
+          "heuristic": 30.988451374105434
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 44.13034032792262,
+          "diffusion": 43.91287310256592,
+          "heuristic": 30.850437129595424
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 44.45466923806527,
+          "diffusion": 44.19534528392053,
+          "heuristic": 30.84787093249634
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 45.31537445774883,
+          "diffusion": 69.03708804241144,
+          "heuristic": 18.763454961288407
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 46.62583395536738,
+          "diffusion": 69.36254964086031,
+          "heuristic": 18.704676315166267
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 47.1215885807095,
+          "diffusion": 70.90564657288044,
+          "heuristic": 18.81279921409084
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 48.89053158546248,
+          "diffusion": 71.91730919442821,
+          "heuristic": 18.76448348963115
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 49.685680576965936,
+          "diffusion": 73.41065703706423,
+          "heuristic": 19.061162263682792
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 42.398851126076835,
+          "diffusion": 78.63841430918748,
+          "heuristic": 19.1990820386349
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 42.499129433068724,
+          "diffusion": 79.34805352737749,
+          "heuristic": 19.4731344983168
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 42.58125485026717,
+          "diffusion": 79.82123368169452,
+          "heuristic": 19.91350783881591
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.2559931969444654,
+          "median": 0.230354499999752,
+          "p95": 0.39787915000082386
+        },
+        "diffusion": {
+          "mean": 0.469177650833346,
+          "median": 0.05499999999969418,
+          "p95": 1.4041270999986644
+        },
+        "heuristic": {
+          "mean": 0.01736490611111211,
+          "median": 0.016375000001289663,
+          "p95": 0.026125000001542276
+        }
+      },
+      "processing_step_ms": {
+        "mean": 11.993528405000019,
+        "p95": 14.894108649999893
+      }
+    },
+    {
+      "seed": 4100038,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 14.826217778680228,
+          "final_mass": 63.37555779487324,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 27,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 14.1854441784436,
+          "final_mass": 31.89034051076442,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 1,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 13.668597465371581,
+          "final_mass": 31.805075061200867,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 3,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 14.234026238885637,
+          "final_mass": 31.044269214522306,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 10,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 14.114923907153608,
+          "final_mass": 41.55903598001148,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 1,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 13.125296299101718,
+          "final_mass": 73.60504201068534,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 129,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 13.554338427953951,
+          "final_mass": 14.0,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 3,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "ppo",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 14.225757038890972,
+          "diffusion": 13.83463116755378,
+          "heuristic": 14.362689294233604
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 14.975757038890972,
+          "diffusion": 14.83463116755378,
+          "heuristic": 15.52935596090027
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 15.725757038890972,
+          "diffusion": 15.33463116755378,
+          "heuristic": 16.196022627566936
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 16.475757038890976,
+          "diffusion": 15.83463116755378,
+          "heuristic": 17.196022627566936
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 17.225757038890976,
+          "diffusion": 16.322131167553785,
+          "heuristic": 17.696022627566936
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 17.965757038890978,
+          "diffusion": 17.054631167553786,
+          "heuristic": 18.196022627566936
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 18.960757038890975,
+          "diffusion": 17.79711880534397,
+          "heuristic": 18.332689294233614
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 20.21049307764733,
+          "diffusion": 18.7765036977773,
+          "heuristic": 18.616022627566952
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 21.20934893173731,
+          "diffusion": 19.50781910045453,
+          "heuristic": 18.899355960900298
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 21.953650723324706,
+          "diffusion": 19.726324069275833,
+          "heuristic": 18.849355960900308
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 23.394038422942863,
+          "diffusion": 19.924075738118333,
+          "heuristic": 18.96602171582649
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 23.80935451866052,
+          "diffusion": 20.34100851368803,
+          "heuristic": 18.91602025928539
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 24.206057646748963,
+          "diffusion": 20.560179044506047,
+          "heuristic": 19.197686925952066
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 24.85349228531268,
+          "diffusion": 20.728871063799193,
+          "heuristic": 19.930793853715244
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 26.82473146199903,
+          "diffusion": 21.604157745654053,
+          "heuristic": 19.977183933506044
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 27.26858207190987,
+          "diffusion": 22.520525194569323,
+          "heuristic": 20.1602519862149
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 27.18599178625923,
+          "diffusion": 22.49051724866517,
+          "heuristic": 21.175241486676743
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 27.597878088589518,
+          "diffusion": 23.202597757188776,
+          "heuristic": 22.039842967978004
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 28.75974513991988,
+          "diffusion": 23.136514203586557,
+          "heuristic": 22.267376593987024
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 29.40433771227728,
+          "diffusion": 23.015762075694617,
+          "heuristic": 22.805628904494338
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 30.53888364326945,
+          "diffusion": 23.638786614078988,
+          "heuristic": 23.19752032233085
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 31.3866578486671,
+          "diffusion": 24.2896139600406,
+          "heuristic": 23.42198902356954
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 31.52154530970194,
+          "diffusion": 24.716243701360494,
+          "heuristic": 24.283447888309798
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 31.655819494489435,
+          "diffusion": 24.65774765739163,
+          "heuristic": 24.80561669646508
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 32.76770678273434,
+          "diffusion": 24.574487543488825,
+          "heuristic": 24.97639678372187
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 32.59979582413458,
+          "diffusion": 24.97634971094638,
+          "heuristic": 25.145192944350953
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 32.77702831768123,
+          "diffusion": 25.413774124525112,
+          "heuristic": 25.660700851499737
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 33.36813368738632,
+          "diffusion": 26.289564306725374,
+          "heuristic": 25.876903211572188
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 34.170444001833374,
+          "diffusion": 27.451515566733825,
+          "heuristic": 26.758037139734967
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 34.96556962954592,
+          "diffusion": 27.85613109912587,
+          "heuristic": 26.599157980667187
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 35.9493742506062,
+          "diffusion": 28.70450604425837,
+          "heuristic": 26.64224377955675
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 36.886188836038954,
+          "diffusion": 29.112491214194826,
+          "heuristic": 26.49539627458117
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 39.31501975914833,
+          "diffusion": 29.501325944330397,
+          "heuristic": 26.708853380929185
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 40.23305605454564,
+          "diffusion": 29.848647919882687,
+          "heuristic": 27.087807076256496
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 40.64912544727848,
+          "diffusion": 30.70130466462923,
+          "heuristic": 27.1320643691694
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 40.56466893396953,
+          "diffusion": 31.05434759645197,
+          "heuristic": 27.67552268706288
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 40.97917368886803,
+          "diffusion": 31.145806764508286,
+          "heuristic": 27.883851662122893
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 42.38895323590417,
+          "diffusion": 31.50677584651617,
+          "heuristic": 27.758850500393958
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 43.54297577171086,
+          "diffusion": 32.36749784251253,
+          "heuristic": 27.800489870955502
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 44.69008544209673,
+          "diffusion": 32.97202922417777,
+          "heuristic": 27.67578925948408
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 45.33222306615896,
+          "diffusion": 33.08763153239667,
+          "heuristic": 27.717591022727962
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 45.47280007807926,
+          "diffusion": 33.459786918220615,
+          "heuristic": 28.424931833327793
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 45.58523450288996,
+          "diffusion": 33.356046752862305,
+          "heuristic": 28.63019670644243
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 45.855199718565004,
+          "diffusion": 33.24777200597276,
+          "heuristic": 28.502228260539155
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 46.4113636090772,
+          "diffusion": 33.62645575661402,
+          "heuristic": 28.87401593151884
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 46.402087584796796,
+          "diffusion": 34.21135880612427,
+          "heuristic": 29.57707844766192
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 46.42296313173813,
+          "diffusion": 35.51796526513728,
+          "heuristic": 30.110771065525437
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 47.4812818230309,
+          "diffusion": 35.58128536529699,
+          "heuristic": 30.309614572625836
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 47.78579636294856,
+          "diffusion": 35.87150751397806,
+          "heuristic": 30.507122581139583
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 48.0895287675308,
+          "diffusion": 36.416178812665564,
+          "heuristic": 30.70408172098401
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 48.88946255026568,
+          "diffusion": 36.708315512133524,
+          "heuristic": 30.567596004596272
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 48.92765505473761,
+          "diffusion": 36.76682628783828,
+          "heuristic": 30.764213906682425
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 49.67863902391576,
+          "diffusion": 36.80187899667112,
+          "heuristic": 30.79399191642574
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 50.931715058897375,
+          "diffusion": 36.60012451516458,
+          "heuristic": 30.787092874268392
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 51.467227622846,
+          "diffusion": 36.416832010688154,
+          "heuristic": 30.63033921549004
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 64.17673445825444,
+          "diffusion": 26.217150365149138,
+          "heuristic": 30.46256585399085
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 65.40356668495949,
+          "diffusion": 26.605850770107175,
+          "heuristic": 30.443372896338158
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 66.60207115081505,
+          "diffusion": 27.758583954836983,
+          "heuristic": 30.590527113632575
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 67.55311523383342,
+          "diffusion": 27.891389104257556,
+          "heuristic": 31.248101305307582
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 68.49029990277928,
+          "diffusion": 27.77951799000574,
+          "heuristic": 31.579894928829194
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.25276018750001533,
+          "median": 0.22770800000060376,
+          "p95": 0.4019410500012198
+        },
+        "diffusion": {
+          "mean": 0.4838657638889033,
+          "median": 0.054541999999546675,
+          "p95": 1.4006868499995215
+        },
+        "heuristic": {
+          "mean": 0.016854047962951466,
+          "median": 0.015624999999630518,
+          "p95": 0.025416999999805512
+        }
+      },
+      "processing_step_ms": {
+        "mean": 11.64461157000001,
+        "p95": 15.192827399997189
+      }
+    },
+    {
+      "seed": 4100075,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 13.853798903717243,
+          "final_mass": 46.99986241124773,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 181,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 13.86321577307707,
+          "final_mass": 36.11806729045971,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 239,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 13.071810279896575,
+          "final_mass": 46.139937242075604,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 86,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 13.382850665408922,
+          "final_mass": 25.205388703034615,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 41,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 14.298355234196105,
+          "final_mass": 72.61035788473691,
+          "piece_captures": 2,
+          "full_deaths": 0,
+          "wall_contact_frames": 381,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 13.577865063282779,
+          "final_mass": 28.19775280242159,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 33,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 14.444840662096203,
+          "final_mass": 45.36755789503556,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 83,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "ppo",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 14.621597948146153,
+          "diffusion": 13.618324784563082,
+          "heuristic": 13.837630372085476
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 16.371597948146153,
+          "diffusion": 13.868324784563082,
+          "heuristic": 14.504297038752142
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 16.871597948146153,
+          "diffusion": 13.868324784563082,
+          "heuristic": 16.00429703875214
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 17.871597948146153,
+          "diffusion": 14.118324784563082,
+          "heuristic": 17.170963705418806
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 19.116597948146158,
+          "diffusion": 14.368324784563082,
+          "heuristic": 17.639297038752147
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 20.36645560467862,
+          "diffusion": 14.618324784563082,
+          "heuristic": 18.58904080825033
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 20.85538146480975,
+          "diffusion": 14.618324784563082,
+          "heuristic": 19.349666014446715
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 21.268250148457163,
+          "diffusion": 14.618324784563082,
+          "heuristic": 19.9151865785411
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 21.365523652138613,
+          "diffusion": 14.868324784563082,
+          "heuristic": 20.31254352368412
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 21.267827589474727,
+          "diffusion": 15.368324784563082,
+          "heuristic": 20.20943798289803
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 21.387405405396763,
+          "diffusion": 15.368324784563082,
+          "heuristic": 20.106504382597798
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 21.574109947921187,
+          "diffusion": 15.368324784563082,
+          "heuristic": 20.17037098887486
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 22.24741821612928,
+          "diffusion": 15.618324784563082,
+          "heuristic": 20.067239940836966
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 22.5918243560263,
+          "diffusion": 15.868324784563082,
+          "heuristic": 19.964281203090263
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 28.25872678969474,
+          "diffusion": 14.92689945185862,
+          "heuristic": 20.361069696637898
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 37.74429089989879,
+          "diffusion": 15.67689945185862,
+          "heuristic": 16.911558447726545
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 38.34712072319153,
+          "diffusion": 16.17689945185862,
+          "heuristic": 16.861558447726555
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 38.68813095117816,
+          "diffusion": 16.67689945185862,
+          "heuristic": 17.02489178105989
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 40.27752221014179,
+          "diffusion": 16.92689945185862,
+          "heuristic": 17.02489178105989
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 41.35971235679268,
+          "diffusion": 17.17689945185862,
+          "heuristic": 16.99822511439323
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 41.43874993412753,
+          "diffusion": 17.17689945185862,
+          "heuristic": 17.981558447726567
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 41.96745108116897,
+          "diffusion": 17.42689945185862,
+          "heuristic": 20.705399055849842
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 41.973293157342866,
+          "diffusion": 18.154399451858623,
+          "heuristic": 21.60223029390738
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 42.009581872572866,
+          "diffusion": 18.82689945185864,
+          "heuristic": 22.12190153843889
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 42.33415767992163,
+          "diffusion": 19.678498069336705,
+          "heuristic": 22.830607640701988
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 43.19625970699636,
+          "diffusion": 20.029309724088293,
+          "heuristic": 23.208006436910974
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 44.04760771083742,
+          "diffusion": 19.95208992646068,
+          "heuristic": 23.71594904658563
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 42.42024479155587,
+          "diffusion": 20.56506918338674,
+          "heuristic": 24.554410647620625
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 42.50166274040615,
+          "diffusion": 20.70776272133489,
+          "heuristic": 24.593090137657967
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 42.83220872569311,
+          "diffusion": 20.58529238925442,
+          "heuristic": 24.646974747397497
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 43.90955427735912,
+          "diffusion": 20.43301114782731,
+          "heuristic": 25.36606648206374
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 44.48715568019436,
+          "diffusion": 20.78589873024015,
+          "heuristic": 26.414322315557257
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 44.55791262262392,
+          "diffusion": 21.422669562831956,
+          "heuristic": 26.29419801157719
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 44.877952785016234,
+          "diffusion": 21.324487691340316,
+          "heuristic": 26.174514627714377
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 45.694509042156554,
+          "diffusion": 21.436473638150545,
+          "heuristic": 26.22188528169808
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 45.75871617969657,
+          "diffusion": 21.568181711883668,
+          "heuristic": 26.26907584070067
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 45.520578430059444,
+          "diffusion": 21.941788018983345,
+          "heuristic": 26.48218085880201
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 45.58476588509781,
+          "diffusion": 22.326834133775165,
+          "heuristic": 26.36205254858909
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 45.65182885967408,
+          "diffusion": 22.726202014776774,
+          "heuristic": 26.408753564461296
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 46.46383859382594,
+          "diffusion": 22.90193611513614,
+          "heuristic": 26.621136988151164
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 46.79737036656876,
+          "diffusion": 23.11962658102957,
+          "heuristic": 26.66714153588394
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 47.103333627682446,
+          "diffusion": 23.826039668041528,
+          "heuristic": 26.546342193384106
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 48.15756359053292,
+          "diffusion": 24.169826208605723,
+          "heuristic": 26.592331477764095
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 48.45605645242367,
+          "diffusion": 24.308073693847735,
+          "heuristic": 27.09001433021719
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 49.252408546107986,
+          "diffusion": 24.942554296587776,
+          "heuristic": 27.250080424829317
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 49.793846974331,
+          "diffusion": 25.322078167069762,
+          "heuristic": 27.575989432392834
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 50.333453056141465,
+          "diffusion": 25.45688665310382,
+          "heuristic": 28.067269040172544
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 51.6308336944699,
+          "diffusion": 25.37117970360741,
+          "heuristic": 30.072514971901544
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 52.946700641839456,
+          "diffusion": 25.773050558013587,
+          "heuristic": 31.130608822834333
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 53.043995670900735,
+          "diffusion": 26.437797999568247,
+          "heuristic": 31.7059366545855
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 54.366157371721464,
+          "diffusion": 28.044977363572755,
+          "heuristic": 31.77986359294958
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 54.454399239400296,
+          "diffusion": 32.50850804061461,
+          "heuristic": 29.000015627056438
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 54.947500064144606,
+          "diffusion": 32.67081121265851,
+          "heuristic": 30.58346927742829
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 54.711487106643034,
+          "diffusion": 33.58078723927326,
+          "heuristic": 31.16209426352964
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 55.50718234038463,
+          "diffusion": 34.49750739623936,
+          "heuristic": 32.04756630122851
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 56.088609018659,
+          "diffusion": 35.369085172131385,
+          "heuristic": 33.43195895894368
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 56.416981596418694,
+          "diffusion": 35.23295570475364,
+          "heuristic": 34.99530895097552
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 56.98050009611007,
+          "diffusion": 35.10739303551279,
+          "heuristic": 35.719562768061145
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 58.48559877800761,
+          "diffusion": 35.72828293394602,
+          "heuristic": 36.10749460040872
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 58.98895788988624,
+          "diffusion": 36.102625557141174,
+          "heuristic": 36.81858577831897
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.2751732133333689,
+          "median": 0.24618800000197893,
+          "p95": 0.43283605000148384
+        },
+        "diffusion": {
+          "mean": 0.5616794075000058,
+          "median": 0.06550049999987095,
+          "p95": 1.5012499999970785
+        },
+        "heuristic": {
+          "mean": 0.017652591666653054,
+          "median": 0.016459000001134427,
+          "p95": 0.026041999995030096
+        }
+      },
+      "processing_step_ms": {
+        "mean": 13.693690872777776,
+        "p95": 21.423133349997055
+      }
+    },
+    {
+      "seed": 4100112,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 13.68370920614943,
+          "final_mass": 27.509296024728517,
+          "piece_captures": 0,
+          "full_deaths": 2,
+          "wall_contact_frames": 557,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 14.281694020319257,
+          "final_mass": 19.110000000000277,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 16,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 13.510329844799244,
+          "final_mass": 29.53276440705361,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 87,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 14.755229423058047,
+          "final_mass": 84.32762395858099,
+          "piece_captures": 2,
+          "full_deaths": 0,
+          "wall_contact_frames": 0,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 14.39331794972491,
+          "final_mass": 31.861719440450468,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 28,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 13.592288235884094,
+          "final_mass": 46.126387435434346,
+          "piece_captures": 3,
+          "full_deaths": 0,
+          "wall_contact_frames": 158,
+          "executed_splits": 3,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 14.600030208505547,
+          "final_mass": 60.582240224069345,
+          "piece_captures": 2,
+          "full_deaths": 0,
+          "wall_contact_frames": 36,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "ppo",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 14.768461721688652,
+          "diffusion": 14.996674079115229,
+          "heuristic": 13.762109095610924
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 15.768461721688652,
+          "diffusion": 15.996674079115229,
+          "heuristic": 14.92877576227759
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 16.768461721688652,
+          "diffusion": 16.99667407911523,
+          "heuristic": 16.428775762277592
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 17.768461721688652,
+          "diffusion": 17.209174079115236,
+          "heuristic": 17.567109095610927
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 18.765961721688655,
+          "diffusion": 17.94417407911524,
+          "heuristic": 19.145056808246267
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 20.26584580010644,
+          "diffusion": 18.191674079115238,
+          "heuristic": 19.54412003482904
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 20.982580767841036,
+          "diffusion": 18.369174079115254,
+          "heuristic": 19.609174093137227
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 22.47603467823307,
+          "diffusion": 18.849174079115258,
+          "heuristic": 20.17424352911268
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 23.468712374100804,
+          "diffusion": 19.331288662205743,
+          "heuristic": 20.238831463751932
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 24.62666176913651,
+          "diffusion": 20.05486098427223,
+          "heuristic": 20.469792293258205
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 25.033154856219994,
+          "diffusion": 20.78187295739526,
+          "heuristic": 20.367596925349698
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 25.16365082922296,
+          "diffusion": 21.74206968022981,
+          "heuristic": 20.25566472339833
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 25.498342541392482,
+          "diffusion": 22.37249688806219,
+          "heuristic": 20.603845018001767
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 26.125778788030665,
+          "diffusion": 22.244825466593937,
+          "heuristic": 21.117361849989617
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 26.705546633242573,
+          "diffusion": 23.12302933980492,
+          "heuristic": 21.130691009933493
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 26.795237172717584,
+          "diffusion": 24.004257650890544,
+          "heuristic": 21.329111170386238
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 27.8729309383477,
+          "diffusion": 24.863977774726173,
+          "heuristic": 22.174374552137138
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 27.698252124441044,
+          "diffusion": 25.222700652814076,
+          "heuristic": 22.203459826319143
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 28.022978948801736,
+          "diffusion": 25.621961996926274,
+          "heuristic": 22.214427471926044
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 27.88017552302898,
+          "diffusion": 25.999540591830485,
+          "heuristic": 22.225765852465347
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 27.95786049567902,
+          "diffusion": 26.598817105622473,
+          "heuristic": 22.40291904603942
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 28.562119687057404,
+          "diffusion": 26.696774210609203,
+          "heuristic": 22.41307588238153
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 28.889531777678137,
+          "diffusion": 33.66617481516058,
+          "heuristic": 20.55187354580963
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 29.458892684174558,
+          "diffusion": 34.20867157798242,
+          "heuristic": 21.44398119865208
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 30.274885270575,
+          "diffusion": 34.504293534470165,
+          "heuristic": 22.333463626165933
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 30.34517271375375,
+          "diffusion": 34.82431013534074,
+          "heuristic": 22.3884331173274
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 31.407702708831287,
+          "diffusion": 34.90352788337627,
+          "heuristic": 22.44381324347871
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 32.21512586755065,
+          "diffusion": 34.700432497851004,
+          "heuristic": 22.499599512027853
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 32.52364922158506,
+          "diffusion": 34.745624085635114,
+          "heuristic": 22.38912074512876
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 32.59402681382477,
+          "diffusion": 34.79798706838315,
+          "heuristic": 22.279039076888196
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 32.910755575619056,
+          "diffusion": 35.106242880519865,
+          "heuristic": 28.8869028132693
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 33.256230144460105,
+          "diffusion": 35.15781201659789,
+          "heuristic": 29.109509236382163
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 33.133164564675525,
+          "diffusion": 35.953580383251456,
+          "heuristic": 30.328844648339857
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 33.50988473063157,
+          "diffusion": 36.78251502083393,
+          "heuristic": 31.71181577597008
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 34.13405882085016,
+          "diffusion": 37.13229425376904,
+          "heuristic": 32.42765498203226
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 34.78315109152159,
+          "diffusion": 37.44105676309189,
+          "heuristic": 33.1036322488469
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 35.164885480355125,
+          "diffusion": 37.53412068386478,
+          "heuristic": 34.41089731517345
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 35.239904126214995,
+          "diffusion": 37.33432454694618,
+          "heuristic": 34.855329945463104
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 35.60606909063176,
+          "diffusion": 37.38669876676508,
+          "heuristic": 35.250010932674016
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 35.906009072018946,
+          "diffusion": 37.418798839635336,
+          "heuristic": 35.01014909429727
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 35.69591861947977,
+          "diffusion": 38.46379832377703,
+          "heuristic": 35.267600480209396
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 36.494579638408645,
+          "diffusion": 38.77391929818883,
+          "heuristic": 35.713220277259865
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 37.590372328049405,
+          "diffusion": 38.573719876912556,
+          "heuristic": 35.82476577487551
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 38.43264238179064,
+          "diffusion": 38.394538968102985,
+          "heuristic": 35.894534519383505
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 29.19085789426873,
+          "diffusion": 38.455962724041406,
+          "heuristic": 44.39316662164797
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 30.386882322393635,
+          "diffusion": 39.817819544560976,
+          "heuristic": 44.932964617851134
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 33.07328872251276,
+          "diffusion": 40.3386697256912,
+          "heuristic": 45.16789458773027
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 34.50420990836191,
+          "diffusion": 40.37847142537207,
+          "heuristic": 45.40391243243638
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 34.68496001863678,
+          "diffusion": 40.405307894898755,
+          "heuristic": 45.467574835798935
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 34.7910963373746,
+          "diffusion": 49.30583441216959,
+          "heuristic": 38.90362009767492
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 35.395939382485025,
+          "diffusion": 49.79264722147374,
+          "heuristic": 39.40123069128002
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 35.746440315272864,
+          "diffusion": 57.80831110594117,
+          "heuristic": 32.48515368655467
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 36.09928725062288,
+          "diffusion": 58.52719737224754,
+          "heuristic": 33.07115067542936
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 37.44264598114398,
+          "diffusion": 59.028323234840244,
+          "heuristic": 33.82021503375885
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 39.30228855195069,
+          "diffusion": 59.531577191143924,
+          "heuristic": 34.065635796665084
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 41.1157295495877,
+          "diffusion": 60.285481249316454,
+          "heuristic": 33.81184367433736
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 46.465181900066824,
+          "diffusion": 52.95313619197888,
+          "heuristic": 34.2240236765955
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 51.77913561400872,
+          "diffusion": 46.09158278544719,
+          "heuristic": 34.46787760289271
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 51.55063890204011,
+          "diffusion": 46.41563562458626,
+          "heuristic": 34.26200856916381
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 51.718811979290635,
+          "diffusion": 46.221979832259905,
+          "heuristic": 34.38948262240549
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.2694717669444419,
+          "median": 0.2368544999988842,
+          "p95": 0.4267708500023558
+        },
+        "diffusion": {
+          "mean": 0.5629194305555982,
+          "median": 0.07989600000080088,
+          "p95": 1.4882086499980571
+        },
+        "heuristic": {
+          "mean": 0.01803598055555045,
+          "median": 0.017062499999553893,
+          "p95": 0.026083050001446395
+        }
+      },
+      "processing_step_ms": {
+        "mean": 12.656614182777675,
+        "p95": 16.49484194999893
+      }
+    },
+    {
+      "seed": 4100149,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 14.803814889685281,
+          "final_mass": 49.62518664300766,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 158,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 13.536156204618557,
+          "final_mass": 42.16228271880103,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 2,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 14.302957723087932,
+          "final_mass": 65.50374509241587,
+          "piece_captures": 2,
+          "full_deaths": 0,
+          "wall_contact_frames": 1,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 14.021512388948658,
+          "final_mass": 49.10127094729094,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 116,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 14.264368383619619,
+          "final_mass": 32.66004076725864,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 49,
+          "executed_splits": 1,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 13.429285533008267,
+          "final_mass": 48.09381172912477,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 316,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 13.761730065382338,
+          "final_mass": 16.0,
+          "piece_captures": 1,
+          "full_deaths": 3,
+          "wall_contact_frames": 240,
+          "executed_splits": 1,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "diffusion",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 14.278834296783607,
+          "diffusion": 14.116121628048099,
+          "heuristic": 14.443304446229078
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 15.528834296783607,
+          "diffusion": 14.366121628048099,
+          "heuristic": 15.109971112895744
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 16.028834296783607,
+          "diffusion": 14.616121628048099,
+          "heuristic": 15.609971112895744
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 17.028834296783607,
+          "diffusion": 15.616121628048099,
+          "heuristic": 15.943304446229078
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 17.528834296783607,
+          "diffusion": 17.088621628048106,
+          "heuristic": 16.27663777956241
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 18.778834296783607,
+          "diffusion": 17.55862162804811,
+          "heuristic": 16.609971112895746
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 19.778828313357202,
+          "diffusion": 17.533621628048117,
+          "heuristic": 16.609971112895746
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 21.275178775207706,
+          "diffusion": 18.01612162804812,
+          "heuristic": 17.109971112895746
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 22.021389436699344,
+          "diffusion": 18.488609021901084,
+          "heuristic": 17.609971112895746
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 23.264926505402162,
+          "diffusion": 18.695731485083584,
+          "heuristic": 18.559957670748727
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 24.002661992656826,
+          "diffusion": 19.17039507818854,
+          "heuristic": 19.342315692987835
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 25.489158347110315,
+          "diffusion": 21.090752877890885,
+          "heuristic": 19.623318827002347
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 26.1670348776071,
+          "diffusion": 22.721565846886456,
+          "heuristic": 20.071065072170544
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 27.13702749342772,
+          "diffusion": 23.39431833123829,
+          "heuristic": 20.635534025697993
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 28.041076749592754,
+          "diffusion": 24.062528838146314,
+          "heuristic": 20.867188745360583
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 29.125731950261603,
+          "diffusion": 24.450256349782382,
+          "heuristic": 21.09638218301521
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 30.21715070678175,
+          "diffusion": 24.821692349907128,
+          "heuristic": 21.990803535241785
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 31.28988207576253,
+          "diffusion": 24.698114079641087,
+          "heuristic": 23.20235427944714
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 31.39726735531542,
+          "diffusion": 24.787531261816312,
+          "heuristic": 23.57360813950353
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 31.280211567341574,
+          "diffusion": 24.931397343862525,
+          "heuristic": 24.46194484268767
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 31.41024979091265,
+          "diffusion": 24.845014904419898,
+          "heuristic": 25.347054565063207
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 31.295639913820285,
+          "diffusion": 25.297204825466604,
+          "heuristic": 26.063551455402187
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 31.181519099248845,
+          "diffusion": 25.49932072537522,
+          "heuristic": 26.776502950296862
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 31.566948852574157,
+          "diffusion": 25.460753243878138,
+          "heuristic": 26.822016089350644
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 40.716484347281465,
+          "diffusion": 25.859062643254553,
+          "heuristic": 24.241619367764894
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 41.73649096849743,
+          "diffusion": 26.50578537893462,
+          "heuristic": 24.8385510746821
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 42.04511032891192,
+          "diffusion": 26.927614902208898,
+          "heuristic": 25.71731858508564
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 42.85835740774377,
+          "diffusion": 28.02908880202174,
+          "heuristic": 26.09258412845399
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 43.186745557036346,
+          "diffusion": 28.398477158217304,
+          "heuristic": 26.799901060995808
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 43.26398998791659,
+          "diffusion": 28.784881828444025,
+          "heuristic": 26.83962579428827
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 43.360365874220065,
+          "diffusion": 29.16990226994624,
+          "heuristic": 27.054490922781998
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 36.62494127853027,
+          "diffusion": 33.866093387185856,
+          "heuristic": 28.39497812041814
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 37.00309325735715,
+          "diffusion": 34.49808110787129,
+          "heuristic": 28.550297462259177
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 37.112170573517204,
+          "diffusion": 34.62045122250969,
+          "heuristic": 28.870015166287846
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 37.50688075650514,
+          "diffusion": 34.93704997430779,
+          "heuristic": 29.021615217705616
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 37.89587367649309,
+          "diffusion": 34.75872244129932,
+          "heuristic": 29.633418344637665
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 38.28259569604265,
+          "diffusion": 35.12817829142722,
+          "heuristic": 29.949030296982766
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 39.68711591688914,
+          "diffusion": 35.96445127904133,
+          "heuristic": 30.596295384417626
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 39.82312045204533,
+          "diffusion": 37.28220723558672,
+          "heuristic": 29.15626635589022
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 40.155351332061244,
+          "diffusion": 50.1349896055402,
+          "heuristic": 21.966121463618766
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 40.695603954864765,
+          "diffusion": 50.173134723248715,
+          "heuristic": 23.850703673530905
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 40.75217014966642,
+          "diffusion": 50.74943572308328,
+          "heuristic": 24.064867512638585
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 40.570900553293725,
+          "diffusion": 51.33627533477966,
+          "heuristic": 24.443993581171245
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 40.66999423608468,
+          "diffusion": 51.871961204347386,
+          "heuristic": 24.822197153057214
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 41.05682947193135,
+          "diffusion": 52.40337851691411,
+          "heuristic": 25.69919886555356
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 41.22076266710578,
+          "diffusion": 52.681552275891306,
+          "heuristic": 25.90884509466569
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 41.63323376330669,
+          "diffusion": 52.95840551696518,
+          "heuristic": 26.268471955239516
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 42.00870729567718,
+          "diffusion": 53.745473966576455,
+          "heuristic": 26.141784942119916
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 42.394258275489165,
+          "diffusion": 53.768894953700375,
+          "heuristic": 26.6844478846178
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 42.77484688647657,
+          "diffusion": 54.29418598063631,
+          "heuristic": 27.059096700662234
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 43.17404385155098,
+          "diffusion": 54.81882329093936,
+          "heuristic": 26.932798772302856
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 43.78414799065732,
+          "diffusion": 55.79762361961021,
+          "heuristic": 30.330758547878258
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 44.63730855030748,
+          "diffusion": 55.76501988944511,
+          "heuristic": 30.56289126306774
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 44.70823176051866,
+          "diffusion": 55.503029443087826,
+          "heuristic": 30.62760186690508
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 45.5255553126497,
+          "diffusion": 55.968662439136786,
+          "heuristic": 30.85922609295952
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 45.84008931724117,
+          "diffusion": 55.93701013802037,
+          "heuristic": 31.376168179276117
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 45.65454168659696,
+          "diffusion": 56.190559938935095,
+          "heuristic": 32.38724192579087
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 45.40264224711779,
+          "diffusion": 57.16930340382494,
+          "heuristic": 32.394925042751204
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 45.89224090739841,
+          "diffusion": 57.11323448782231,
+          "heuristic": 32.40495983638653
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 45.63177683304599,
+          "diffusion": 56.798778410770325,
+          "heuristic": 32.76174247008877
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.2821554561110931,
+          "median": 0.24900000000016576,
+          "p95": 0.4570934500005563
+        },
+        "diffusion": {
+          "mean": 0.526959614444359,
+          "median": 0.06199999999978445,
+          "p95": 1.5559368500010604
+        },
+        "heuristic": {
+          "mean": 0.01943718592599058,
+          "median": 0.018375000003345576,
+          "p95": 0.029124999997520717
+        }
+      },
+      "processing_step_ms": {
+        "mean": 13.094733711111228,
+        "p95": 16.27488990000394
+      }
+    },
+    {
+      "seed": 4100186,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 13.670660430287896,
+          "final_mass": 40.84163251144575,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 76,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 14.288717899708438,
+          "final_mass": 77.13824587652142,
+          "piece_captures": 2,
+          "full_deaths": 0,
+          "wall_contact_frames": 0,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 13.9247686703999,
+          "final_mass": 16.5,
+          "piece_captures": 1,
+          "full_deaths": 2,
+          "wall_contact_frames": 449,
+          "executed_splits": 1,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 13.388117393469482,
+          "final_mass": 18.470000000000006,
+          "piece_captures": 0,
+          "full_deaths": 2,
+          "wall_contact_frames": 2,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 14.820995554897404,
+          "final_mass": 33.986405610746615,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 0,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 14.556242039844284,
+          "final_mass": 64.85920413787434,
+          "piece_captures": 2,
+          "full_deaths": 0,
+          "wall_contact_frames": 59,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 13.134601917786807,
+          "final_mass": 34.95111216731951,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 41,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "diffusion",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 14.222179716656882,
+          "diffusion": 13.711659908747622,
+          "heuristic": 14.972141551861734
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 14.722179716656882,
+          "diffusion": 14.461659908747622,
+          "heuristic": 16.305474885195068
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 14.972179716656882,
+          "diffusion": 15.711659908747622,
+          "heuristic": 18.105474885195076
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 15.722179716656884,
+          "diffusion": 16.21165990874762,
+          "heuristic": 19.675243920390855
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 16.972179716656882,
+          "diffusion": 16.949159908747625,
+          "heuristic": 19.90760873078916
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 17.967179716656887,
+          "diffusion": 16.934159908747628,
+          "heuristic": 20.63897198171124
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 18.209679716656886,
+          "diffusion": 17.131659908747636,
+          "heuristic": 21.36805020280484
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 18.937173780001658,
+          "diffusion": 18.311646983307714,
+          "heuristic": 21.91565852775719
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 19.935202576367228,
+          "diffusion": 18.778767244150927,
+          "heuristic": 21.976181823264678
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 21.154267213753315,
+          "diffusion": 19.232565325834564,
+          "heuristic": 22.36939949215707
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 22.857183196348494,
+          "diffusion": 19.68077714198733,
+          "heuristic": 22.42876866398048
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 23.02757157274398,
+          "diffusion": 20.62661179132044,
+          "heuristic": 22.98783181580309
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 23.74983964378984,
+          "diffusion": 20.566136695953247,
+          "heuristic": 23.51900210000551
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 24.21306584846534,
+          "diffusion": 20.753375057638586,
+          "heuristic": 24.224535055743814
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 24.84708399240145,
+          "diffusion": 20.678352812963126,
+          "heuristic": 24.445714822724
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 24.72726274493156,
+          "diffusion": 21.30855714206632,
+          "heuristic": 24.3334353458053
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 25.06201339047713,
+          "diffusion": 21.92388440999308,
+          "heuristic": 24.22153664729461
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 25.173314576304158,
+          "diffusion": 22.31568175476464,
+          "heuristic": 24.110013582645845
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 25.047245737836242,
+          "diffusion": 22.50883877501507,
+          "heuristic": 24.331945067161346
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 24.881709342626444,
+          "diffusion": 22.90376976514785,
+          "heuristic": 24.552925800553385
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 24.96606901143152,
+          "diffusion": 24.022013458471918,
+          "heuristic": 25.106023906784372
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 25.050042276785092,
+          "diffusion": 25.3940276613198,
+          "heuristic": 25.490432387866168
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 25.133914483926752,
+          "diffusion": 26.525370892772557,
+          "heuristic": 25.540951587338583
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 25.217700904840356,
+          "diffusion": 27.656171707785255,
+          "heuristic": 25.41478074107796
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 25.61673168844447,
+          "diffusion": 28.0530955635029,
+          "heuristic": 25.748440563905373
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 25.56973215835002,
+          "diffusion": 28.689652478779145,
+          "heuristic": 27.57731211006188
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 30.104619973015026,
+          "diffusion": 28.847445664508776,
+          "heuristic": 28.098351366520898
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 30.516200309480865,
+          "diffusion": 28.740458330710158,
+          "heuristic": 28.13919454769022
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 31.387214922454458,
+          "diffusion": 28.886068893732443,
+          "heuristic": 27.999843262177222
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 32.7199928694678,
+          "diffusion": 29.001293046705804,
+          "heuristic": 27.824475124565254
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 33.836005894049606,
+          "diffusion": 29.11306001094028,
+          "heuristic": 27.816025739852865
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 33.683443386149975,
+          "diffusion": 28.967418400032205,
+          "heuristic": 28.306907458964584
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 33.72404638084174,
+          "diffusion": 29.544528649139735,
+          "heuristic": 28.13038284979695
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 33.801957636667055,
+          "diffusion": 29.682017164598598,
+          "heuristic": 28.453630709983063
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 33.63766432580029,
+          "diffusion": 31.31716339062949,
+          "heuristic": 29.108643229130266
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 33.96629461197598,
+          "diffusion": 31.405589640963335,
+          "heuristic": 29.593820441520972
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 34.57046501096194,
+          "diffusion": 31.75085714799986,
+          "heuristic": 29.941956665393125
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 34.886589630729354,
+          "diffusion": 31.58581349457699,
+          "heuristic": 29.974660860972673
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 35.17449959736857,
+          "diffusion": 31.89801993112524,
+          "heuristic": 30.339664788018563
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 34.96271242288546,
+          "diffusion": 32.26683260922389,
+          "heuristic": 30.703530906528176
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 35.25085090934771,
+          "diffusion": 32.83408940678429,
+          "heuristic": 31.231757971118146
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 35.07879478251538,
+          "diffusion": 33.13570551783627,
+          "heuristic": 31.59147813001681
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 34.90758740453377,
+          "diffusion": 33.732304328038495,
+          "heuristic": 31.617519767266714
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 35.268340700396436,
+          "diffusion": 33.85373612159154,
+          "heuristic": 31.976286626765575
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 30.276023062815824,
+          "diffusion": 53.989242392046755,
+          "heuristic": 25.52584159966858
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 30.42654407460142,
+          "diffusion": 53.99548732459065,
+          "heuristic": 25.900586521291547
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 31.829329980471122,
+          "diffusion": 54.24869055212704,
+          "heuristic": 26.77396590758288
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 32.96407535106805,
+          "diffusion": 55.220547588746385,
+          "heuristic": 26.978212394441616
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 33.56905511362832,
+          "diffusion": 55.89507718162682,
+          "heuristic": 27.34914903467107
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 34.17447299232742,
+          "diffusion": 55.59594541070717,
+          "heuristic": 27.885256108100787
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 34.029488603482605,
+          "diffusion": 55.28198185487031,
+          "heuristic": 28.084549511196304
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 33.88531401207302,
+          "diffusion": 55.74177409736328,
+          "heuristic": 28.949646661573524
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 34.24152405489963,
+          "diffusion": 55.46207327445177,
+          "heuristic": 30.141570262037778
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 34.84592831063414,
+          "diffusion": 55.22954540095604,
+          "heuristic": 30.663184777527125
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 35.19693071799413,
+          "diffusion": 55.00909767740927,
+          "heuristic": 30.517316232099194
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 35.04760056703839,
+          "diffusion": 54.72077660176963,
+          "heuristic": 30.7051249561493
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 35.14911458731554,
+          "diffusion": 55.44514165751623,
+          "heuristic": 30.728164894649392
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 41.47384926944432,
+          "diffusion": 55.90203612553316,
+          "heuristic": 29.96593192266626
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 41.5978336722253,
+          "diffusion": 56.10454164286059,
+          "heuristic": 30.37081799295575
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 41.66460206893717,
+          "diffusion": 56.044679021920466,
+          "heuristic": 30.442679374064124
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.28769542305551077,
+          "median": 0.2603125000071316,
+          "p95": 0.45010065000035115
+        },
+        "diffusion": {
+          "mean": 0.550333849166675,
+          "median": 0.06154149999915148,
+          "p95": 1.5369663500024444
+        },
+        "heuristic": {
+          "mean": 0.018755945185161344,
+          "median": 0.017624999998133717,
+          "p95": 0.027916050000342807
+        }
+      },
+      "processing_step_ms": {
+        "mean": 12.060749207777816,
+        "p95": 14.379454500001998
+      }
+    },
+    {
+      "seed": 4100223,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 13.977932126406095,
+          "final_mass": 72.02866591330465,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 3,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 13.065171238440513,
+          "final_mass": 52.598408037555274,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 3,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 14.036647008327835,
+          "final_mass": 34.053944485284845,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 142,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 14.85220470837977,
+          "final_mass": 52.98376278937215,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 82,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 13.982459112989938,
+          "final_mass": 60.531876510758956,
+          "piece_captures": 2,
+          "full_deaths": 0,
+          "wall_contact_frames": 1,
+          "executed_splits": 1,
+          "projectile_piece_captures": 1
+        },
+        {
+          "id": "player_5",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 13.049493215577995,
+          "final_mass": 21.407596155935213,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 887,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 13.678141217101436,
+          "final_mass": 27.968146973982925,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 312,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "ppo",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 15.415068417392932,
+          "diffusion": 13.523815175715225,
+          "heuristic": 13.588093813669088
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 16.41506841739293,
+          "diffusion": 14.023815175715225,
+          "heuristic": 14.754760480335754
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 16.66506841739293,
+          "diffusion": 15.023815175715225,
+          "heuristic": 15.754760480335754
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 17.16506841739293,
+          "diffusion": 15.523815175715225,
+          "heuristic": 16.921427147002422
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 17.912568417392933,
+          "diffusion": 16.273815175715225,
+          "heuristic": 17.71142714700243
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 19.162568417392933,
+          "diffusion": 17.25631517571523,
+          "heuristic": 17.66142714700244
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 19.912568417392933,
+          "diffusion": 17.74631517571523,
+          "heuristic": 18.11142680887578
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 20.896764888685624,
+          "diffusion": 18.69381517571524,
+          "heuristic": 18.22795252890713
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 21.643753705600552,
+          "diffusion": 19.611315175715255,
+          "heuristic": 18.67766252192514
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 23.121417506907772,
+          "diffusion": 20.311249320748693,
+          "heuristic": 18.79403976954494
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 23.55985153147966,
+          "diffusion": 20.75266107752823,
+          "heuristic": 19.895378872324407
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 24.538320876454552,
+          "diffusion": 21.21881970384569,
+          "heuristic": 20.79339442739321
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 25.26990722395467,
+          "diffusion": 21.193915318569264,
+          "heuristic": 21.024397959557984
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 25.5043828556758,
+          "diffusion": 22.602963309580744,
+          "heuristic": 21.254321110037537
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 26.21394754242855,
+          "diffusion": 22.529293966196274,
+          "heuristic": 21.483680857080298
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 26.38223265917228,
+          "diffusion": 22.9897501021303,
+          "heuristic": 21.878916026096306
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 27.02979449624921,
+          "diffusion": 23.16725546395044,
+          "heuristic": 22.597038052104576
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 28.67672526105273,
+          "diffusion": 23.381075301870226,
+          "heuristic": 22.625862736377915
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 29.82004948390444,
+          "diffusion": 24.06961418271293,
+          "heuristic": 22.509905083486
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 30.45999889284806,
+          "diffusion": 24.190792871604017,
+          "heuristic": 22.72389657937318
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 31.31715255362964,
+          "diffusion": 25.55282296330202,
+          "heuristic": 22.777841086058498
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 31.377014701268706,
+          "diffusion": 26.20279199192219,
+          "heuristic": 22.78673584263988
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 31.704057053159246,
+          "diffusion": 26.618714254797325,
+          "heuristic": 23.128927925107988
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 31.513124773795102,
+          "diffusion": 27.07010177669799,
+          "heuristic": 23.96864535096741
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 31.375422816896325,
+          "diffusion": 27.492248266065346,
+          "heuristic": 24.687261827207266
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 31.704711316424994,
+          "diffusion": 27.662923603155242,
+          "heuristic": 24.873008040841743
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 32.282993386791574,
+          "diffusion": 28.090369708343125,
+          "heuristic": 25.041286837599387
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 33.34924466102995,
+          "diffusion": 28.47327536550648,
+          "heuristic": 25.0430258267267
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 33.423272795812395,
+          "diffusion": 28.85937083310582,
+          "heuristic": 24.926207941881092
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 33.269706016039834,
+          "diffusion": 28.73550569101047,
+          "heuristic": 25.30840363066923
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 33.39639239439753,
+          "diffusion": 28.85173826253185,
+          "heuristic": 25.356494952975122
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 33.77101501154725,
+          "diffusion": 29.00684992417485,
+          "heuristic": 25.73684708072555
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 33.64567432107492,
+          "diffusion": 29.629406819535937,
+          "heuristic": 25.616340380591282
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 33.52092054552752,
+          "diffusion": 30.048818798822722,
+          "heuristic": 25.995101810409448
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 33.396749223622464,
+          "diffusion": 30.21645699942234,
+          "heuristic": 26.53779732662477
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 33.7299968204077,
+          "diffusion": 37.491576340613236,
+          "heuristic": 26.42615863503164
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 43.811805959980944,
+          "diffusion": 37.55469623682658,
+          "heuristic": 23.68312516387517
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 44.38130297900064,
+          "diffusion": 38.3586607278814,
+          "heuristic": 25.152365729336704
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 45.447052853010916,
+          "diffusion": 38.42257988457331,
+          "heuristic": 25.951608122967638
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 46.531256836058205,
+          "diffusion": 42.54563717452325,
+          "heuristic": 23.523839459043582
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 47.79886485327586,
+          "diffusion": 42.839991190584215,
+          "heuristic": 24.168976028087627
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 49.52622207613551,
+          "diffusion": 43.60131048975852,
+          "heuristic": 24.977561565156332
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 49.52892681886895,
+          "diffusion": 44.42390502199491,
+          "heuristic": 26.115245395309426
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 49.99386943138161,
+          "diffusion": 51.09450193998609,
+          "heuristic": 22.413651423804918
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 51.44419143306469,
+          "diffusion": 51.56040888868699,
+          "heuristic": 23.304920620974148
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 53.21974884181594,
+          "diffusion": 51.799565386997884,
+          "heuristic": 23.69333432905401
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 54.491169317317606,
+          "diffusion": 53.02183801256233,
+          "heuristic": 24.08030524465737
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 55.28811139357782,
+          "diffusion": 53.422054416948725,
+          "heuristic": 24.633008017446244
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 56.86797271808159,
+          "diffusion": 53.5631959388336,
+          "heuristic": 25.505389507738542
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 58.192307432531706,
+          "diffusion": 53.77959494541115,
+          "heuristic": 25.337879580211332
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 58.509420037042034,
+          "diffusion": 53.95037509442129,
+          "heuristic": 25.66992434995342
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 58.575286956475615,
+          "diffusion": 54.14811893128578,
+          "heuristic": 26.16740055135143
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 60.38944885549452,
+          "diffusion": 54.40464269502701,
+          "heuristic": 26.163545905127965
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 60.69314065372946,
+          "diffusion": 54.63709670877433,
+          "heuristic": 26.326200299784148
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 61.2443006567041,
+          "diffusion": 55.13211218769591,
+          "heuristic": 26.488340856808392
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 61.294164233571024,
+          "diffusion": 56.323102398198984,
+          "heuristic": 26.841508876730526
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 61.34380905455133,
+          "diffusion": 57.05516677726855,
+          "heuristic": 27.1683257101857
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 61.5862107415349,
+          "diffusion": 56.79703045716018,
+          "heuristic": 27.493805769405327
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 62.05417720535411,
+          "diffusion": 56.81936953152899,
+          "heuristic": 27.485052518562977
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 62.5062143513384,
+          "diffusion": 56.56514227415711,
+          "heuristic": 27.809895871734327
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.2765765341664345,
+          "median": 0.24306299999921066,
+          "p95": 0.4440479000017203
+        },
+        "diffusion": {
+          "mean": 0.49722257166654926,
+          "median": 0.05945849999733355,
+          "p95": 1.512395850004111
+        },
+        "heuristic": {
+          "mean": 0.019740147037102435,
+          "median": 0.01808300000050167,
+          "p95": 0.031167000003051726
+        }
+      },
+      "processing_step_ms": {
+        "mean": 12.967217116110971,
+        "p95": 17.730933000002835
+      }
+    },
+    {
+      "seed": 4100260,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 13.511141377623922,
+          "final_mass": 63.44132125889076,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 69,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 14.839281289273499,
+          "final_mass": 44.1385998920678,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 9,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 13.980886763221664,
+          "final_mass": 37.52527661154251,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 314,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 13.074747335770155,
+          "final_mass": 46.36438295702974,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 87,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 14.33600729489497,
+          "final_mass": 45.382388962063416,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 100,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 14.713219833329493,
+          "final_mass": 39.8430003733813,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 119,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 14.569424919223412,
+          "final_mass": 14.0,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 624,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "ppo",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 14.675211333448711,
+          "diffusion": 13.705377315332562,
+          "heuristic": 14.75451050525819
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 15.675211333448711,
+          "diffusion": 14.955377315332562,
+          "heuristic": 15.921177171924858
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 16.42521133344871,
+          "diffusion": 16.455377315332562,
+          "heuristic": 16.909510505258194
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 17.420211333448712,
+          "diffusion": 17.205377315332562,
+          "heuristic": 16.8595105052582
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 18.162711333448712,
+          "diffusion": 17.667877315332568,
+          "heuristic": 17.14784383859154
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 19.162503085060713,
+          "diffusion": 17.635377315332576,
+          "heuristic": 17.431177171924887
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 19.89214036984327,
+          "diffusion": 17.845377315332584,
+          "heuristic": 17.54784383859156
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 20.848091792342966,
+          "diffusion": 18.325377315332588,
+          "heuristic": 17.997788194636737
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 21.068105708666238,
+          "diffusion": 19.5078773153326,
+          "heuristic": 18.280941483713963
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 22.543500432057247,
+          "diffusion": 19.962852899458106,
+          "heuristic": 18.563689058981467
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 22.971325601807017,
+          "diffusion": 20.649511513423906,
+          "heuristic": 18.679673317330444
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 24.189346557295885,
+          "diffusion": 20.593440072041936,
+          "heuristic": 18.962430449606384
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 24.143066617834165,
+          "diffusion": 21.044678975779007,
+          "heuristic": 19.72139902058832
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 24.84006963870378,
+          "diffusion": 21.21021225974787,
+          "heuristic": 20.169961054682247
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 25.29765720347889,
+          "diffusion": 22.131427051851073,
+          "heuristic": 20.11825007487973
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 25.933909306683184,
+          "diffusion": 23.262409462980376,
+          "heuristic": 20.066682201569737
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 26.071116998151375,
+          "diffusion": 23.93838566615308,
+          "heuristic": 20.181702475245114
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 26.455432147610825,
+          "diffusion": 24.349921332881525,
+          "heuristic": 20.13004747661512
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 26.85981718718192,
+          "diffusion": 25.034614620524557,
+          "heuristic": 20.540192406550805
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 27.043734496074457,
+          "diffusion": 25.189845349342647,
+          "heuristic": 20.772061951496607
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 26.976969006412347,
+          "diffusion": 25.591536264559657,
+          "heuristic": 21.336396308083085
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 27.354170816074763,
+          "diffusion": 26.733458152911517,
+          "heuristic": 21.899278661101874
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 27.53837512243845,
+          "diffusion": 27.620159450174384,
+          "heuristic": 21.79519391859026
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 28.208128189446235,
+          "diffusion": 28.027111537993527,
+          "heuristic": 22.00803566147506
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 28.101973535296995,
+          "diffusion": 28.927431024199336,
+          "heuristic": 23.025344850567915
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 28.31544648860875,
+          "diffusion": 29.77793611090164,
+          "heuristic": 24.731271401005085
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 29.01989558135164,
+          "diffusion": 30.16696708159683,
+          "heuristic": 25.284182559719728
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 29.736609120950035,
+          "diffusion": 30.776195336395567,
+          "heuristic": 25.334038796832274
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 30.439723314065468,
+          "diffusion": 31.38965234561708,
+          "heuristic": 25.865657174913405
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 31.401761055908075,
+          "diffusion": 32.49556546888034,
+          "heuristic": 25.74854951829254
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 32.11060855419139,
+          "diffusion": 32.59794361255791,
+          "heuristic": 25.954779107160643
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 32.994952616004674,
+          "diffusion": 33.45795718400366,
+          "heuristic": 26.335950515427555
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 33.30435192642898,
+          "diffusion": 34.0743479068793,
+          "heuristic": 26.38359110247758
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 33.398039616163146,
+          "diffusion": 34.900905386561014,
+          "heuristic": 26.43085931141533
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 33.52459263446978,
+          "diffusion": 35.4543263129497,
+          "heuristic": 26.643831730493318
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 33.40065227901941,
+          "diffusion": 35.56043096821797,
+          "heuristic": 26.689956280615785
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 34.028426609369305,
+          "diffusion": 36.40976196388051,
+          "heuristic": 26.73627989699359
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 34.451307361397554,
+          "diffusion": 36.99726384011056,
+          "heuristic": 26.615800218578315
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 34.619790275702016,
+          "diffusion": 36.84707869485793,
+          "heuristic": 26.799091701127846
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 34.550663462597846,
+          "diffusion": 37.65277643948203,
+          "heuristic": 27.62757250910391
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 35.170552579498604,
+          "diffusion": 38.44491102878246,
+          "heuristic": 28.617821589038087
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 35.253657272119895,
+          "diffusion": 39.234538418164874,
+          "heuristic": 28.939556055501736
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 36.10155039332088,
+          "diffusion": 39.27818454882012,
+          "heuristic": 29.292881205496343
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 36.45923339608702,
+          "diffusion": 39.07410318631798,
+          "heuristic": 29.45818441832745
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 36.82320920942368,
+          "diffusion": 38.920917886280336,
+          "heuristic": 29.941573066169614
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 37.200936693324536,
+          "diffusion": 38.80832789645636,
+          "heuristic": 30.090874859526206
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 38.77381449018216,
+          "diffusion": 38.676354935004326,
+          "heuristic": 30.405930508590213
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 38.88135421997758,
+          "diffusion": 38.54002921243405,
+          "heuristic": 31.218133931690886
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 38.73450339579169,
+          "diffusion": 38.34451129599603,
+          "heuristic": 32.52161063889388
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 39.517270719042145,
+          "diffusion": 38.162443070793415,
+          "heuristic": 33.062726579553946
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 39.789401023423125,
+          "diffusion": 38.98636043369861,
+          "heuristic": 34.57717443998563
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 39.575562607531694,
+          "diffusion": 39.093130953888426,
+          "heuristic": 34.75478040830586
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 39.669444355823444,
+          "diffusion": 39.20682928010891,
+          "heuristic": 35.26446593927057
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 39.51602761994112,
+          "diffusion": 43.09380412536031,
+          "heuristic": 32.7691774803706
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 39.562853659000965,
+          "diffusion": 42.955524476405245,
+          "heuristic": 33.47124221939135
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 39.3775469442352,
+          "diffusion": 43.293841073362984,
+          "heuristic": 33.704641642037664
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 51.293464764970906,
+          "diffusion": 43.38427991031679,
+          "heuristic": 29.226919615196703
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 51.59960234328904,
+          "diffusion": 43.72364630535607,
+          "heuristic": 29.299979289424282
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 53.19508757568134,
+          "diffusion": 44.5513092729835,
+          "heuristic": 30.037643160831067
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 53.789960575479284,
+          "diffusion": 45.87338595954658,
+          "heuristic": 30.456092328307935
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.27147189805555727,
+          "median": 0.2381250000027535,
+          "p95": 0.42797470000266447
+        },
+        "diffusion": {
+          "mean": 0.49651857277784156,
+          "median": 0.05937499999220108,
+          "p95": 1.5213360500027306
+        },
+        "heuristic": {
+          "mean": 0.019397702592540454,
+          "median": 0.01779199999418779,
+          "p95": 0.03071105000032049
+        }
+      },
+      "processing_step_ms": {
+        "mean": 12.593214529444536,
+        "p95": 17.68537295000243
+      }
+    },
+    {
+      "seed": 4100297,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 13.666688226210775,
+          "final_mass": 53.40525176546776,
+          "piece_captures": 2,
+          "full_deaths": 0,
+          "wall_contact_frames": 20,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 14.923998698182448,
+          "final_mass": 56.2249664666581,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 0,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 14.452797752592076,
+          "final_mass": 16.31535131397702,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 0,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 14.784423348608733,
+          "final_mass": 21.871489622731378,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 678,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 13.354771646479994,
+          "final_mass": 40.06915233831233,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 82,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 14.120353103600966,
+          "final_mass": 62.673077302469125,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 0,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 13.558984857004567,
+          "final_mass": 40.40157515310394,
+          "piece_captures": 2,
+          "full_deaths": 0,
+          "wall_contact_frames": 335,
+          "executed_splits": 1,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "ppo",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 14.772175900891707,
+          "diffusion": 13.760729936345385,
+          "heuristic": 14.432068652735126
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 16.022175900891707,
+          "diffusion": 14.760729936345385,
+          "heuristic": 15.098735319401792
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 16.772175900891707,
+          "diffusion": 14.760729936345385,
+          "heuristic": 17.098735319401793
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 17.272175900891707,
+          "diffusion": 15.760729936345385,
+          "heuristic": 19.523684941357587
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 18.022175900891707,
+          "diffusion": 16.760729936345385,
+          "heuristic": 19.75659705338448
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 19.019675900891706,
+          "diffusion": 16.760729936345385,
+          "heuristic": 20.48934072323603
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 21.0193189915342,
+          "diffusion": 17.48322993634539,
+          "heuristic": 20.720673130105126
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 22.265452285557387,
+          "diffusion": 17.703229936345394,
+          "heuristic": 20.951755178496764
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 23.50829271025011,
+          "diffusion": 18.1732299363454,
+          "heuristic": 22.014052369187027
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 24.24603163142035,
+          "diffusion": 18.89822993634541,
+          "heuristic": 22.075164127797407
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 24.71387924848483,
+          "diffusion": 18.83572993634542,
+          "heuristic": 22.13611876660355
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 26.145482768907407,
+          "diffusion": 20.015580191295573,
+          "heuristic": 21.993972108780877
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 26.551037062072965,
+          "diffusion": 20.214607416611727,
+          "heuristic": 22.005486999776604
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 26.987626950522554,
+          "diffusion": 20.136185362855926,
+          "heuristic": 22.704478074429897
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 27.92363105634328,
+          "diffusion": 20.28290964053307,
+          "heuristic": 22.729537811184247
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 28.14778796203437,
+          "diffusion": 20.44212477419666,
+          "heuristic": 23.071848685869288
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 28.585624070859268,
+          "diffusion": 21.609503917570862,
+          "heuristic": 23.413663491956658
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 28.981586718966476,
+          "diffusion": 21.997904445414406,
+          "heuristic": 24.100465396859722
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 30.361669563642614,
+          "diffusion": 22.149565328873685,
+          "heuristic": 24.488453636957146
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 30.431244057037162,
+          "diffusion": 22.536274456604055,
+          "heuristic": 24.87495235404019
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 30.807332289443664,
+          "diffusion": 22.419681076754685,
+          "heuristic": 25.925101461870543
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 31.14677108115996,
+          "diffusion": 22.80302557440642,
+          "heuristic": 26.139949337440765
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 31.275029900526476,
+          "diffusion": 23.209831830807783,
+          "heuristic": 26.187994063874154
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 32.15636253807237,
+          "diffusion": 24.629268079826367,
+          "heuristic": 26.235710985444786
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 32.26534392314665,
+          "diffusion": 25.804395973609026,
+          "heuristic": 27.281000370847895
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 33.39147582863197,
+          "diffusion": 26.228974531853105,
+          "heuristic": 28.278162026108816
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 34.244027124123434,
+          "diffusion": 27.338281372966954,
+          "heuristic": 28.766449874604984
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 35.100316780793094,
+          "diffusion": 27.497102562477536,
+          "heuristic": 29.086306978367165
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 35.144262964889805,
+          "diffusion": 27.613136034730104,
+          "heuristic": 29.072045305415553
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 35.18773930614864,
+          "diffusion": 27.454430771309298,
+          "heuristic": 29.224437169748104
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 35.23085761477677,
+          "diffusion": 28.05967679451652,
+          "heuristic": 29.04373141649751
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 35.29660668161975,
+          "diffusion": 28.90320728521884,
+          "heuristic": 28.863762796187903
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 35.14204947700408,
+          "diffusion": 29.280802266253595,
+          "heuristic": 28.85077100848805
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 35.244737376490015,
+          "diffusion": 29.673717847145134,
+          "heuristic": 31.733991347565915
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 35.31544646720684,
+          "diffusion": 30.569066702509556,
+          "heuristic": 32.04618908959511
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 35.92284728559224,
+          "diffusion": 30.49805802342955,
+          "heuristic": 32.50508548778642
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 35.712948790719885,
+          "diffusion": 30.404883233234422,
+          "heuristic": 32.46203926312243
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 36.75242786842186,
+          "diffusion": 30.30461255026166,
+          "heuristic": 32.25332534883706
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 37.78745209653306,
+          "diffusion": 30.44929255993676,
+          "heuristic": 32.87801539185934
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 38.31652580160466,
+          "diffusion": 30.797984640803143,
+          "heuristic": 33.33449404555865
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 38.84795142540616,
+          "diffusion": 30.696018684885395,
+          "heuristic": 34.95319102587974
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 39.15330803012789,
+          "diffusion": 31.305944115106783,
+          "heuristic": 35.71037330693826
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 48.62065667662452,
+          "diffusion": 31.458900135936034,
+          "heuristic": 27.00079572357581
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 48.917662222439375,
+          "diffusion": 32.124362970599776,
+          "heuristic": 27.323482602694202
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 49.46183302929116,
+          "diffusion": 32.28620860415106,
+          "heuristic": 27.145483241440648
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 49.75422608951649,
+          "diffusion": 32.12536647469494,
+          "heuristic": 27.681481190279808
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 49.79627741953796,
+          "diffusion": 32.960397192444816,
+          "heuristic": 27.718171505211497
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 51.83430714347396,
+          "diffusion": 33.29070171433668,
+          "heuristic": 28.08817155565329
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 52.36363171892893,
+          "diffusion": 33.903553875334,
+          "heuristic": 28.241602500848348
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 52.88983964378498,
+          "diffusion": 34.052208753297606,
+          "heuristic": 29.096145080614914
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 53.662622883031794,
+          "diffusion": 33.95811909463502,
+          "heuristic": 29.272979460256693
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 54.192938000443036,
+          "diffusion": 35.08511696034853,
+          "heuristic": 29.93124601152181
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 54.745792387891626,
+          "diffusion": 35.19342090522748,
+          "heuristic": 31.499235091967105
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 55.7583306599969,
+          "diffusion": 36.02896617983927,
+          "heuristic": 32.18738965668602
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 57.218615325905816,
+          "diffusion": 37.15041642331979,
+          "heuristic": 33.36974396483944
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 57.14900255294619,
+          "diffusion": 37.772645197640955,
+          "heuristic": 33.71541723970359
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 58.07093268816598,
+          "diffusion": 46.548266926733646,
+          "heuristic": 25.995122612722525
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 59.00603857454834,
+          "diffusion": 46.613271745650025,
+          "heuristic": 26.87462189685239
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 58.96078017844626,
+          "diffusion": 46.440358582914655,
+          "heuristic": 27.417876654740592
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 59.449021884563614,
+          "diffusion": 46.737202051890044,
+          "heuristic": 26.196138696604113
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.2818195708334217,
+          "median": 0.24664549999187102,
+          "p95": 0.44813335000526416
+        },
+        "diffusion": {
+          "mean": 0.5177649633332848,
+          "median": 0.06137500000136242,
+          "p95": 1.5442086500058847
+        },
+        "heuristic": {
+          "mean": 0.019213641851907656,
+          "median": 0.018208000000186075,
+          "p95": 0.02866599999151731
+        }
+      },
+      "processing_step_ms": {
+        "mean": 12.73625756944442,
+        "p95": 16.21187355000302
+      }
+    },
+    {
+      "seed": 4100334,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 13.689415172623972,
+          "final_mass": 21.474748009362862,
+          "piece_captures": 0,
+          "full_deaths": 2,
+          "wall_contact_frames": 480,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 13.322949492766515,
+          "final_mass": 53.894267382872115,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 0,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 14.022389132808268,
+          "final_mass": 24.268810674554572,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 1,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 14.720123725878505,
+          "final_mass": 31.798197883924136,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 75,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 13.449450450351645,
+          "final_mass": 98.39318506171631,
+          "piece_captures": 3,
+          "full_deaths": 0,
+          "wall_contact_frames": 5,
+          "executed_splits": 1,
+          "projectile_piece_captures": 1
+        },
+        {
+          "id": "player_5",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 14.567664694696967,
+          "final_mass": 37.99429854848193,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 4,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 14.069977610699036,
+          "final_mass": 30.316094694439595,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 70,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "ppo",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 13.985919791579956,
+          "diffusion": 14.695307093731742,
+          "heuristic": 14.493172169733837
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 14.985919791579956,
+          "diffusion": 15.44530709373174,
+          "heuristic": 15.993172169733839
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 16.235919791579956,
+          "diffusion": 15.69530709373174,
+          "heuristic": 16.32650550306717
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 16.735919791579956,
+          "diffusion": 16.195307093731742,
+          "heuristic": 17.30317216973384
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 17.983419791579955,
+          "diffusion": 16.445307093731742,
+          "heuristic": 17.80317216973384
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 18.983388438210255,
+          "diffusion": 16.945307093731742,
+          "heuristic": 17.80317216973384
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 19.97754628074118,
+          "diffusion": 17.910307093731745,
+          "heuristic": 18.136505503067173
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 21.22515861959709,
+          "diffusion": 18.365307093731758,
+          "heuristic": 18.136505503067173
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 22.22096597550295,
+          "diffusion": 18.595307093731762,
+          "heuristic": 18.136505503067173
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 22.964781394515526,
+          "diffusion": 18.59280709373176,
+          "heuristic": 18.136505503067173
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 24.185194414374685,
+          "diffusion": 18.820307093731763,
+          "heuristic": 18.30317216973384
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 24.350652632195715,
+          "diffusion": 19.060307093731765,
+          "heuristic": 18.75817216973385
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 24.30633411146399,
+          "diffusion": 19.285130187512006,
+          "heuristic": 19.013172169733867
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 24.51184382374042,
+          "diffusion": 20.151869374747925,
+          "heuristic": 19.413085208496895
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 24.72610564681011,
+          "diffusion": 21.050377782332554,
+          "heuristic": 19.812397310776063
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 24.902747703883833,
+          "diffusion": 21.979670987476027,
+          "heuristic": 20.044650870612628
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 26.317339558639024,
+          "diffusion": 22.654708136674465,
+          "heuristic": 20.253704043966426
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 26.455798427964012,
+          "diffusion": 22.887675934631723,
+          "heuristic": 20.269524182848592
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 26.311530707981383,
+          "diffusion": 23.567201076574616,
+          "heuristic": 20.78477893040216
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 26.739950682321904,
+          "diffusion": 24.471372482878397,
+          "heuristic": 21.155748336377613
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 27.605314275865926,
+          "diffusion": 25.12545777097251,
+          "heuristic": 22.70458047652272
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 27.44418327486165,
+          "diffusion": 25.33836114854831,
+          "heuristic": 22.763969752275525
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 27.321057675481025,
+          "diffusion": 25.759836880463794,
+          "heuristic": 23.156303188683008
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 27.722377333893235,
+          "diffusion": 26.409518573848104,
+          "heuristic": 23.04822782735467
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 27.605687417899784,
+          "diffusion": 27.03160738169129,
+          "heuristic": 23.10687579497909
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 36.372732713299904,
+          "diffusion": 27.18679159095477,
+          "heuristic": 20.851067440298134
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 37.47049073113559,
+          "diffusion": 27.337133270906705,
+          "heuristic": 20.958722240976368
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 38.79327554385564,
+          "diffusion": 27.990624541715462,
+          "heuristic": 20.857973943588473
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 39.32519645153802,
+          "diffusion": 28.3992193609254,
+          "heuristic": 21.92370039564022
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 39.63366544924557,
+          "diffusion": 28.599477185506615,
+          "heuristic": 22.030448978636354
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 40.66917990799933,
+          "diffusion": 29.02625939873962,
+          "heuristic": 22.602719413936637
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 41.46616195217074,
+          "diffusion": 29.91945280885207,
+          "heuristic": 23.514731446988918
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 42.97294435540489,
+          "diffusion": 30.788692226073383,
+          "heuristic": 24.236021498475093
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 43.72499955358274,
+          "diffusion": 31.123143698508315,
+          "heuristic": 24.949885906875718
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 44.53773912863578,
+          "diffusion": 31.4639917207095,
+          "heuristic": 25.37489437738995
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 44.78320453255563,
+          "diffusion": 32.08576274586515,
+          "heuristic": 25.46924242906518
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 44.77769136050105,
+          "diffusion": 32.965818938948544,
+          "heuristic": 25.3968451439176
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 46.1944187696415,
+          "diffusion": 34.061044667194466,
+          "heuristic": 25.824739144463035
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 46.719114188553085,
+          "diffusion": 33.93708799509109,
+          "heuristic": 26.37428140848874
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 47.25775417889065,
+          "diffusion": 35.026752302372394,
+          "heuristic": 26.75144030037593
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 48.34709955466176,
+          "diffusion": 35.89091839178242,
+          "heuristic": 27.126071825266077
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 49.16486505516541,
+          "diffusion": 35.74085157254203,
+          "heuristic": 27.808516942802203
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 49.749876217158885,
+          "diffusion": 36.82169131860199,
+          "heuristic": 27.629759157498682
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 49.78282242948469,
+          "diffusion": 37.169014865362385,
+          "heuristic": 28.11729451417261
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 49.995720494062965,
+          "diffusion": 37.05788666964746,
+          "heuristic": 27.936681685883766
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 50.17985602871004,
+          "diffusion": 37.90121974310507,
+          "heuristic": 27.92331868232839
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 50.11610094509919,
+          "diffusion": 38.57180809479004,
+          "heuristic": 28.243838188035806
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 50.336876288402,
+          "diffusion": 38.737407359769435,
+          "heuristic": 28.06492901099439
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 50.77189247614385,
+          "diffusion": 38.65078967128663,
+          "heuristic": 27.88661965985833
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 50.95477526995793,
+          "diffusion": 38.77913727464215,
+          "heuristic": 28.04205226029787
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 52.398616572128674,
+          "diffusion": 38.88935016442188,
+          "heuristic": 28.197537326554542
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 52.567401649605536,
+          "diffusion": 38.78710026357972,
+          "heuristic": 28.353072706858995
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 53.97613041781157,
+          "diffusion": 39.93898231126807,
+          "heuristic": 28.50797784466666
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 53.86533940282123,
+          "diffusion": 40.29513729162837,
+          "heuristic": 28.32936959715057
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 61.820610316676536,
+          "diffusion": 41.202942772815106,
+          "heuristic": 26.169451861801903
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 61.536216534259,
+          "diffusion": 42.55278172159359,
+          "heuristic": 26.876209038265312
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 61.530090580808775,
+          "diffusion": 42.88198382796324,
+          "heuristic": 26.893515573049353
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 61.321681821033145,
+          "diffusion": 44.93063657768475,
+          "heuristic": 27.550237837082218
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 61.072444513019576,
+          "diffusion": 45.445031375966266,
+          "heuristic": 28.039903163360037
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 61.33099786813544,
+          "diffusion": 45.94428296567702,
+          "heuristic": 27.8630135292422
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.2859450788888138,
+          "median": 0.25781200000807303,
+          "p95": 0.4476753500028962
+        },
+        "diffusion": {
+          "mean": 0.5361120208334884,
+          "median": 0.06164549999709834,
+          "p95": 1.5474062499876593
+        },
+        "heuristic": {
+          "mean": 0.01929318907399504,
+          "median": 0.018541000002869623,
+          "p95": 0.0284159999921485
+        }
+      },
+      "processing_step_ms": {
+        "mean": 12.5766818033334,
+        "p95": 15.867048199996958
+      }
+    },
+    {
+      "seed": 4100371,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 14.621874845290199,
+          "final_mass": 41.78534523223515,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 25,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_1",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 14.810194604023513,
+          "final_mass": 33.2245127503406,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 383,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 14.108870475727478,
+          "final_mass": 40.78134434656741,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 10,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 14.054623029375128,
+          "final_mass": 50.788626718788485,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 1,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 13.14928927600424,
+          "final_mass": 17.9950000000001,
+          "piece_captures": 0,
+          "full_deaths": 1,
+          "wall_contact_frames": 542,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 13.544516495660423,
+          "final_mass": 30.112255449948112,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 29,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 14.481688753887518,
+          "final_mass": 37.0140173313249,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 0,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "ppo",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 14.331746752551304,
+          "diffusion": 14.55178179958886,
+          "heuristic": 13.83466679189606
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 15.081746752551304,
+          "diffusion": 15.55178179958886,
+          "heuristic": 14.168000125229392
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 16.081746752551304,
+          "diffusion": 16.05178179958886,
+          "heuristic": 14.668000125229392
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 17.081746752551304,
+          "diffusion": 16.30178179958886,
+          "heuristic": 16.001333458562726
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 18.081746752551304,
+          "diffusion": 17.05178179958886,
+          "heuristic": 16.826333458562726
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 18.58173005262573,
+          "diffusion": 18.271781799588865,
+          "heuristic": 18.109382438988796
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 20.581020748706074,
+          "diffusion": 18.49928179958887,
+          "heuristic": 18.05870516921737
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 21.571567307928476,
+          "diffusion": 19.681781799588883,
+          "heuristic": 18.34148066836773
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 22.067160261149738,
+          "diffusion": 20.36399533325925,
+          "heuristic": 18.77569614378999
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 23.31044507859825,
+          "diffusion": 21.035399035334972,
+          "heuristic": 18.89165018289926
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 24.038423744486593,
+          "diffusion": 21.72707325300922,
+          "heuristic": 18.841058391373494
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 25.961782302003172,
+          "diffusion": 21.930748492550244,
+          "heuristic": 18.790582397638918
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 28.363964964804104,
+          "diffusion": 21.851524630113502,
+          "heuristic": 19.700191495092437
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 28.224714035217445,
+          "diffusion": 22.241344460700503,
+          "heuristic": 20.565454914265953
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 28.375983746035622,
+          "diffusion": 22.87535922614434,
+          "heuristic": 21.2822015870311
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 28.807955680561392,
+          "diffusion": 23.807259190748308,
+          "heuristic": 21.989110102829063
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 29.190226693535465,
+          "diffusion": 24.19635958366414,
+          "heuristic": 22.879245528338604
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 30.816250399578372,
+          "diffusion": 25.360920975413208,
+          "heuristic": 23.553957425149378
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 30.954176272013214,
+          "diffusion": 26.486724314401553,
+          "heuristic": 23.586052245994804
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 30.8415593358701,
+          "diffusion": 26.885832355650475,
+          "heuristic": 24.14221676163075
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 31.233638427659194,
+          "diffusion": 27.53807854596187,
+          "heuristic": 24.320859630384877
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 32.18227724598513,
+          "diffusion": 27.967678498700533,
+          "heuristic": 24.658113856043116
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 32.56787424844197,
+          "diffusion": 28.151584096682754,
+          "heuristic": 24.827595028469883
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 32.410673427178835,
+          "diffusion": 29.038781694981424,
+          "heuristic": 25.329616012424037
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 33.778426673338174,
+          "diffusion": 29.370021726598196,
+          "heuristic": 25.867959911289393
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 34.32690747274666,
+          "diffusion": 29.718342067212696,
+          "heuristic": 25.877214110050573
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 34.374118637571414,
+          "diffusion": 30.103075288579003,
+          "heuristic": 26.20877619624186
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 34.42027568110167,
+          "diffusion": 30.507884353293704,
+          "heuristic": 26.206489110325325
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 34.21717319737281,
+          "diffusion": 30.931937553954263,
+          "heuristic": 26.370576063788338
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 34.26436447122803,
+          "diffusion": 31.073501991978702,
+          "heuristic": 26.367488020365005
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 34.31127214029708,
+          "diffusion": 31.476539346865334,
+          "heuristic": 26.19818539598047
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 34.108676644598425,
+          "diffusion": 31.64118733478651,
+          "heuristic": 26.69555256608575
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 34.90536841323593,
+          "diffusion": 31.563062228915314,
+          "heuristic": 27.02475975228803
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 35.19893392340397,
+          "diffusion": 31.946521298111442,
+          "heuristic": 27.01930976160732
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 44.20268201094437,
+          "diffusion": 32.11427094956188,
+          "heuristic": 23.38466782083836
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 44.73111778460256,
+          "diffusion": 32.01902450567002,
+          "heuristic": 24.098404483226926
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 44.74350366320985,
+          "diffusion": 32.41067189230841,
+          "heuristic": 24.311929561595488
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 44.488559710814286,
+          "diffusion": 32.54894476277167,
+          "heuristic": 24.359210867541805
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 44.484342892961145,
+          "diffusion": 32.92285737050469,
+          "heuristic": 24.24031217611173
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 44.23084991757127,
+          "diffusion": 33.347233881414354,
+          "heuristic": 24.621692173713214
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 43.97868989707018,
+          "diffusion": 33.241456525228074,
+          "heuristic": 25.168852244796145
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 43.976703598059395,
+          "diffusion": 33.29847824782646,
+          "heuristic": 25.382193927864005
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 43.813129797640066,
+          "diffusion": 34.38471442847406,
+          "heuristic": 25.760774562745226
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 43.83244868334555,
+          "diffusion": 35.04737969743339,
+          "heuristic": 26.304566820376678
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 44.08116136866944,
+          "diffusion": 35.67529862800971,
+          "heuristic": 26.679675447934954
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 44.34128939386423,
+          "diffusion": 37.05718260508698,
+          "heuristic": 26.887091186562376
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 44.85796480568077,
+          "diffusion": 37.129095314454986,
+          "heuristic": 26.761001389508248
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 45.388053639671995,
+          "diffusion": 38.41619545505212,
+          "heuristic": 26.76378999839106
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 45.37825625833768,
+          "diffusion": 38.25644469960237,
+          "heuristic": 26.588785669504244
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 45.1197483752976,
+          "diffusion": 38.80917216964804,
+          "heuristic": 26.58052193839097
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 44.86760113303188,
+          "diffusion": 38.88693052113465,
+          "heuristic": 26.42589689939705
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 45.6358252731832,
+          "diffusion": 38.69489465553653,
+          "heuristic": 26.301804518845017
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 45.625703019616694,
+          "diffusion": 39.25432658357611,
+          "heuristic": 27.008747294464158
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 46.621579282230925,
+          "diffusion": 39.15271503862736,
+          "heuristic": 27.380716347124757
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 46.44397913296109,
+          "diffusion": 39.22374067545641,
+          "heuristic": 27.418598925523696
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 46.23741885319012,
+          "diffusion": 39.26648936811097,
+          "heuristic": 27.45677473293996
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 46.00199859564688,
+          "diffusion": 39.29934846737738,
+          "heuristic": 27.328198199727456
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 46.00666797507462,
+          "diffusion": 39.584399400762415,
+          "heuristic": 27.36642621688129
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 46.03410575905545,
+          "diffusion": 39.36411243978682,
+          "heuristic": 27.238226344273745
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 45.78498553267795,
+          "diffusion": 39.399681281780026,
+          "heuristic": 27.11058940009627
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.3022577075000438,
+          "median": 0.26435400000224263,
+          "p95": 0.478906249999511
+        },
+        "diffusion": {
+          "mean": 0.5439640063890275,
+          "median": 0.06404100000168,
+          "p95": 1.620717300008323
+        },
+        "heuristic": {
+          "mean": 0.020989821110983138,
+          "median": 0.02037500000540149,
+          "p95": 0.02941700000747005
+        }
+      },
+      "processing_step_ms": {
+        "mean": 12.827359201666708,
+        "p95": 15.640527400015003
+      }
+    },
+    {
+      "seed": 4100408,
+      "players": [
+        {
+          "id": "player_0",
+          "group": "heuristic",
+          "name": "RULE-HUNTER",
+          "initial_mass": 14.94672400081928,
+          "final_mass": 109.64179223566643,
+          "piece_captures": 6,
+          "full_deaths": 0,
+          "wall_contact_frames": 435,
+          "executed_splits": 4,
+          "projectile_piece_captures": 1
+        },
+        {
+          "id": "player_1",
+          "group": "heuristic",
+          "name": "RULE-SURVIVOR",
+          "initial_mass": 13.698579757054343,
+          "final_mass": 32.94705474045255,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 0,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_2",
+          "group": "diffusion",
+          "name": "DIFF-2",
+          "initial_mass": 13.352171156274506,
+          "final_mass": 50.620893566586574,
+          "piece_captures": 1,
+          "full_deaths": 0,
+          "wall_contact_frames": 192,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_3",
+          "group": "diffusion",
+          "name": "DIFF-1",
+          "initial_mass": 13.941751678012137,
+          "final_mass": 16.5,
+          "piece_captures": 0,
+          "full_deaths": 3,
+          "wall_contact_frames": 189,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_4",
+          "group": "ppo",
+          "name": "PPO-2",
+          "initial_mass": 13.024052388700605,
+          "final_mass": 31.04143713328799,
+          "piece_captures": 0,
+          "full_deaths": 0,
+          "wall_contact_frames": 3,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_5",
+          "group": "ppo",
+          "name": "PPO-1",
+          "initial_mass": 13.352416727359659,
+          "final_mass": 26.873459346534545,
+          "piece_captures": 0,
+          "full_deaths": 2,
+          "wall_contact_frames": 44,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        },
+        {
+          "id": "player_6",
+          "group": "heuristic",
+          "name": "RULE-APEX",
+          "initial_mass": 13.601737314343746,
+          "final_mass": 15.0,
+          "piece_captures": 0,
+          "full_deaths": 2,
+          "wall_contact_frames": 1281,
+          "executed_splits": 0,
+          "projectile_piece_captures": 0
+        }
+      ],
+      "winner_group": "heuristic",
+      "timeline": [
+        {
+          "seconds": 1.0,
+          "ppo": 13.438234558030132,
+          "diffusion": 13.646961417143322,
+          "heuristic": 14.249013690739124
+        },
+        {
+          "seconds": 2.0,
+          "ppo": 13.938234558030132,
+          "diffusion": 14.146961417143322,
+          "heuristic": 15.082347024072456
+        },
+        {
+          "seconds": 3.0,
+          "ppo": 14.688234558030132,
+          "diffusion": 15.146961417143322,
+          "heuristic": 16.3706803574058
+        },
+        {
+          "seconds": 4.0,
+          "ppo": 15.188234558030132,
+          "diffusion": 15.646961417143322,
+          "heuristic": 17.820236528717334
+        },
+        {
+          "seconds": 5.0,
+          "ppo": 16.438234558030132,
+          "diffusion": 16.146961417143324,
+          "heuristic": 18.10277381043444
+        },
+        {
+          "seconds": 6.0,
+          "ppo": 17.188234558030132,
+          "diffusion": 16.896961417143324,
+          "heuristic": 19.05025071926791
+        },
+        {
+          "seconds": 7.0,
+          "ppo": 18.39823455803014,
+          "diffusion": 17.836961417143335,
+          "heuristic": 23.35483231977996
+        },
+        {
+          "seconds": 8.0,
+          "ppo": 19.322963571693645,
+          "diffusion": 19.0160277727878,
+          "heuristic": 23.563187670416102
+        },
+        {
+          "seconds": 9.0,
+          "ppo": 19.69745458691019,
+          "diffusion": 19.198203894533656,
+          "heuristic": 24.304898496712
+        },
+        {
+          "seconds": 10.0,
+          "ppo": 20.061366313869406,
+          "diffusion": 19.88736382681605,
+          "heuristic": 25.030277252828327
+        },
+        {
+          "seconds": 11.0,
+          "ppo": 20.1844522321797,
+          "diffusion": 20.073194262399657,
+          "heuristic": 25.40279437796079
+        },
+        {
+          "seconds": 12.0,
+          "ppo": 20.052488369942708,
+          "diffusion": 20.528859243291283,
+          "heuristic": 25.804866399738188
+        },
+        {
+          "seconds": 13.0,
+          "ppo": 20.237814014755756,
+          "diffusion": 24.87785991746257,
+          "heuristic": 25.891303878154144
+        },
+        {
+          "seconds": 14.0,
+          "ppo": 18.081587206906736,
+          "diffusion": 25.808230203359876,
+          "heuristic": 30.489793347514166
+        },
+        {
+          "seconds": 15.0,
+          "ppo": 19.827090691441974,
+          "diffusion": 26.263879907956206,
+          "heuristic": 31.407096913079187
+        },
+        {
+          "seconds": 16.0,
+          "ppo": 20.320900070119986,
+          "diffusion": 26.46412558386194,
+          "heuristic": 31.978454103797862
+        },
+        {
+          "seconds": 17.0,
+          "ppo": 20.518645336376373,
+          "diffusion": 26.396545623928528,
+          "heuristic": 31.88415154375024
+        },
+        {
+          "seconds": 18.0,
+          "ppo": 20.686127309841858,
+          "diffusion": 27.59606014248326,
+          "heuristic": 31.956401407009537
+        },
+        {
+          "seconds": 19.0,
+          "ppo": 20.603518847374247,
+          "diffusion": 28.3130495839546,
+          "heuristic": 31.89264328087394
+        },
+        {
+          "seconds": 20.0,
+          "ppo": 20.53367381236732,
+          "diffusion": 29.022521003721774,
+          "heuristic": 31.87305705739905
+        },
+        {
+          "seconds": 21.0,
+          "ppo": 20.451608844004493,
+          "diffusion": 29.478321933205343,
+          "heuristic": 32.04732236064245
+        },
+        {
+          "seconds": 22.0,
+          "ppo": 20.652241720683968,
+          "diffusion": 29.433331103084758,
+          "heuristic": 32.71954036227928
+        },
+        {
+          "seconds": 23.0,
+          "ppo": 20.819990874009584,
+          "diffusion": 28.13857051499974,
+          "heuristic": 37.03515920977114
+        },
+        {
+          "seconds": 24.0,
+          "ppo": 20.78023143870396,
+          "diffusion": 28.59185480550822,
+          "heuristic": 37.17577586954874
+        },
+        {
+          "seconds": 25.0,
+          "ppo": 20.73561229344512,
+          "diffusion": 29.044995013675855,
+          "heuristic": 37.60063335897797
+        },
+        {
+          "seconds": 26.0,
+          "ppo": 19.413696439208344,
+          "diffusion": 29.497039722485766,
+          "heuristic": 42.63748621021992
+        },
+        {
+          "seconds": 27.0,
+          "ppo": 19.60374821387245,
+          "diffusion": 30.94786076145578,
+          "heuristic": 42.692140939619726
+        },
+        {
+          "seconds": 28.0,
+          "ppo": 19.531400570192496,
+          "diffusion": 31.146541556602024,
+          "heuristic": 42.4157057313519
+        },
+        {
+          "seconds": 29.0,
+          "ppo": 19.496753938525963,
+          "diffusion": 31.344394857679497,
+          "heuristic": 43.135721846697415
+        },
+        {
+          "seconds": 30.0,
+          "ppo": 19.41481936580386,
+          "diffusion": 31.741572436355554,
+          "heuristic": 43.02091641341311
+        },
+        {
+          "seconds": 31.0,
+          "ppo": 19.61812552345373,
+          "diffusion": 32.11470688271058,
+          "heuristic": 43.903187976990374
+        },
+        {
+          "seconds": 32.0,
+          "ppo": 19.541640533546502,
+          "diffusion": 32.47752263782008,
+          "heuristic": 44.308688191636605
+        },
+        {
+          "seconds": 33.0,
+          "ppo": 19.510303306810943,
+          "diffusion": 32.797982810762235,
+          "heuristic": 44.39432001390558
+        },
+        {
+          "seconds": 34.0,
+          "ppo": 19.439189174084795,
+          "diffusion": 33.594361906615774,
+          "heuristic": 44.48009922367487
+        },
+        {
+          "seconds": 35.0,
+          "ppo": 19.383248841887543,
+          "diffusion": 33.4410673659245,
+          "heuristic": 44.23127514716203
+        },
+        {
+          "seconds": 36.0,
+          "ppo": 19.31005930426828,
+          "diffusion": 34.02446269057238,
+          "heuristic": 44.15040747418084
+        },
+        {
+          "seconds": 37.0,
+          "ppo": 19.247120053356355,
+          "diffusion": 34.84693743108847,
+          "heuristic": 43.90470904068388
+        },
+        {
+          "seconds": 38.0,
+          "ppo": 20.241288627424794,
+          "diffusion": 34.982675973594056,
+          "heuristic": 43.66157040246332
+        },
+        {
+          "seconds": 39.0,
+          "ppo": 21.455138742479225,
+          "diffusion": 36.08590308247798,
+          "heuristic": 43.50760210700156
+        },
+        {
+          "seconds": 40.0,
+          "ppo": 21.853287626881727,
+          "diffusion": 36.1508980869353,
+          "heuristic": 44.27751138928607
+        },
+        {
+          "seconds": 41.0,
+          "ppo": 21.771562952772207,
+          "diffusion": 35.94659642199696,
+          "heuristic": 44.54211040640104
+        },
+        {
+          "seconds": 42.0,
+          "ppo": 22.122354331290317,
+          "diffusion": 35.986937299970485,
+          "heuristic": 44.304657671148426
+        },
+        {
+          "seconds": 43.0,
+          "ppo": 22.245169987362328,
+          "diffusion": 36.52624472700667,
+          "heuristic": 44.56749580587873
+        },
+        {
+          "seconds": 44.0,
+          "ppo": 22.610574802481807,
+          "diffusion": 37.10772524225571,
+          "heuristic": 44.66197041455453
+        },
+        {
+          "seconds": 45.0,
+          "ppo": 22.458668059806527,
+          "diffusion": 37.65848654477891,
+          "heuristic": 44.25927357158381
+        },
+        {
+          "seconds": 46.0,
+          "ppo": 22.312134685504056,
+          "diffusion": 37.94963821267293,
+          "heuristic": 44.1917190694509
+        },
+        {
+          "seconds": 47.0,
+          "ppo": 22.65528074829656,
+          "diffusion": 37.73910711062343,
+          "heuristic": 44.124498784221636
+        },
+        {
+          "seconds": 48.0,
+          "ppo": 23.287709867814414,
+          "diffusion": 37.534608029639614,
+          "heuristic": 43.89274478107481
+        },
+        {
+          "seconds": 49.0,
+          "ppo": 23.645788549801686,
+          "diffusion": 37.32358726340828,
+          "heuristic": 43.66293620403513
+        },
+        {
+          "seconds": 50.0,
+          "ppo": 25.00824371286139,
+          "diffusion": 37.12359142459623,
+          "heuristic": 43.27039752656606
+        },
+        {
+          "seconds": 51.0,
+          "ppo": 25.463110427012637,
+          "diffusion": 31.72825665621514,
+          "heuristic": 49.15533925947259
+        },
+        {
+          "seconds": 52.0,
+          "ppo": 25.880744121394958,
+          "diffusion": 32.12731693184176,
+          "heuristic": 49.34839587474733
+        },
+        {
+          "seconds": 53.0,
+          "ppo": 25.713492700865196,
+          "diffusion": 32.984578911533006,
+          "heuristic": 49.0283298900819
+        },
+        {
+          "seconds": 54.0,
+          "ppo": 27.294673677645203,
+          "diffusion": 33.111661190966416,
+          "heuristic": 48.87919098605733
+        },
+        {
+          "seconds": 55.0,
+          "ppo": 28.118760728990512,
+          "diffusion": 33.23696078215694,
+          "heuristic": 48.567157861930156
+        },
+        {
+          "seconds": 56.0,
+          "ppo": 28.513104620039712,
+          "diffusion": 33.10050477499966,
+          "heuristic": 48.471867060184714
+        },
+        {
+          "seconds": 57.0,
+          "ppo": 28.704339111437932,
+          "diffusion": 32.96481196429288,
+          "heuristic": 48.71263786130749
+        },
+        {
+          "seconds": 58.0,
+          "ppo": 29.049518114864867,
+          "diffusion": 33.08234080797547,
+          "heuristic": 49.25258592175868
+        },
+        {
+          "seconds": 59.0,
+          "ppo": 28.869783861975115,
+          "diffusion": 33.44545542889986,
+          "heuristic": 52.44980316776098
+        },
+        {
+          "seconds": 60.0,
+          "ppo": 28.957448239911265,
+          "diffusion": 33.56044678329329,
+          "heuristic": 52.52961565870633
+        }
+      ],
+      "latency_ms": {
+        "ppo": {
+          "mean": 0.3051034477778695,
+          "median": 0.26672900000335176,
+          "p95": 0.4920124999813424
+        },
+        "diffusion": {
+          "mean": 0.5584512041667327,
+          "median": 0.06725000000074033,
+          "p95": 1.6172711500061603
+        },
+        "heuristic": {
+          "mean": 0.020918391666634655,
+          "median": 0.018666999999084055,
+          "p95": 0.03266600000983999
+        }
+      },
+      "processing_step_ms": {
+        "mean": 13.928198580555863,
+        "p95": 17.138081250016057
+      }
+    }
+  ]
+}

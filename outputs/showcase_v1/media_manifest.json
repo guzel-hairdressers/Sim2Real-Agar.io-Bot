@@ -1,0 +1,58 @@
+{
+  "assets": {
+    "split_decisions.mp4": {
+      "bytes": 117678,
+      "sha256": "584de53ede2ff9954dd11cbe76294669d2e65440be08156975a8aa44ab608557"
+    },
+    "overview.png": {
+      "bytes": 69349,
+      "sha256": "942c8888bd86909efd64456f9d873f45da95f39a36737ee51b8ecfe69d4d85f1"
+    },
+    "split_decisions.gif": {
+      "bytes": 400446,
+      "sha256": "2101a080cac141224348e33127c14c06005b8809ae76f96afc0c66ba1448314c"
+    },
+    "benchmarks.png": {
+      "bytes": 255150,
+      "sha256": "e7a3201a8c8eeb5d56b427e87b2abbf5f2689eb224c3942bf2ee7a8ba8638d39"
+    },
+    "local_sensing.png": {
+      "bytes": 69258,
+      "sha256": "737e6ac0ee42b33ba1cf76b358496988c6f60fee6f6fae05e88b357ce7855d6e"
+    },
+    "gameplay.mp4": {
+      "bytes": 2257205,
+      "sha256": "c6f5a7be2a3b6b336b94a840876d626ef9238cb49fa39447642306460ef1a8f4"
+    },
+    "split_decisions.png": {
+      "bytes": 60408,
+      "sha256": "bdd3e6dfde0269c795972f125f609632f604d942342bd113568875d185c7a49a"
+    },
+    "gameplay.gif": {
+      "bytes": 1062372,
+      "sha256": "68be04e8279c74bd34bf224c94dd555ac7f80b4594d3e283d02754a01e3af7a9"
+    }
+  },
+  "gameplay_seed": 4100001,
+  "gameplay_seconds": 60.0,
+  "simulation_hz": 30,
+  "gameplay_video_hz": 15,
+  "gameplay_speed": 1,
+  "split_demo_speed": 0.16666666666666666,
+  "trace_sha256": "4d731245b5849a9cc25dc8c5c7bb946235bf9e5b55ef2df86513f33e844c9fc0",
+  "renderer_sha256": "19391d1cb62c5dc38b056d0bdcbf2f1bbfeb6fbd540b9993b8af0b51638982f5",
+  "models": {
+    "ppo": {
+      "file": "ppo.pt",
+      "sha256": "edbe9776f665c148e3e9a0411ef17345cfccabf6c115c67f1045c03893071da6"
+    },
+    "diffusion": {
+      "file": "diffusion.pt",
+      "sha256": "18d3f31b0e88f526295b63ba8f273c86e5aa12a5fa52dfdb0d9e42569a59517c"
+    },
+    "critic": {
+      "file": "../arena_v2_cosine/critic.pt",
+      "sha256": "b7038895092ca19e66b406de3c299e6d90913c8ddb6129e70efefd76909b54ef"
+    }
+  }
+}

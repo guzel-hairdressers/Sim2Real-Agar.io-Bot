@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "matches": 12,
+  "agent_runs": 84,
+  "simulation_steps": 21600,
+  "policy_decisions": 151200,
+  "trace_frames": 901,
+  "local_links_checked": 48,
+  "model_source_and_data_hashes_verified": true,
+  "benchmark_arithmetic_verified": true,
+  "media": {
+    "overview.png": {
+      "width": 1440,
+      "height": 900,
+      "frames": 1
+    },
+    "split_decisions.gif": {
+      "width": 864,
+      "height": 540,
+      "frames": 74,
+      "seconds": 9.26
+    },
+    "benchmarks.png": {
+      "width": 2100,
+      "height": 1320,
+      "frames": 1
+    },
+    "local_sensing.png": {
+      "width": 1440,
+      "height": 900,
+      "frames": 1
+    },
+    "split_decisions.png": {
+      "width": 1440,
+      "height": 900,
+      "frames": 1
+    },
+    "gameplay.gif": {
+      "width": 864,
+      "height": 540,
+      "frames": 80,
+      "seconds": 10.01
+    },
+    "gameplay.mp4": {
+      "codec_name": "h264",
+      "width": 1440,
+      "height": 900,
+      "r_frame_rate": "15/1",
+      "duration": "60.000000",
+      "nb_frames": "900"
+    },
+    "split_decisions.mp4": {
+      "codec_name": "h264",
+      "width": 1440,
+      "height": 900,
+      "r_frame_rate": "15/1",
+      "duration": "9.200000",
+      "nb_frames": "138"
+    }
+  },
+  "benchmark_sha256": "c445dc7d6a2e878621c16de25534e31deeb20ae80ab73d8d116f8aa0b27d7bc5",
+  "media_manifest_sha256": "1d167d48afb5b54a1f9c78bade19066cbd3db41a7bcbdb803950ed593ecd3e7d"
+}

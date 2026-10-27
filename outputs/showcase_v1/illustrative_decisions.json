@@ -1,0 +1,30 @@
+[
+  {
+    "algorithm": "ppo",
+    "own": 90,
+    "target": 20,
+    "capture_step": 1,
+    "executed_splits": 1
+  },
+  {
+    "algorithm": "ppo",
+    "own": 45,
+    "target": 30,
+    "capture_step": 20,
+    "executed_splits": 0
+  },
+  {
+    "algorithm": "diffusion",
+    "own": 90,
+    "target": 20,
+    "capture_step": 1,
+    "executed_splits": 1
+  },
+  {
+    "algorithm": "diffusion",
+    "own": 45,
+    "target": 30,
+    "capture_step": 24,
+    "executed_splits": 0
+  }
+]

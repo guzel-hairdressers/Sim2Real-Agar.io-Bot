@@ -1,0 +1,3 @@
+# Optional, only for scripts/build_showcase.py. Install ffmpeg separately.
+Pillow>=9.2
+matplotlib>=3.8.0

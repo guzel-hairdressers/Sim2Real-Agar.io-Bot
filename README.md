@@ -1,108 +1,98 @@
-# Sim2Real PPO Navigation — Competitive Arena
+# Sim2Real Agar Control
 
-A playable multi-agent continuous-control testbed comparing a hybrid PPO policy with an action-diffusion policy. The implementation uses a shared 30 Hz environment, visible piece-level motion, strict checkpoint loading, and reproducible comparisons against frozen previous agents.
+**Learned navigation and decision-making in a competitive, partially observed world.**
 
-This is a simulated arena. The retained robot-navigation prototype has **not** demonstrated transfer to a physical robot.
+Agents steer through an Agar-style arena, collect food, grow, avoid hazards, and decide when to split to capture smaller opponents. The project brings **PPO**, **action diffusion**, and **rule-based opponents** into the same simulator—and lets you play against the trained agents in a browser.
 
-## Play
+[![Watch the agents navigate and compete](docs/media/showcase/gameplay.gif)](docs/media/showcase/gameplay.mp4)
+
+**[Full 60-second gameplay video](docs/media/showcase/gameplay.mp4)** · [Screenshots and demo gallery](docs/media.md) · [Benchmark protocol and raw results](docs/benchmarks.md) · [Run locally](#play-against-the-agents)
+
+*Actual simulator recording at real-time speed. Blue: PPO; green: diffusion; amber: heuristic opponents; pink: virus hazards. The dashed circle marks one agent's sensing range. The animation is a ten-second excerpt; the linked video contains the entire match.*
+
+## What this project explores
+
+The arena makes navigation harder than steering toward a waypoint: agents have inertia, their speed changes with mass, nearby opponents can be threats or targets, and splitting changes both mobility and vulnerability. Each policy sees a **70-value local observation**, rather than the full map shown to spectators.
+
+- **Continuous control:** choose thrust and steering at a 30 Hz simulation timestep.
+- **Limited sensing:** react to visible opponent pieces, relative motion, food, hazards, and boundaries.
+- **Discrete decisions:** learn when a split can capture a target without making the launched half too small.
+- **Interactive evaluation:** play alongside two PPO agents, two diffusion agents, and two heuristic opponents.
+
+The current deliverable is a **simulation research testbed**. Despite the historical “Sim2Real” name, physical robot transfer has not been demonstrated.
+
+## See what the agents do
+
+![A complete arena beside one agent's local sensing footprint and current state](docs/media/showcase/overview.png)
+
+The left panel is the spectator's full arena. The right panel illustrates the local sensing footprint used to construct one agent's observation; the policy receives numeric features, not this picture. The table records mass, piece captures, full deaths, and actual split executions.
+
+[![Current PPO and diffusion agents choose a split attack or preserve their mass](docs/media/showcase/split_decisions.gif)](docs/media/showcase/split_decisions.mp4)
+
+**[Split-decision video](docs/media/showcase/split_decisions.mp4)** — a controlled demonstration of both current policies. A 90-unit actor can halve itself and still capture a 20-unit target. A 45-unit actor holds its split against a 30-unit target because its launched half would be too small. Targets are stationary; the video is slowed to **1/6 speed**, with simulator time shown. Split commands come from the deployed policies.
+
+## Current capabilities: benchmarks
+
+These results describe the **current models**, with no historical agents in the match roster. Twelve fresh 60-second matches each contain two PPO agents, two diffusion agents, and three heuristic opponents, with shuffled seats. Agents compete individually; sharing a policy does not make them a team.
+
+| Metric | PPO | Diffusion | Heuristic opponents |
+| --- | ---: | ---: | ---: |
+| Agent runs | 24 | 24 | 36 |
+| Mean final mass, simulation units | **51.7** | **47.6** | 31.5 |
+| Runs with no full death | **20/24 (83.3%)** | **21/24 (87.5%)** | 22/36 (61.1%) |
+| Opponent pieces captured per agent-minute | 0.71 | **0.88** | 0.42 |
+| Executed splits, total | 1 | 1 | 12 |
+| Mean policy inference on this Mac, CPU | 0.279 ms | 0.525 ms | 0.019 ms |
+
+Inference includes safety checks and was measured under parallel evaluation load; it excludes rendering and is not browser FPS. A full death means losing all pieces; respawns remain part of the match. Mass is a simulator quantity, not a physical measurement.
+
+![Current-agent growth, death-free runs, capture rate, and separate split-opportunity evaluation](docs/media/showcase/benchmarks.png)
+
+A separate held-out split test contains **996 valid encounters per learned policy**. PPO captured **120/125 beneficial opportunities (96.0%)** and diffusion **119/126 (94.4%)** with a launched piece. Neither executed a split that violated the current safety checks. These percentages apply to known beneficial opportunities in that test; they are **not game win rates or general combat accuracy**.
+
+The agents still split rarely in ordinary matches. Corner escapes, close predator traps, and wall contacts remain weaknesses; skilled humans can beat them. Twelve simulator seeds do not establish broad generalization. See [definitions, confidence intervals, hardware context, and reproduction commands](docs/benchmarks.md).
+
+## How it works
+
+```mermaid
+flowchart LR
+    S[Local observation: 70 values] --> P[PPO: continuous actions]
+    S --> D[Diffusion: candidate action sequences]
+    D --> C[Return critic selects a sequence]
+    S --> B[Learned binary split head]
+    P --> G[Observation-based safety layer]
+    C --> G
+    B --> G
+    G --> E[Shared arena physics]
+    E --> S
+```
+
+PPO uses imitation initialization followed by reinforcement learning. Diffusion learns short action sequences from demonstrations; a return critic ranks candidates, and the agent executes a short prefix before replanning. Both use separately trained binary split decisions and a safety layer that can reject unsafe splits or alter movement near immediate hazards. Splitting is supervised using paired physical trials in which splitting captures a target earlier than holding.
+
+The models share the same observation contract and physics. Benchmark runs record seeds, individual agent outcomes, model hashes, and source hashes. The exported demonstration is rendered from the first benchmark seed, chosen before its outcome, rather than from a selected winning run.
+
+## Play against the agents
+
+From the repository root, using Python 3.9+:
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 python scripts/play_agar_web.py --host 127.0.0.1 --port 8080
 ```
 
-Open **http://localhost:8080/**. Move the mouse to steer, hold **W** to sprint, press **Space** to split, and press **R** to reset the match. The server loads the accepted checkpoints through `outputs/split_combat_v3/deployment.json` and rejects missing, incompatible, or checksum-mismatched models. `/status` reports the loaded model hashes and control timestep. Importing the web module does not start a game thread. Use `--policy-dir outputs/arena_v2` to play the previous checkpoint.
+Open **[localhost:8080](http://localhost:8080/)**. Move the mouse to steer, hold **W** to sprint, press **Space** to split, and press **R** to reset the match.
 
-![Updated playable arena](docs/media/split_preview.png)
+Accepted weights are included in the repository. The server checks the deployment manifest and rejects missing, incompatible, or checksum-mismatched models. `/status` exposes readiness, model hashes, and the control timestep. The GitHub videos are recordings; the interactive game runs locally.
 
-## Current checkpoint: learned split attacks — October 27, 2026
+## Reproduce and explore
 
-The previous training replay had just **9 positive split labels in 79,800 observations**. Both agents now use a dedicated binary split head trained on paired simulator trials: an attack is positive only if its launched piece captures the target earlier than holding, without immediate attacker damage. Continuous navigation weights, the return critic, the `0.65` request threshold, and the safety rules are unchanged. Diffusion uses a separate discrete head; its denoiser still controls movement.
+| Resource | What it contains |
+| --- | --- |
+| [Demo gallery](docs/media.md) | Gameplay and split videos, animations, screenshots, and recording provenance |
+| [Current benchmarks](docs/benchmarks.md) | Absolute metrics, test definitions, raw data, and commands |
+| [Navigation training and checkpoint history](docs/checkpoint_history_2026-10-27.md) | Training recipes and historical comparisons |
+| [Split training and limitations](docs/split_combat_results_2026-10-27.md) | Paired split/hold curriculum, acceptance gates, and failure modes |
+| [Current benchmark data](outputs/showcase_v1/benchmark.json) | All twelve match results, time series, seeds, and hashes |
+| [Training and simulator source](src/) | PPO, diffusion, inference wrappers, benchmarks, and diagnostics |
 
-| Fresh physical test | PPO | Diffusion |
-| --- | ---: | ---: |
-| Beneficial opportunities captured by projectile | **120/125 (96%)** | **119/126 (94.4%)** |
-| Total projectile captures / encounters with attacks | **184/186** | **172/175** |
-| Executed splits violating safety checks | **0** | **0** |
-| Previous-v2 projectile captures on the same encounters | 0 | 0 |
-
-This test contains 996 valid randomized encounters per algorithm; four initial allocations exceeded the curriculum mass cap and were excluded. In twelve full matches per algorithm against previous-v2 agents, the new PPO made **2 splits / 2 projectile captures** and diffusion made **1 split / 2 captures**, versus zero splits for the previous policies. Attacks remain rare in ordinary play. Both pass the predeclared navigation-retention tolerance; diffusion had **4 deaths versus 2** for its previous baseline, so this is not a survival-improvement claim.
-
-See [the complete split results, limitations, and reproduction commands](docs/split_combat_results_2026-10-27.md). The agents remain beatable, and aggressive pursuit and trap escapes still need work.
-
-## Previous checkpoint: growth and survival — October 27, 2026
-
-Each algorithm was tested in 12 independent 60-second matches. Each match contained two new agents, two original agents of the same algorithm, and three heuristic opponents. Seats were shuffled. The primary comparison is the difference in pair-average mass gained, not the number of outright individual game wins.
-
-| Metric | Original PPO | New PPO | Original diffusion | New diffusion |
-| --- | ---: | ---: | ---: | ---: |
-| Mean final mass per agent | 28.04 | **71.01** | 24.58 | **68.42** |
-| Full deaths across all matches, including respawns | 74 | **2** | 56 | **0** |
-| Matches with greater pair-average mass gain | — | **10/12** | — | **12/12** |
-| Mean inference time on this Mac | 0.19 ms | 0.22 ms | 0.44 ms | 0.49 ms |
-
-The mean mass-gain advantage was **42.78** for PPO (match-bootstrap 95% interval **21.11–60.71**) and **43.65** for diffusion (**29.79–57.05**). These are held-out initial-state seeds in this arena, not evidence of human-level play or general sim-to-real transfer. Wall contacts remain an issue, especially for diffusion.
-
-In separate close-range exploit tests, both new agents survived the four split-bait cases that killed the originals. Both still failed the head-on predator, flanking predator, and corner-trap cases. The agents remain beatable.
-
-See the [full results, ablations and limitations](docs/arena_v2_results_2026-10-27.md) and the [initial critical assessment](docs/critical_assessment_2026-10-27.md).
-
-## What changed
-
-- PPO preserves the sampled continuous action for both old and new likelihoods. Only the environment command is clipped. Kill/death bonuses use event deltas; time-limit bootstrapping is separate from deaths and episode resets.
-- Version 2 observations retain the legacy 38 fields and append visible opponent-piece motion/mass, own piece summaries, post-split danger, nearest food/virus vectors, and wall distances. Hidden opponents do not contribute.
-- A measured safety filter rejects unsafe splits and intervenes near observable hazards. Ordinary neural actions are retained. The previous reflex is frozen only as a benchmark fixture.
-- PPO was trained with imitation initialization followed by 121,344 learner transitions against a mixed opponent league.
-- Diffusion was retrained with symmetric action normalization, a cosine noise schedule, averaged model weights, and a critic supervised on **observed discounted environment rewards**. Its action horizon is 16 physical control steps, with 3-step receding execution and emergency replanning.
-- Version-2 navigation training, full-match evaluation, and browser play share their physical configuration. The later split-head encounter curriculum varies density and uses a 400-unit mass cap; the live/full-match cap stays 550. The browser limits opponent positions to the human player's visibility radius.
-
-## Reproduce the previous navigation checkpoint
-
-Use the repository root as the working directory. Training creates new outputs; it does not overwrite the historical champions.
-
-```bash
-# Recreate the recorded data and PPO training. The frozen initial teacher is
-# retained because deployment clearance was revised after this training run.
-python -m src.train_arena_v2 --output outputs/reproduction \
-  --workers 4 --episodes 24 --episode-steps 600 --steps 120000 \
-  --seed 260271 --bc-epochs 15 --schedule linear --teacher-version initial_v2
-
-# Train the accepted diffusion variant on those same episode-separated data.
-python -m src.train_arena_v2 --output outputs/reproduction_cosine \
-  --diffusion-only --reuse-data --data outputs/reproduction/demonstrations.npz \
-  --schedule cosine --symmetric-actions --diffusion-epochs 80 --seed 260271
-
-# Evaluate the shipped accepted policies against frozen originals.
-python -m src.evaluate_arena_v2 --algorithm ppo \
-  --checkpoint outputs/arena_v2/ppo.pt --workers 2 \
-  --output outputs/recheck_ppo.json
-python -m src.evaluate_arena_v2 --algorithm diffusion \
-  --checkpoint outputs/arena_v2_cosine/diffusion.pt \
-  --critic outputs/arena_v2_cosine/critic.pt --workers 2 \
-  --output outputs/recheck_diffusion.json
-
-# Historical reports intentionally cannot promote changed source. Use the
-# freshly regenerated reports to validate the previous navigation models.
-python scripts/promote_arena_v2.py --ppo-report outputs/recheck_ppo.json \
-  --diffusion-report outputs/recheck_diffusion.json --output outputs/recheck_v2_deployment.json
-
-# Includes regression, physics, and web integration tests.
-python -m unittest discover -s tests -v
-```
-
-For the current split checkpoint, follow the [split training/evaluation recipe](docs/split_combat_results_2026-10-27.md#reproduction), then run `python scripts/promote_split_combat.py` against fresh reports. For **new** training/evaluation work, choose fresh final test seeds; the shipped final seeds are already public. Exact training replay across other hardware/library versions is not guaranteed. The recorded dataset checksums, configurations, checkpoints, and match records are included; raw training buffers are regenerated rather than committed.
-
-## Layout
-
-- `envs/arena_config.py`: shared environment contract.
-- `src/arena_tactics.py`: observable teacher and safety interventions.
-- `src/train_arena_v2.py`: data collection, hybrid PPO, diffusion and return-critic training.
-- `src/arena_policies.py`: strict versioned inference and frozen baseline adapters.
-- `src/evaluate_arena_v2.py`: matched-seat acceptance tournaments.
-- `src/evaluate_encounters_v2.py`: scripted exploit diagnostics.
-- `src/train_split_combat.py`, `src/evaluate_split_combat.py`: paired physical attack curriculum and held-out tests.
-- `outputs/split_combat_v3/`: current split models, accepted manifest, audits and evidence.
-- `outputs/arena_v2/`, `outputs/arena_v2_cosine/`: immutable previous models and evidence.
-- `benchmarks/`: frozen historical reflex and recorded training teacher.
-
-Older scripts, videos and experiments are retained as historical material. Their architecture, timings and headline statistics should not be substituted for the current acceptance reports. The [historical README](docs/historical_arena_readme_2026-09.md) is preserved for provenance.
+Run existing regression checks with `python -m unittest discover -s tests -v`. To recreate the media, install the optional [media-build dependencies](requirements-media.txt) and follow the [gallery instructions](docs/media.md#rebuild-the-showcase).
