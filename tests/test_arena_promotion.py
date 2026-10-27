@@ -12,12 +12,12 @@ class PromotionTests(unittest.TestCase):
                 ROOT/'outputs/arena_v2_cosine/critic.pt', ROOT/'outputs/arena_v2/ppo_acceptance.json',
                 ROOT/'outputs/arena_v2_cosine/diffusion_acceptance.json']
 
-    def test_verified_reports_can_build_manifest(self):
+    def test_historical_v2_reports_cannot_promote_changed_source(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory)/'deployment.json'
-            manifest = promote(*self.paths(), output)
-            self.assertEqual(set(manifest['models']), {'ppo', 'diffusion', 'critic'})
-            self.assertEqual(json.loads(output.read_text()), manifest)
+            with self.assertRaisesRegex(ValueError, 'Evaluated source has changed'):
+                promote(*self.paths(), output)
+            self.assertFalse(output.exists())
 
     def test_failed_acceptance_does_not_overwrite_existing_manifest(self):
         with tempfile.TemporaryDirectory() as directory:

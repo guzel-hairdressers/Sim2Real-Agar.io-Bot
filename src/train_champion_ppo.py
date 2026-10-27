@@ -27,6 +27,7 @@ from envs.agar_env import PartiallyObservableAgarEnv
 from src.heuristic_agent import MasterHeuristicAgarBot
 from src.train_agar_parallel_gpu import env_worker
 from src.tactical_combat_reflex import apply_tactical_combat_reflex
+from src.split_head import BinarySplitHead
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("ChampionPPO")
@@ -40,9 +41,12 @@ class HybridActorCritic(nn.Module):
     - Dedicated Critic trunk to prevent representation interference
     """
 
-    def __init__(self, obs_dim: int = 38, hidden_dim: int = 128):
+    def __init__(self, obs_dim: int = 38, hidden_dim: int = 128, split_architecture='trunk_linear'):
         super().__init__()
         self.obs_dim = obs_dim
+        if split_architecture not in ('trunk_linear', 'obs_mlp'):
+            raise ValueError('Unsupported split architecture')
+        self.split_architecture = split_architecture
 
         # Dedicated Actor trunk
         self.actor_trunk = nn.Sequential(
@@ -60,6 +64,8 @@ class HybridActorCritic(nn.Module):
 
         # Discrete split head: logits
         self.split_head = nn.Linear(hidden_dim, 1)
+        if split_architecture == 'obs_mlp':
+            self.split_head = BinarySplitHead(obs_dim)
 
         # Dedicated Critic trunk
         self.critic_trunk = nn.Sequential(
@@ -80,8 +86,9 @@ class HybridActorCritic(nn.Module):
                 nn.init.orthogonal_(m.weight, gain=np.sqrt(2))
                 nn.init.constant_(m.bias, 0.0)
         nn.init.orthogonal_(self.cont_head.weight, gain=0.05)
-        nn.init.orthogonal_(self.split_head.weight, gain=0.05)
-        nn.init.constant_(self.split_head.bias, -2.0)  # Start with low split probability (~12%)
+        if self.split_architecture == 'trunk_linear':
+            nn.init.orthogonal_(self.split_head.weight, gain=0.05)
+            nn.init.constant_(self.split_head.bias, -2.0)
         nn.init.orthogonal_(self.critic_head.weight, gain=1.0)
 
     def forward(self, obs: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
@@ -91,7 +98,7 @@ class HybridActorCritic(nn.Module):
         steer = torch.tanh(cont_raw[..., 1:2])
         cont_mu = torch.cat([thrust, steer], dim=-1)
 
-        split_logit = self.split_head(act_feat).squeeze(-1)
+        split_logit = self.split_head(obs if self.split_architecture == 'obs_mlp' else act_feat).squeeze(-1)
 
         crit_feat = self.critic_trunk(obs)
         value = self.critic_head(crit_feat).squeeze(-1)

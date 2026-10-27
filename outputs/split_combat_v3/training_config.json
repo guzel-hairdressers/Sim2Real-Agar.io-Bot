@@ -1,0 +1,9 @@
+{
+  "seed": 2800001,
+  "cases": 6000,
+  "epochs": 80,
+  "target": "paired projectile capture at least 3 steps earlier, without actor damage",
+  "movement_frozen": true,
+  "data_sha256": "50465b0e31292889f7abae8aaf2705bf46960e95e10dba7d5f6213a4d156b45c",
+  "workers": 4
+}

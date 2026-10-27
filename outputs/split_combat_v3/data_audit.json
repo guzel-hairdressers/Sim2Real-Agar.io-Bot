@@ -1,0 +1,35 @@
+{
+  "raw_sha256": "50465b0e31292889f7abae8aaf2705bf46960e95e10dba7d5f6213a4d156b45c",
+  "raw_cases": 6000,
+  "accepted_cases": 5990,
+  "excluded_initial_overbudget_seeds": [
+    2800131,
+    2800790,
+    2800803,
+    2801289,
+    2801302,
+    2802530,
+    2803060,
+    2804128,
+    2804627,
+    2804723
+  ],
+  "canonical_filtered_sha256": "cc0bfb29d84befc22d7df87748350058ca6608c1268fe0bc3514b5a1487d7d77",
+  "split_threshold": 0.65,
+  "validation_selection": "minimum balanced BCE among epochs 1,11,21,31,41,51,61,71,80",
+  "split_guard_unchanged": true,
+  "counts": {
+    "ppo": {
+      "train_cases": 4790,
+      "train_positive": 669,
+      "validation_cases": 1200,
+      "validation_positive": 160
+    },
+    "diffusion": {
+      "train_cases": 4790,
+      "train_positive": 673,
+      "validation_cases": 1200,
+      "validation_positive": 159
+    }
+  }
+}

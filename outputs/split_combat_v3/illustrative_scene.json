@@ -1,0 +1,26 @@
+[
+  {
+    "policy": "Previous PPO",
+    "checkpoint_sha256": "7737fd2c974803eee88a60e4569669a005d163d12e6e64f30da2d9b137972e08",
+    "splits": 0,
+    "capture_step": null
+  },
+  {
+    "policy": "Split-head PPO",
+    "checkpoint_sha256": "edbe9776f665c148e3e9a0411ef17345cfccabf6c115c67f1045c03893071da6",
+    "splits": 1,
+    "capture_step": 1
+  },
+  {
+    "policy": "Previous diffusion",
+    "checkpoint_sha256": "ed3d19f685997e1d303b6f1077358a31fc78c0a61f4073171a8d0134b93ea6c1",
+    "splits": 0,
+    "capture_step": null
+  },
+  {
+    "policy": "Split-head diffusion",
+    "checkpoint_sha256": "18d3f31b0e88f526295b63ba8f273c86e5aa12a5fa52dfdb0d9e42569a59517c",
+    "splits": 1,
+    "capture_step": 1
+  }
+]

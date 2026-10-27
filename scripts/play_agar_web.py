@@ -127,7 +127,7 @@ class ArenaGameManager:
         self.obs_dict, _ = self.env.reset(seed=int(time.time()) % 10000)
 
         # Load models
-        directory = Path(os.environ.get('ARENA_POLICY_DIR', os.path.join(PROJECT_ROOT, 'outputs/arena_v2')))
+        directory = Path(os.environ.get('ARENA_POLICY_DIR', os.path.join(PROJECT_ROOT, 'outputs/split_combat_v3')))
         self.model_manifest = json.loads((directory/'deployment.json').read_text())
         weights = {}
         for name, entry in self.model_manifest['models'].items():
@@ -472,7 +472,7 @@ def main():
     parser = argparse.ArgumentParser(description="Agar.io Interactive Web Arena")
     parser.add_argument("--host", type=str, default="127.0.0.1", help="Host interface")
     parser.add_argument("--port", type=int, default=8080, help="Port to run web game on")
-    parser.add_argument('--policy-dir', default=os.path.join(PROJECT_ROOT, 'outputs/arena_v2'))
+    parser.add_argument('--policy-dir', default=os.path.join(PROJECT_ROOT, 'outputs/split_combat_v3'))
     args = parser.parse_args()
     os.environ['ARENA_POLICY_DIR'] = args.policy_dir
 

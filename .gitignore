@@ -40,6 +40,7 @@ outputs/*.npz
 outputs/*.npy
 outputs/**/demonstrations.npz
 outputs/**/training.log
+outputs/**/counterfactuals.jsonl
 outputs/agar_arena_demo.mp4
 
 # Keep key demonstration video and lightweight artifacts

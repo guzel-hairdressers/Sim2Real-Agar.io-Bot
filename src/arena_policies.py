@@ -7,6 +7,7 @@ from envs.arena_config import OBSERVATION_DIM, OBSERVATION_VERSION, ArenaConfig
 from src.train_champion_ppo import HybridActorCritic
 from src.agar_diffusion_policy import AgarDiffusionPolicy
 from src.arena_tactics import safety_filter, teacher_action
+from src.split_head import BinarySplitHead
 
 
 def load_package(path, algorithm):
@@ -32,7 +33,7 @@ class TacticalTeacher:
 class ArenaPPO:
     def __init__(self, path, assisted=True):
         package = load_package(path, 'ppo')
-        self.net = HybridActorCritic(OBSERVATION_DIM)
+        self.net = HybridActorCritic(OBSERVATION_DIM, split_architecture=package.get('split_architecture', 'trunk_linear'))
         self.net.load_state_dict(package['state_dict'], strict=True)
         self.net.eval()
         self.assisted = assisted
@@ -56,6 +57,11 @@ class ArenaPPO:
 class ArenaDiffusion:
     def __init__(self, path, critic_path=None, seed=42, assisted=True):
         package = load_package(path, 'diffusion')
+        self.split_head = None
+        if package.get('split_architecture') == 'obs_mlp':
+            self.split_head = BinarySplitHead(OBSERVATION_DIM)
+            self.split_head.load_state_dict(package['split_head_state_dict'], strict=True)
+            self.split_head.eval()
         if critic_path:
             load_package(critic_path, 'return_critic')
         self.policy = AgarDiffusionPolicy(
@@ -74,6 +80,12 @@ class ArenaDiffusion:
         if obs[47] > 0 and obs[47] < .35:
             self.policy.reset()
         raw = self.policy.predict(obs, deterministic, apply_reflex=False)
+        if self.split_head is not None:
+            # Splitting is a discrete event, evaluated on the current state
+            # even while the continuous trajectory's action buffer is active.
+            with torch.inference_mode():
+                probability = self.split_head(torch.as_tensor(obs).unsqueeze(0)).sigmoid().item()
+            raw[2] = float(probability > .65)
         action = safety_filter(raw, obs) if self.assisted else raw
         self.observations += 1
         self.interventions += int(np.max(np.abs(action - raw)) > 1e-5)

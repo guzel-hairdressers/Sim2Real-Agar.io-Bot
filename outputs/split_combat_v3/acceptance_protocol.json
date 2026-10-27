@@ -1,0 +1,21 @@
+{
+  "declared_before_final_evaluation": true,
+  "development_seed": 3000001,
+  "final_combat_seed": 3100001,
+  "combat_cases": 1000,
+  "combat_per_algorithm": {
+    "minimum_paired_beneficial_opportunities": 50,
+    "minimum_opportunity_fire_rate": 0.85,
+    "minimum_opportunity_projectile_capture_rate": 0.80,
+    "maximum_guard_violating_executed_splits": 0,
+    "minimum_additional_projectile_captures_over_v2": 30
+  },
+  "retention_seed_start": 3310001,
+  "retention_seed_stride": 37,
+  "matches_per_algorithm": 12,
+  "steps_per_match": 1800,
+  "baseline": "immutable arena_v2 checkpoints from 9189015",
+  "minimum_mean_final_mass_ratio": 0.90,
+  "maximum_additional_total_deaths": 2,
+  "limitations": "Retention is an engineering tolerance, not statistical noninferiority. Combat cases are randomized simulator encounters, not human play or real robot transfer. Movement and critic weights are frozen."
+}

@@ -1,0 +1,22 @@
+{
+  "ready": true,
+  "error": null,
+  "observation_version": 2,
+  "control_dt": 0.03333333333333333,
+  "simulation_seconds": 6.8999999999999995,
+  "processing_capacity_fps": 39.3,
+  "models": {
+    "ppo": {
+      "file": "ppo.pt",
+      "sha256": "edbe9776f665c148e3e9a0411ef17345cfccabf6c115c67f1045c03893071da6"
+    },
+    "diffusion": {
+      "file": "diffusion.pt",
+      "sha256": "18d3f31b0e88f526295b63ba8f273c86e5aa12a5fa52dfdb0d9e42569a59517c"
+    },
+    "critic": {
+      "file": "../arena_v2_cosine/critic.pt",
+      "sha256": "b7038895092ca19e66b406de3c299e6d90913c8ddb6129e70efefd76909b54ef"
+    }
+  }
+}

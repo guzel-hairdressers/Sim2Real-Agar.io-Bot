@@ -26,6 +26,7 @@ class SubPiece:
     vel: np.ndarray
     merge_cooldown: float = 0.0
     prev_pos: np.ndarray = None
+    split_birth_step: int = -1
 
     def __post_init__(self):
         if self.prev_pos is None:
@@ -124,7 +125,7 @@ class PlayerState:
     def can_split(self) -> bool:
         return any(p.mass >= 36.0 for p in self.pieces) and (self.split_cooldown <= 0.0) and (len(self.pieces) < self.max_pieces)
 
-    def split(self) -> bool:
+    def split(self, step_index=-1) -> bool:
         """Executes authentic Agar.io splitting: divides eligible pieces in half (capped at max_pieces)."""
         if not self.can_split:
             return False
@@ -149,7 +150,8 @@ class PlayerState:
                 pos=launch_pos,
                 mass=half_m,
                 vel=launch_vel,
-                merge_cooldown=8.0  # Can re-merge after 8 seconds
+                merge_cooldown=8.0,  # Can re-merge after 8 seconds
+                split_birth_step=step_index
             )
             new_projectiles.append(projectile)
 
@@ -476,7 +478,7 @@ class PartiallyObservableAgarEnv(gym.Env):
 
             # Trigger split
             if split_cmd > 0.5:
-                did_split = player.split()
+                did_split = player.split(step_index=self.step_count)
                 if did_split:
                     rewards[pid] += 0.2
 
@@ -815,7 +817,8 @@ class PartiallyObservableAgarEnv(gym.Env):
                         "predator": pred_pid,
                         "prey": prey_pid,
                         "pos": prey_piece.pos.copy(),
-                        "mass_gained": absorbed_mass
+                        "mass_gained": absorbed_mass,
+                        "projectile_age_steps": self.step_count - pred_piece.split_birth_step if pred_piece.split_birth_step >= 0 else -1
                     })
 
                     # Blast 30% splatter outward as high-velocity shrapnel beyond predator radius

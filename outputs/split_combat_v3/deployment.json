@@ -1,0 +1,30 @@
+{
+  "schema_version": 2,
+  "observation_version": 2,
+  "accepted_on": "2026-10-27",
+  "models": {
+    "ppo": {
+      "file": "ppo.pt",
+      "sha256": "edbe9776f665c148e3e9a0411ef17345cfccabf6c115c67f1045c03893071da6"
+    },
+    "diffusion": {
+      "file": "diffusion.pt",
+      "sha256": "18d3f31b0e88f526295b63ba8f273c86e5aa12a5fa52dfdb0d9e42569a59517c"
+    },
+    "critic": {
+      "file": "../arena_v2_cosine/critic.pt",
+      "sha256": "b7038895092ca19e66b406de3c299e6d90913c8ddb6129e70efefd76909b54ef"
+    }
+  },
+  "evaluations": [
+    "combat_acceptance.json",
+    "ppo_retention.json",
+    "diffusion_retention.json"
+  ],
+  "evaluation_sha256": {
+    "combat_acceptance.json": "c3d045de8653d9eaf8f5619df063f544cc2ad6dbd0ab3b03691f9f7094a0578f",
+    "ppo_retention.json": "1f5bc3db36438ec059e46760a810d268b826dce870f912e633cda034fd7d51a6",
+    "diffusion_retention.json": "bdfb7be8e779fa9580ba6226777f04b0528fac1397246f3848b9f2b677d63c76"
+  },
+  "acceptance": "paired projectile attacks plus 90% mass / +2 total deaths v2 retention tolerance"
+}

@@ -1,0 +1,8 @@
+{
+  "algorithm": "ppo",
+  "train_positive": 669,
+  "validation_positive": 160,
+  "validation_proposals": 184,
+  "recall": 0.94375,
+  "precision": 0.8206521739130435
+}

@@ -1,0 +1,8 @@
+{
+  "algorithm": "diffusion",
+  "train_positive": 673,
+  "validation_positive": 159,
+  "validation_proposals": 175,
+  "recall": 0.9371069182389937,
+  "precision": 0.8514285714285714
+}
