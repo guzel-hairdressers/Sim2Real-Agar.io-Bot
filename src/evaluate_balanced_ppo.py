@@ -52,7 +52,10 @@ def world(seed, steps, candidate=None, focus=None):
     splits = dict.fromkeys(env.player_ids, 0)
     violations = dict(splits)
     projectiles = dict(splits)
-    overrides = dict(splits)
+    # Only the fully learned adapter is independently audited here. Historical
+    # controllers retain steering assistance: unavailable must never mean zero.
+    overrides = {pid: 0 if isinstance(policy, BalancedPPO) else None
+                 for pid, policy in policies.items()}
     timing = []
     for _ in range(steps):
         before = {pid: p.deaths for pid, p in env.players.items()}
@@ -121,7 +124,8 @@ def summarize(rows):
                             death_free_runs=sum(p['full_deaths'] == 0 for p in players))
         for key in ('full_deaths', 'captures', 'splits', 'projectile_captures',
                     'wall_contact_frames', 'physical_violations', 'nonphysical_overrides'):
-            result[side][key] = sum(p[key] for p in players)
+            values = [p[key] for p in players]
+            result[side][key] = None if any(v is None for v in values) else sum(values)
     differences = np.array([np.mean([c['candidate']['final_mass'] - c['baseline']['final_mass']
                                      for c in r['cases']]) for r in rows])
     boot = np.random.default_rng(9417).choice(differences, (10000, len(rows)), replace=True).mean(1)
@@ -165,6 +169,7 @@ def main():
                   candidate_sha256=model_hash,
                   baseline_sha256=sha(ROOT / 'outputs/split_combat_v3/ppo.pt'),
                   source_hashes=hashes, config=asdict(ArenaConfig(max_steps=args.steps)),
+                  control_audit_scope='Raw command equality is audited only for BalancedPPO. Historical assisted controllers: null (not measured).',
                   protocol=dict(seeds=args.seeds, steps=args.steps, workers=args.workers,
                                 observation_hz=30, all_observations_processed=True,
                                 roster='Control: four v3 PPO + three heuristics; replace only one focus seat per world',
