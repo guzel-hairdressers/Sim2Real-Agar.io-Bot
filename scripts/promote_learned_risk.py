@@ -45,6 +45,8 @@ def promote(directory,output=None):
         package=load_package(models[algorithm],algorithm)
         if package.get('split_control')!='learned_risk_physical_only':raise ValueError('Risk veto mode is not physical-only')
         training=package['risk_training']
+        if training.get('acceptance_protocol_sha256') and training['acceptance_protocol_sha256']!=digest(directory/'acceptance_protocol.json'):
+            raise ValueError('Declared acceptance protocol changed after fitting')
         if training['cases']<4000 or training['epochs']<240 or training['horizon']<60:raise ValueError('Longer training recipe is incomplete')
         if not training.get('sampling','').startswith('Uniform observed case prior'):raise ValueError('Uncalibrated training run cannot be promoted')
         sources(training,['src/learned_risk.py','src/train_learned_risk.py'])

@@ -93,7 +93,9 @@ def main():
         generic_source=args.output/'generic_corrections_used.json'
         generic=json.loads(generic_source.read_text())['records']
     generic_seeds=sorted({r['seed'] for r in generic});generic_train=set(generic_seeds[:int(len(generic_seeds)*.8)])
-    (args.output/'acceptance_protocol.json').write_bytes((args.base/'acceptance_protocol.json').read_bytes())
+    declared=args.output/'acceptance_protocol.declared.json'
+    protocol=declared if declared.exists() else args.base/'acceptance_protocol.json'
+    (args.output/'acceptance_protocol.json').write_bytes(protocol.read_bytes())
     metadata={}
     for algorithm in ('ppo','diffusion'):
         package=torch.load(args.base/f'{algorithm}.pt',map_location='cpu',weights_only=True);old=package['risk_training']
@@ -110,6 +112,7 @@ def main():
             package['state_dict'].update({'split_head.'+k:v for k,v in head.state_dict().items()})
         else:package['split_head_state_dict']=head.state_dict()
         config=copy.deepcopy(old);config['base_source_hashes']=copy.deepcopy(old['source_hashes'])
+        config['acceptance_protocol_sha256']=hashlib.sha256(protocol.read_bytes()).hexdigest()
         config['match_refinement']=dict(seed=args.seed,episodes=args.episodes,horizon=args.horizon,selection=args.selection,
             sample_holds=args.sample_holds,policy_directory=str(args.policy_directory or args.base),
             policy_model_sha256={a:hashlib.sha256(((args.policy_directory or args.base)/f'{a}.pt').read_bytes()).hexdigest() for a in ('ppo','diffusion')},
