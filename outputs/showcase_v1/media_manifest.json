@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "assets": {
     "policy_comparison.gif": {
       "bytes": 6344788,
@@ -26,23 +26,38 @@
       "sha256": "2870de1b008dd7f2223c748c79cbd1bf5ce00b0bd36faccff1b24236a4e49933"
     },
     "gameplay.mp4": {
-      "bytes": 3969552,
-      "sha256": "ddcda432c8bfa5c258b6be875a1e4b8e98a8944982a39c67a5707c55835d4e8f"
+      "bytes": 3204706,
+      "sha256": "07fc85ba9271c32aeb03f895ea8a49ceb05d6677f8bac89319e98800475308e6"
     },
     "gameplay.gif": {
-      "bytes": 4218282,
-      "sha256": "0b000a111aa272357c0708761c7972e8ec1801c985c2eaf10cb002cf6672719e"
+      "bytes": 4210567,
+      "sha256": "bfc83eb5e29e6f172526e1ec9d75f51250433bffcb44e7eb786bbb9df7e2d145"
     }
   },
   "simulation_hz": 30,
   "source_recording_hz": 15,
   "video_hz": 30,
   "playback_speed": 2,
-  "video_seconds": 60,
-  "simulation_seconds": 120,
+  "recording_simulation_seconds": 120,
   "preview_seconds": 30,
+  "videos": {
+    "gameplay.mp4": {
+      "frames": 1450,
+      "video_seconds": 48.333333333333336,
+      "simulation_start_seconds": 23.333333333333332,
+      "simulation_end_seconds": 120.0,
+      "first_capture_simulation_seconds": 27.333333333333332,
+      "first_capture_playback_seconds": 2.0
+    },
+    "policy_comparison.mp4": {
+      "frames": 1800,
+      "video_seconds": 60.0,
+      "simulation_start_seconds": 0,
+      "simulation_end_seconds": 120.0
+    }
+  },
   "recordings_sha256": "f93c819b09b37f607a9d9a313b98770817e9a85dd1fe3784b1e28d0fd3d10aa6",
-  "renderer_sha256": "0755cfa9f61e1b33f7ac22db89420dacffc739960459264a0e04eb5e2204a4c5",
+  "renderer_sha256": "12b1434c459c89d31074866270127cf4c8213b38af9b0200f3f6f3c63d6aa645",
   "models": {
     "ppo": {
       "file": "ppo.pt",

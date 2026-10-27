@@ -1,14 +1,14 @@
 # Clashes and policy comparisons
 
-Actual autonomous matches with the accepted policies. Both full videos run for **60 seconds at 2× speed**, showing **120 simulator seconds**. There are no stationary-target demonstrations or forced split commands. The light layout is an offline spectator presentation; the browser game's styling is separate.
+Actual autonomous matches with the accepted policies, shown at **2× speed**. The main gameplay video runs for **48.3 seconds**, starting two playback seconds before its first capture; the paired comparison runs for **60 seconds**. The source recordings each span 120 simulator seconds. There are no stationary-target demonstrations or forced split commands. The light layout is an offline spectator presentation; the browser game's styling is separate.
 
 ## Shared match: PPO, diffusion and reactive opponents
 
 [![Thirty-second preview of autonomous clashes at two-times speed](media/showcase/gameplay.gif)](media/showcase/gameplay.mp4)
 
-**[Full gameplay — MP4, 60 seconds, 2× speed, 1440 × 900](media/showcase/gameplay.mp4)**
+**[Gameplay — MP4, 48.3 seconds, 2× speed, 1440 × 900](media/showcase/gameplay.mp4)**
 
-Two PPO agents, two diffusion agents and three heuristic opponents compete individually. Seed `4100001`, extended to 120 simulator seconds. The full recording contains **10 piece captures and 4 full deaths**. A spectator camera follows encounters; red rings and event labels mark actual consumption events. The map rectangle shows the zoomed area. The full video is uncut; the animation shows its first 30 playback seconds.
+Two PPO agents, two diffusion agents and three heuristic opponents compete individually. Seed `4100001`, extended to 120 simulator seconds. The video begins at simulator time **23.33 seconds**, with the first capture at **27.33 seconds**, exactly **two playback seconds** into the video. Only the quiet opening is removed; the remaining sequence is continuous and retains all **10 piece captures and 4 full deaths**. Simulator timestamps and counters retain their original values. A spectator camera follows encounters; red rings and event labels mark actual consumption events. The map rectangle shows the zoomed area. The animation shows the edited video's first 30 playback seconds.
 
 Blue: PPO; green: diffusion; amber: heuristic opponents; pink: virus hazards; pale dots: food. The leaderboard records actual mass, piece captures, full deaths and split executions. Virus contact can fragment a player without a split command, so multiple pieces do not necessarily imply an executed split.
 
@@ -61,8 +61,11 @@ PYTHONDONTWRITEBYTECODE=1 python -m src.record_clashes
 # Or render from the shipped traces without re-running inference.
 PYTHONDONTWRITEBYTECODE=1 python scripts/build_showcase.py
 PYTHONDONTWRITEBYTECODE=1 python scripts/verify_showcase.py
+
+# Rebuild only the main video and its preview from the existing traces.
+PYTHONDONTWRITEBYTECODE=1 python scripts/build_showcase.py --gameplay-only
 ```
 
-Recording retains every second state (15 Hz) and all capture/split/death events. Rendering at 30 fps produces exactly 2× speed without skipping control observations. Each full video has 1,800 frames / 60 seconds. The animated previews are 30 playback seconds. Camera selection uses actual encounter geometry and nearby recorded capture events; it has no influence on policy actions or physics. Posters intentionally feature clashes.
+Recording retains every second state (15 Hz) and all capture/split/death events. Rendering at 30 fps produces exactly 2× speed without skipping control observations. The main video omits the first 350 recorded frames and contains **1,450 frames / 48.33 seconds**; the comparison retains **1,800 frames / 60 seconds**. The animated previews are 30 playback seconds. The main video's start is computed from the first recorded capture, with a two-playback-second lead-in. Camera selection uses actual encounter geometry and nearby recorded capture events; it has no influence on policy actions or physics. Posters intentionally feature clashes.
 
 Provenance: [recordings and model/source hashes](../outputs/showcase_clashes/recordings.json), [media hashes and playback metadata](../outputs/showcase_v1/media_manifest.json), [verification](../outputs/showcase_v1/verification.json). Font and encoder versions can change media bytes when rebuilding; trace states and actual policy outcomes are the underlying evidence. Historical stationary-target illustrations are not used in this gallery.

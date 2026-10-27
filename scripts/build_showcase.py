@@ -3,6 +3,7 @@
 No generated gameplay, hand-scripted split commands or historical checkpoints.
 Requires Pillow and ffmpeg for export; these are optional media-build tools.
 """
+import argparse
 import gzip
 import hashlib
 import json
@@ -257,6 +258,9 @@ def benchmark_figure(report):
 
 
 def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--gameplay-only',action='store_true',help='Rebuild the main video and GIF while retaining comparison and chart assets')
+    args=parser.parse_args()
     OUT.mkdir(parents=True,exist_ok=True)
     recording=json.loads((CLASHES/'recordings.json').read_text());traces={}
     for item in recording['recordings']:
@@ -264,14 +268,18 @@ def main():
         if hashlib.sha256(path.read_bytes()).hexdigest()!=item['sha256']:raise ValueError('Recording hash mismatch')
         with gzip.open(path,'rt') as f:traces[item['kind']]=json.load(f)
     mixed=traces['mixed'];events=mixed['events'];frames=mixed['frames']
+    first=next(e for e in events if e['kind']=='capture')
+    # Two playback seconds at 2x correspond to four simulator seconds.
+    start_index=max(0,round((first['seconds']-4)*mixed['capture_hz']))
+    start_seconds=frames[start_index]['seconds']
     def mixed_frames():
         center=camera_target(frames[0],events)
-        for state in frames[:-1]:
+        for index,state in enumerate(frames[:-1]):
             center=.82*center+.18*camera_target(state,events)
-            yield gameplay_frame(state,events,center)
+            if index>=start_index:
+                yield gameplay_frame(state,events,center)
     encode(OUT/'gameplay.mp4',mixed_frames())
-    # Posters intentionally show actual clashes; the full videos are uncut.
-    first=next(e for e in events if e['kind']=='capture')
+    # Keep the original simulator timestamps and every frame after the trim.
     poster=frames[min(len(frames)-1,round((first['seconds']+.3)*15))]
     gameplay_frame(poster,events,np.array(first['pos'])).save(OUT/'overview.png')
     later=[e for e in events if e['kind']=='capture'][-1]
@@ -283,18 +291,30 @@ def main():
         for states in zip(left['frames'][:-1],right['frames'][:-1]):
             centers=[.82*c+.18*camera_target(s,e,focus='player_0') for c,s,e in zip(centers,states,ev)]
             yield comparison_frame(states,ev,centers)
-    encode(OUT/'policy_comparison.mp4',paired_frames())
+    if not args.gameplay_only:
+        encode(OUT/'policy_comparison.mp4',paired_frames())
     focus_event=next(e for e in left['events'] if e['kind']=='capture' and e['predator']=='player_0')
     index=min(len(left['frames'])-1,round((focus_event['seconds']+.3)*15))
     states=[left['frames'][index],right['frames'][index]]
     centers=[camera_target(s,e,focus='player_0') for s,e in zip(states,ev)]
-    comparison_frame(states,ev,centers).save(OUT/'policy_comparison.png')
+    if not args.gameplay_only:
+        comparison_frame(states,ev,centers).save(OUT/'policy_comparison.png')
     gif(OUT/'gameplay.mp4',OUT/'gameplay.gif',0,30)
-    gif(OUT/'policy_comparison.mp4',OUT/'policy_comparison.gif',0,30)
-    report=json.loads((DATA/'benchmark.json').read_text());benchmark_figure(report)
+    report=json.loads((DATA/'benchmark.json').read_text())
+    if not args.gameplay_only:
+        gif(OUT/'policy_comparison.mp4',OUT/'policy_comparison.gif',0,30)
+        benchmark_figure(report)
     assets={p.name:dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in OUT.iterdir() if p.is_file()}
-    manifest=dict(schema_version=2,assets=assets,simulation_hz=30,source_recording_hz=15,
-        video_hz=30,playback_speed=2,video_seconds=60,simulation_seconds=120,preview_seconds=30,
+    manifest=dict(schema_version=3,assets=assets,simulation_hz=30,source_recording_hz=15,
+        video_hz=30,playback_speed=2,recording_simulation_seconds=120,preview_seconds=30,
+        videos={'gameplay.mp4':dict(frames=len(frames)-1-start_index,
+                    video_seconds=(len(frames)-1-start_index)/30,
+                    simulation_start_seconds=start_seconds,simulation_end_seconds=frames[-1]['seconds'],
+                    first_capture_simulation_seconds=first['seconds'],
+                    first_capture_playback_seconds=(first['seconds']-start_seconds)/2),
+                'policy_comparison.mp4':dict(frames=len(left['frames'])-1,
+                    video_seconds=(len(left['frames'])-1)/30,
+                    simulation_start_seconds=0,simulation_end_seconds=left['frames'][-1]['seconds'])},
         recordings_sha256=hashlib.sha256((CLASHES/'recordings.json').read_bytes()).hexdigest(),
         renderer_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),models=report['models'],
         poster_simulator_seconds=dict(overview=poster['seconds'],local_sensing=state['seconds'],comparison=states[0]['seconds']))

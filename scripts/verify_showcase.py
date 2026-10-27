@@ -32,7 +32,8 @@ def main():
     recordings=json.loads((clash_dir/'recordings.json').read_text())
     assert sha(clash_dir/'recordings.json')==manifest['recordings_sha256']
     assert recordings['models']==manifest['models']
-    assert manifest['playback_speed']==2 and manifest['video_seconds']>=30
+    assert manifest['schema_version']==3 and manifest['playback_speed']==2
+    assert all(item['video_seconds']>=30 for item in manifest['videos'].values())
     for source,digest in recordings['source_hashes'].items():assert sha(ROOT/source)==digest,source
     traces={}
     for item in recordings['recordings']:
@@ -47,6 +48,14 @@ def main():
     for field in ('food','viruses'):assert traces['ppo']['frames'][0][field]==traces['diffusion']['frames'][0][field]
     for first,second in zip(traces['ppo']['frames'][0]['players'],traces['diffusion']['frames'][0]['players']):
         for field in ('id','pos','yaw','mass','pieces'):assert first[field]==second[field]
+    gameplay=manifest['videos']['gameplay.mp4']
+    first_capture=next(e for e in traces['mixed']['events'] if e['kind']=='capture')['seconds']
+    assert gameplay['first_capture_simulation_seconds']==first_capture
+    assert abs(gameplay['first_capture_playback_seconds']-2)<=1/30
+    assert abs((first_capture-gameplay['simulation_start_seconds'])/2-2)<=1/30
+    start_index=round(gameplay['simulation_start_seconds']*15)
+    assert traces['mixed']['frames'][start_index]['seconds']==gameplay['simulation_start_seconds']
+    assert gameplay['frames']==len(traces['mixed']['frames'])-1-start_index
     assert len(report['rows'])==len({r['seed'] for r in report['rows']})==12
     assert summarize(report['rows'],1800)==report['summary']
     for row in report['rows']:
@@ -79,7 +88,9 @@ def main():
                     item['seconds']=duration/1000
                     assert 29.9<=item['seconds']<=30.2
                 assets[name]=item
-    for name,frames,seconds in [('gameplay.mp4',1800,60.),('policy_comparison.mp4',1800,60.)]:
+    for name,item in manifest['videos'].items():
+        frames,seconds=item['frames'],item['video_seconds']
+        assert abs((item['simulation_end_seconds']-item['simulation_start_seconds'])/2-seconds)<.01
         path=media/name
         meta=json.loads(subprocess.check_output(['ffprobe','-v','error','-select_streams','v:0',
             '-show_entries','stream=codec_name,width,height,nb_frames,r_frame_rate,duration','-of','json',str(path)],text=True))['streams'][0]

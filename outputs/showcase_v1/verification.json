@@ -5,7 +5,7 @@
   "simulation_steps": 21600,
   "policy_decisions": 151200,
   "trace_frames": 901,
-  "local_links_checked": 52,
+  "local_links_checked": 54,
   "model_source_and_data_hashes_verified": true,
   "benchmark_arithmetic_verified": true,
   "identical_comparison_initial_states_verified": true,
@@ -48,8 +48,8 @@
       "width": 1440,
       "height": 900,
       "r_frame_rate": "30/1",
-      "duration": "60.000000",
-      "nb_frames": "1800"
+      "duration": "48.333333",
+      "nb_frames": "1450"
     },
     "policy_comparison.mp4": {
       "codec_name": "h264",
@@ -61,5 +61,5 @@
     }
   },
   "benchmark_sha256": "c445dc7d6a2e878621c16de25534e31deeb20ae80ab73d8d116f8aa0b27d7bc5",
-  "media_manifest_sha256": "deed07386fe9e1d65b04c163389da8b44f88b8a249e1c690380e9cbb81a97432"
+  "media_manifest_sha256": "e7a132ba780f7062204d88c94777d0c97b5c82035befb981f41326357c190fe5"
 }

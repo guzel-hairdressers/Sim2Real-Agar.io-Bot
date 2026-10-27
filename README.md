@@ -8,9 +8,9 @@ Agents steer through an Agar-style arena, collect food, grow, avoid hazards, and
 
 [![Watch the agents navigate and compete](docs/media/showcase/gameplay.gif)](docs/media/showcase/gameplay.mp4)
 
-**[Full 60-second gameplay video at 2×](docs/media/showcase/gameplay.mp4)** · [Screenshots and demo gallery](docs/media.md) · [Benchmark protocol and raw results](docs/benchmarks.md) · [Run locally](#play-against-the-agents)
+**[48-second gameplay video at 2×](docs/media/showcase/gameplay.mp4)** · [Screenshots and demo gallery](docs/media.md) · [Benchmark protocol and raw results](docs/benchmarks.md) · [Run locally](#play-against-the-agents)
 
-*Actual autonomous clashes at 2× speed. Blue: PPO; green: diffusion; amber: heuristic opponents; pink: virus hazards. The rectangle marks the spectator clash camera; red rings mark measured captures. The 30-second animation previews a full 60-second video covering 120 simulator seconds.*
+*Actual autonomous clashes at 2× speed, starting two playback seconds before the first capture. Blue: PPO; green: diffusion; amber: heuristic opponents; pink: virus hazards. The rectangle marks the spectator clash camera; red rings mark measured captures. The 30-second animation previews a 48.3-second video covering simulator time 23.3–120 seconds.*
 
 ## What this project explores
 
