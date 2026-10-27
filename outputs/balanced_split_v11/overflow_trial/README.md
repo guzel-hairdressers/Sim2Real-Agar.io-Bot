@@ -1,0 +1,1 @@
+Stopped after detecting an infinite KL term from saturated float32 Bernoulli probabilities. The 30,720-transition checkpoint predates the overflow and is finite. No overflowed checkpoint was accepted or deployed. A resumed run uses stable logit-space KL, explicit finite-loss/gradient checks and fresh training seeds.

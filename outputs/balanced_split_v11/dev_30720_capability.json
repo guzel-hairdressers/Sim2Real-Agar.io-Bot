@@ -1,0 +1,11 @@
+{
+  "purpose": "Consumed v8 observations; development classification, not unseen outcomes",
+  "checkpoint_sha256": "19d27e75c1d80d752e3696850b2b42ea315dad3554ecc756fb44b566dfdc17df",
+  "reference_report_sha256": "6a5c2b2bfe10bca7b054de2c99391def1dd176f0ba756ad852344109e7f793a4",
+  "cases": 585,
+  "known_positive_opportunities": 89,
+  "initial_proposals": 68,
+  "initial_precision": 0.5588235294117647,
+  "initial_recall": 0.42696629213483145,
+  "useful_initial_splits_outside_old_guard": 22
+}

@@ -1,0 +1,38 @@
+{
+  "seed": 6200001,
+  "steps_requested": 240000,
+  "workers": 4,
+  "rollout": 256,
+  "discount_horizon_seconds": 20.0,
+  "gamma": 0.9983347214509387,
+  "gae_lambda": 0.98,
+  "split_head_frozen": true,
+  "continuous_safety_override": false,
+  "escape_curriculum_fraction": 0.35,
+  "reward": "log mass gain + 0.10 piece captures - 3.0 full deaths; no respawn growth credit",
+  "actor_learning_rate": 3e-05,
+  "critic_learning_rate": 0.0001,
+  "anchor_coefficient": 0.05,
+  "source_hashes": {
+    "src/train_balanced_ppo.py": "a2a3ae553a8578f78a10f54a0b048a6db100f67b0dbc7bda69d01800f12b21fe",
+    "src/balanced_policies.py": "fd75c3bc0c45210afae9b0e4e63d7934372af9d7f9cb41f2ea5c8ef78818fc5a",
+    "src/train_champion_ppo.py": "cf80816a826cf9a731e2d47041e9a1bfe8416c972bf67be09ccc967100db794b",
+    "src/train_arena_v2.py": "c8ca828ea113fc5420fe821a4726348e8e65af5db5e57e3a506f2185f9358957",
+    "envs/agar_env.py": "ff77a8ef2321a4c4768940cf3bda190d1339accac123a435803f23a54f778e3d",
+    "envs/arena_config.py": "3118bb710bd651243cd93bdb210ed182d7c24f6e85d911f141666394c5de19fa",
+    "src/heuristic_agent.py": "bf4ab693b7df66397ee837b4508d2db5bd1768d5db5d138720ff3ca354c22bd9",
+    "src/learned_risk.py": "30d272ce16b3a28bc5b44c9930eb20d820c21e9dafc62c5df2b6cdbc885c18cc"
+  },
+  "base_sha256": "c66236a8ad2a6b264557c4dbd395a27c01d84b48dd134d567afae41d7b4c1245",
+  "arena_config": {
+    "arena_size": 18.0,
+    "num_players": 7,
+    "num_food": 180,
+    "num_viruses": 7,
+    "total_world_mass": 550.0,
+    "dt": 0.03333333333333333,
+    "max_steps": 1800,
+    "max_pieces": 4,
+    "observation_version": 2
+  }
+}

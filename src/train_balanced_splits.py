@@ -14,13 +14,22 @@ import time
 
 import numpy as np
 import torch
-from torch.distributions import Bernoulli, kl_divergence
+from torch.distributions import Bernoulli
+from torch.nn import functional as F
 
 from src.arena_policies import load_package
 from src.benchmark_showcase import ROOT
 from src.learned_risk import physical_split_filter
 from src.train_arena_v2 import gae
 from src.train_champion_ppo import HybridActorCritic
+
+
+def bernoulli_reference_kl(reference_logits, logits):
+    """KL(reference || current) without probability-space saturation infinities."""
+    probability = reference_logits.sigmoid()
+    cross_entropy = F.binary_cross_entropy_with_logits(logits, probability, reduction='none')
+    entropy = F.binary_cross_entropy_with_logits(reference_logits, probability, reduction='none')
+    return (cross_entropy - entropy).clamp(min=0)
 
 
 def worker(pipe, index, seed):
@@ -80,6 +89,9 @@ def main():
                   threshold_logit=threshold_logit,
                   binary_exploration_temperature=temperature,
                   policy_loss_normalization='Mean over all transitions; unavailable split actions contribute zero',
+                  kl_implementation='Stable logit-space cross entropy minus reference entropy',
+                  fail_on_nonfinite=True,
+                  parent_balanced_split_training=package.get('balanced_split_training'),
                   base_sha256=hashlib.sha256(args.base.read_bytes()).hexdigest(),
                   source_hashes={s: hashlib.sha256((ROOT / s).read_bytes()).hexdigest() for s in sources})
     (args.output / 'training_config.json').write_text(json.dumps(config, indent=2))
@@ -147,14 +159,16 @@ def main():
                     surrogate = torch.minimum(ratio * advantage[ids],
                                               ratio.clamp(.9, 1.1) * advantage[ids])
                     with torch.no_grad():
-                        prior = Bernoulli(logits=(reference(batch)[2] - threshold_logit) / temperature)
-                    anchor = (kl_divergence(prior, distribution) * eligible).mean()
+                        prior_logits = (reference(batch)[2] - threshold_logit) / temperature
+                    anchor = (bernoulli_reference_kl(prior_logits, distribution.logits) * eligible).mean()
                     entropy = (distribution.entropy() * eligible).mean()
                     loss = -(surrogate * eligible).mean()
                     loss = loss + .25 * (value - target[ids]).square().mean() + .01 * anchor - .001 * entropy
+                    if not torch.isfinite(loss):
+                        raise FloatingPointError('Nonfinite split-training loss; refusing to update')
                     optimizer.zero_grad()
                     loss.backward()
-                    torch.nn.utils.clip_grad_norm_(head + critic, .5)
+                    torch.nn.utils.clip_grad_norm_(head + critic, .5, error_if_nonfinite=True)
                     optimizer.step()
                     losses.append(float(loss.detach()))
             updates += 1

@@ -163,3 +163,23 @@ head passes development retention, test the selected frozen checkpoint on
 the reserved fresh paired seeds and reactive encounter family. A head that
 simply stops splitting must not be presented as improved split capability;
 the encounter gate also requires useful initial splits outside the old guard.
+
+V10's final 241,664-transition checkpoint failed at **42.33 mass / 4 deaths**
+on the same eight development cases, versus 73.58 / 0. Its raw action contract
+passed; better action provenance is not evidence of better gameplay.
+
+The split-only branch encountered float32 Bernoulli KL saturation. The run
+was stopped; the last pre-overflow 30,720-transition checkpoint and all its
+preceding losses were verified finite. Post-overflow local checkpoints are
+explicitly excluded from continuation/acceptance. The numerical repair
+uses stable logit-space cross entropy, finite-loss/gradient checks, and two
+extreme-logit regression tests. All **97 tests passed**. Stable continuation
+fits 90,112 additional transitions from those weights, resetting the
+optimizer and using fresh seeds **6,340,001 + worker*10,000 + episode**.
+Sources, bad-trial logs and the valid continuation lineage are preserved.
+
+A cheap diagnostic on the consumed v8 observations confirms that the early
+split checkpoint is not an all-hold head: 68 proposals, 42.7% initial recall
+and 22 known useful initial splits outside the old guard. Precision is only
+55.9%, below v8's 73.9%; these classification results do not prove improved
+match outcomes or fresh generalization.

@@ -1,0 +1,152 @@
+[
+  {
+    "steps": 2048,
+    "update": 1,
+    "reward": -0.000277155210402503,
+    "deaths": 1,
+    "eligible_frames": 0,
+    "split_requests": 0,
+    "loss": 0.07333195529645309,
+    "steps_per_second": 247.28200963170138
+  },
+  {
+    "steps": 4096,
+    "update": 2,
+    "reward": -0.00015951451414433066,
+    "deaths": 1,
+    "eligible_frames": 2,
+    "split_requests": 1,
+    "loss": 0.0628929061931558,
+    "steps_per_second": 242.12815156591248
+  },
+  {
+    "steps": 6144,
+    "update": 3,
+    "reward": 0.0011729811579139686,
+    "deaths": 0,
+    "eligible_frames": 219,
+    "split_requests": 1,
+    "loss": 0.18918106914497912,
+    "steps_per_second": 240.4054576558229
+  },
+  {
+    "steps": 8192,
+    "update": 4,
+    "reward": 0.0010709426945802263,
+    "deaths": 0,
+    "eligible_frames": 327,
+    "split_requests": 1,
+    "loss": 0.11318685291917063,
+    "steps_per_second": 231.9387266274279
+  },
+  {
+    "steps": 10240,
+    "update": 5,
+    "reward": 0.0002901452992379344,
+    "deaths": 0,
+    "eligible_frames": 335,
+    "split_requests": 3,
+    "loss": 0.2525295177474618,
+    "steps_per_second": 225.2593898137387
+  },
+  {
+    "steps": 12288,
+    "update": 6,
+    "reward": -0.0025244314122743862,
+    "deaths": 2,
+    "eligible_frames": 610,
+    "split_requests": 3,
+    "loss": 0.2621851523872465,
+    "steps_per_second": 220.24897378292698
+  },
+  {
+    "steps": 14336,
+    "update": 7,
+    "reward": -0.002929485273964117,
+    "deaths": 2,
+    "eligible_frames": 589,
+    "split_requests": 4,
+    "loss": 0.1608570390380919,
+    "steps_per_second": 215.72650821880393
+  },
+  {
+    "steps": 16384,
+    "update": 8,
+    "reward": 0.0007317263661983226,
+    "deaths": 0,
+    "eligible_frames": 11,
+    "split_requests": 0,
+    "loss": 0.030787512398092076,
+    "steps_per_second": 206.67126851033095
+  },
+  {
+    "steps": 18432,
+    "update": 9,
+    "reward": -0.0006203548819336084,
+    "deaths": 1,
+    "eligible_frames": 1,
+    "split_requests": 1,
+    "loss": 0.032535341975744814,
+    "steps_per_second": 196.08712401101104
+  },
+  {
+    "steps": 20480,
+    "update": 10,
+    "reward": 0.0007093405565356557,
+    "deaths": 0,
+    "eligible_frames": 52,
+    "split_requests": 0,
+    "loss": 0.024392178558628075,
+    "steps_per_second": 182.92849967162638
+  },
+  {
+    "steps": 22528,
+    "update": 11,
+    "reward": 0.0012649082715352196,
+    "deaths": 0,
+    "eligible_frames": 147,
+    "split_requests": 2,
+    "loss": -0.005146102952494402,
+    "steps_per_second": 181.8517735924552
+  },
+  {
+    "steps": 24576,
+    "update": 12,
+    "reward": 0.001320952897857388,
+    "deaths": 0,
+    "eligible_frames": 85,
+    "split_requests": 5,
+    "loss": 0.08054303546668962,
+    "steps_per_second": 184.0840891060919
+  },
+  {
+    "steps": 26624,
+    "update": 13,
+    "reward": 0.0006378486729449759,
+    "deaths": 0,
+    "eligible_frames": 304,
+    "split_requests": 2,
+    "loss": 0.09130458248546347,
+    "steps_per_second": 186.89944216941814
+  },
+  {
+    "steps": 28672,
+    "update": 14,
+    "reward": 0.0006558067099877653,
+    "deaths": 0,
+    "eligible_frames": 388,
+    "split_requests": 4,
+    "loss": 0.15812138258479536,
+    "steps_per_second": 188.7989332096439
+  },
+  {
+    "steps": 30720,
+    "update": 15,
+    "reward": -0.0008103334347054411,
+    "deaths": 1,
+    "eligible_frames": 16,
+    "split_requests": 0,
+    "loss": 0.034791233418218326,
+    "steps_per_second": 194.04843531694033
+  }
+]
