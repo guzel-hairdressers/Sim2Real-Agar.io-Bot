@@ -99,3 +99,24 @@ horizon, with new training seeds **6,200,001 + worker*10,000 + episode**.
 Development seeds and all predeclared final seed reserves stay unchanged.
 The warm-start and later checkpoints must pass match evaluation before
 any deployment. The regression suite currently has **94 passing tests**.
+
+| Development checkpoint (same 8 focus cases) | Mean final mass | Full deaths | Wall-contact frames |
+| --- | ---: | ---: | ---: |
+| Same-seat v3 control | 73.58 | 0 | 157 |
+| V9, 30,720 transitions | 32.76 | 8 | 603 |
+| V9, 120,832 transitions | 49.32 | 2 | 917 |
+| V10 distilled warm-start | 56.64 | 2 | 509 |
+
+These are development comparisons, not independent unseen tests. Neither
+the completed v9 run nor the warm-start meets the 90% mass-retention bar
+(66.22 on these cases). More training improved v9 survival; distillation
+improved the starting controller's development mass and wall contacts.
+Neither result establishes a successful deployment replacement.
+
+Audit scope caveat for the initial development JSON format: the
+`nonphysical_overrides` counter compares emitted commands with raw neural
+commands **only for BalancedPPO**. Its zero for historical assisted
+controllers is unmeasured, not evidence of no steering assistance. Those
+controllers explicitly retain it. Growth, death, capture, wall-contact and
+physical-violation measurements cover every focus case. Final reports must
+mark unmeasured control counters unavailable rather than report zero.
