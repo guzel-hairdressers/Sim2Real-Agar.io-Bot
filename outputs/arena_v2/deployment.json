@@ -1,0 +1,23 @@
+{
+  "schema_version": 2,
+  "observation_version": 2,
+  "accepted_on": "2026-10-27",
+  "models": {
+    "ppo": {
+      "file": "ppo.pt",
+      "sha256": "7737fd2c974803eee88a60e4569669a005d163d12e6e64f30da2d9b137972e08"
+    },
+    "diffusion": {
+      "file": "../arena_v2_cosine/diffusion.pt",
+      "sha256": "ed3d19f685997e1d303b6f1077358a31fc78c0a61f4073171a8d0134b93ea6c1"
+    },
+    "critic": {
+      "file": "../arena_v2_cosine/critic.pt",
+      "sha256": "b7038895092ca19e66b406de3c299e6d90913c8ddb6129e70efefd76909b54ef"
+    }
+  },
+  "evaluations": [
+    "ppo_acceptance.json",
+    "../arena_v2_cosine/diffusion_acceptance.json"
+  ]
+}

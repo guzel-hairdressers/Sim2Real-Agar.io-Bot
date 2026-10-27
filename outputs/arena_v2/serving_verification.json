@@ -1,0 +1,17 @@
+{
+  "ready": true,
+  "error": null,
+  "control_dt": 0.03333333333333333,
+  "observed_control_hz": 27.13,
+  "frame_shape": [
+    675,
+    1200,
+    3
+  ],
+  "model_hashes": {
+    "ppo": "7737fd2c974803eee88a60e4569669a005d163d12e6e64f30da2d9b137972e08",
+    "diffusion": "ed3d19f685997e1d303b6f1077358a31fc78c0a61f4073171a8d0134b93ea6c1",
+    "critic": "b7038895092ca19e66b406de3c299e6d90913c8ddb6129e70efefd76909b54ef"
+  },
+  "verification": "Read-only status and stream requests; no control/reset calls to the live session."
+}

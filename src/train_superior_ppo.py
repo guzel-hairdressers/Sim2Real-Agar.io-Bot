@@ -120,12 +120,8 @@ class SuperiorPPOAgent:
     def __init__(self, weights_path: str = "outputs/agar_ppo_champion.pt", device: str = "cpu"):
         self.device = torch.device(device)
         self.net = SeparateActorCritic(obs_dim=38, action_dim=3, hidden_dim=128).to(self.device)
-        if os.path.exists(weights_path):
-            try:
-                self.net.load_state_dict(torch.load(weights_path, map_location=self.device))
-                logger.info(f"Superior PPO loaded from {weights_path}")
-            except Exception as e:
-                logger.warning(f"Could not load {weights_path}: {e}")
+        self.net.load_state_dict(torch.load(weights_path, map_location=self.device, weights_only=True))
+        logger.info(f"Superior PPO loaded from {weights_path}")
         self.net.eval()
 
     def predict(self, obs: np.ndarray, deterministic: bool = True) -> np.ndarray:

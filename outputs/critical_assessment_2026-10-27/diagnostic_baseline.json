@@ -1,0 +1,191 @@
+[
+  {
+    "mode": "current_reflex",
+    "seed": 72701,
+    "duration_sim_seconds": 30,
+    "groups": {
+      "Heuristic": {
+        "agents": 3,
+        "kills": 0,
+        "deaths": 0,
+        "final_mass_sum": 56.66
+      },
+      "PPO": {
+        "agents": 2,
+        "kills": 0,
+        "deaths": 1,
+        "final_mass_sum": 33.5
+      },
+      "Diffusion": {
+        "agents": 2,
+        "kills": 2,
+        "deaths": 1,
+        "final_mass_sum": 59.28
+      }
+    },
+    "diagnostic": {
+      "neural_observations": 3600,
+      "action_changed": 3600,
+      "fully_rule_controlled": 493,
+      "nearby_threat_observations": 153,
+      "evasion_branch_fires": 0,
+      "split_requests": 2,
+      "requested_split_cannot_eat_nearest_prey": 2
+    }
+  },
+  {
+    "mode": "current_reflex",
+    "seed": 72719,
+    "duration_sim_seconds": 30,
+    "groups": {
+      "Heuristic": {
+        "agents": 3,
+        "kills": 0,
+        "deaths": 0,
+        "final_mass_sum": 52.879999999999995
+      },
+      "PPO": {
+        "agents": 2,
+        "kills": 0,
+        "deaths": 0,
+        "final_mass_sum": 36.83
+      },
+      "Diffusion": {
+        "agents": 2,
+        "kills": 0,
+        "deaths": 0,
+        "final_mass_sum": 35.33
+      }
+    },
+    "diagnostic": {
+      "neural_observations": 3600,
+      "action_changed": 3600
+    }
+  },
+  {
+    "mode": "current_reflex",
+    "seed": 72733,
+    "duration_sim_seconds": 30,
+    "groups": {
+      "Diffusion": {
+        "agents": 2,
+        "kills": 0,
+        "deaths": 0,
+        "final_mass_sum": 47.7
+      },
+      "Heuristic": {
+        "agents": 3,
+        "kills": 0,
+        "deaths": 0,
+        "final_mass_sum": 64.03999999999999
+      },
+      "PPO": {
+        "agents": 2,
+        "kills": 0,
+        "deaths": 0,
+        "final_mass_sum": 40.32
+      }
+    },
+    "diagnostic": {
+      "neural_observations": 3600,
+      "action_changed": 3600,
+      "nearby_threat_observations": 49,
+      "evasion_branch_fires": 0,
+      "fully_rule_controlled": 89
+    }
+  },
+  {
+    "mode": "raw_network",
+    "seed": 72701,
+    "duration_sim_seconds": 30,
+    "groups": {
+      "Heuristic": {
+        "agents": 3,
+        "kills": 2,
+        "deaths": 0,
+        "final_mass_sum": 87.53
+      },
+      "PPO": {
+        "agents": 2,
+        "kills": 2,
+        "deaths": 2,
+        "final_mass_sum": 51.93
+      },
+      "Diffusion": {
+        "agents": 2,
+        "kills": 2,
+        "deaths": 1,
+        "final_mass_sum": 45.81
+      }
+    },
+    "diagnostic": {
+      "neural_observations": 3600,
+      "action_changed": 3600,
+      "fully_rule_controlled": 467,
+      "nearby_threat_observations": 872,
+      "evasion_branch_fires": 0
+    }
+  },
+  {
+    "mode": "raw_network",
+    "seed": 72719,
+    "duration_sim_seconds": 30,
+    "groups": {
+      "Heuristic": {
+        "agents": 3,
+        "kills": 5,
+        "deaths": 0,
+        "final_mass_sum": 132.56
+      },
+      "PPO": {
+        "agents": 2,
+        "kills": 0,
+        "deaths": 2,
+        "final_mass_sum": 29.5
+      },
+      "Diffusion": {
+        "agents": 2,
+        "kills": 0,
+        "deaths": 3,
+        "final_mass_sum": 40.370000000000005
+      }
+    },
+    "diagnostic": {
+      "neural_observations": 3600,
+      "action_changed": 3600,
+      "nearby_threat_observations": 1111,
+      "evasion_branch_fires": 0
+    }
+  },
+  {
+    "mode": "raw_network",
+    "seed": 72733,
+    "duration_sim_seconds": 30,
+    "groups": {
+      "Diffusion": {
+        "agents": 2,
+        "kills": 1,
+        "deaths": 1,
+        "final_mass_sum": 47.5
+      },
+      "Heuristic": {
+        "agents": 3,
+        "kills": 2,
+        "deaths": 0,
+        "final_mass_sum": 94.39999999999999
+      },
+      "PPO": {
+        "agents": 2,
+        "kills": 0,
+        "deaths": 1,
+        "final_mass_sum": 36.47
+      }
+    },
+    "diagnostic": {
+      "neural_observations": 3600,
+      "action_changed": 3600,
+      "nearby_threat_observations": 586,
+      "evasion_branch_fires": 0
+    }
+  }
+]

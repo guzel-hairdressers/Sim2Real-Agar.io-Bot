@@ -112,8 +112,10 @@ class HybridActorCritic(nn.Module):
             cont_act = cont_dist.rsample()
             split_act = split_dist.sample()
 
-        thrust = torch.clamp(cont_act[..., 0:1], 0.0, 1.0)
-        steer = torch.clamp(cont_act[..., 1:2], -1.0, 1.0)
+        # Retain the Gaussian sample for the old AND new likelihood. Only the
+        # action sent to the environment is clipped, not the rollout buffer.
+        thrust = cont_act[..., 0:1]
+        steer = cont_act[..., 1:2]
         action = torch.cat([thrust, steer, split_act.unsqueeze(-1)], dim=-1)
 
         log_prob = cont_dist.log_prob(cont_act).sum(dim=-1) + split_dist.log_prob(split_act)
@@ -140,19 +142,15 @@ class ChampionPPOAgent:
     def __init__(self, weights_path: str = "outputs/agar_ppo_champion.pt", device: str = "cpu"):
         self.device = torch.device(device)
         self.net = HybridActorCritic(obs_dim=38, hidden_dim=128).to(self.device)
-        if os.path.exists(weights_path):
-            try:
-                self.net.load_state_dict(torch.load(weights_path, map_location=self.device))
-                logger.info(f"Champion PPO loaded from {weights_path}")
-            except Exception as e:
-                logger.warning(f"Could not load {weights_path}: {e}")
+        self.net.load_state_dict(torch.load(weights_path, map_location=self.device, weights_only=True))
+        logger.info(f"Champion PPO loaded from {weights_path}")
         self.net.eval()
 
     def predict(self, obs: np.ndarray, deterministic: bool = True, apply_reflex: bool = True) -> np.ndarray:
         with torch.no_grad():
             t_obs = torch.tensor(obs, dtype=torch.float32, device=self.device).unsqueeze(0)
             act, _, _, _ = self.net.get_action_and_value(t_obs, deterministic=deterministic)
-            action = act.squeeze(0).cpu().numpy()
+            action = np.clip(act.squeeze(0).cpu().numpy(), [0, -1, 0], [1, 1, 1]).astype(np.float32)
         if apply_reflex:
             return apply_tactical_combat_reflex(action, obs)
         return action
@@ -310,6 +308,8 @@ def train_competitive_ppo_rl(
 
     worker_obs = [remote.recv() for remote in remotes]
     global_step = 0
+    previous_kills = [0] * num_workers
+    previous_deaths = [0] * num_workers
     iteration = 0
     start_time = time.time()
 
@@ -387,15 +387,15 @@ def train_competitive_ppo_rl(
                             raw_r += 0.35 * abs(t_fwd)
 
                     # Predation vs Death Shaping
-                    if infos["player_0"]["kills"] > 0:
-                        raw_r += 4.5  # Massive reward for taking down heuristic bots
-                    if infos["player_0"]["deaths"] > 0:
-                        raw_r -= 3.0  # Decisive penalty for death
+                    raw_r += 4.5 * max(0, infos['player_0']['kills'] - previous_kills[w])
+                    raw_r -= 3.0 * max(0, infos['player_0']['deaths'] - previous_deaths[w])
 
                     rewards_buf[step, w] = raw_r
                     dones_buf[step, w] = float(terms["player_0"] or truncs["player_0"])
 
-                    iter_kills += infos["player_0"]["kills"]
+                    iter_kills += max(0, infos['player_0']['kills'] - previous_kills[w])
+                    previous_kills[w] = infos['player_0']['kills'] if not truncs['player_0'] else 0
+                    previous_deaths[w] = infos['player_0']['deaths'] if not truncs['player_0'] else 0
                     iter_masses.append(infos["player_0"]["mass"])
 
                     worker_trajectories[w].append((

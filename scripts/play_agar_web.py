@@ -16,6 +16,11 @@ import math
 import argparse
 import logging
 import threading
+import json
+import hashlib
+from pathlib import Path
+from contextlib import asynccontextmanager
+import torch
 import cv2
 import numpy as np
 import uvicorn
@@ -28,16 +33,29 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from envs.agar_env import PartiallyObservableAgarEnv
+from envs.arena_config import ArenaConfig
+from src.arena_policies import ArenaPPO, ArenaDiffusion
 from src.heuristic_agent import MasterHeuristicAgarBot
-from src.train_champion_ppo import ChampionPPOAgent
-from src.agar_diffusion_policy import AgarDiffusionPolicy
 from scripts.render_agar_demo import draw_glowing_cell, draw_spiked_virus
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("AgarWebArena")
 
-app = FastAPI(title="Playable Agar.io AI Arena", description="Human vs Trained Neural Bots")
+@asynccontextmanager
+async def lifespan(app):
+    global arena_mgr, sim_thread
+    torch.set_num_threads(1)
+    arena_mgr = ArenaGameManager()
+    sim_thread = threading.Thread(target=arena_mgr.run_loop, daemon=True)
+    sim_thread.start()
+    try:
+        yield
+    finally:
+        arena_mgr.is_running = False
+        sim_thread.join(timeout=5)
+
+
+app = FastAPI(title="Playable Agar.io AI Arena", description="Human vs Trained Neural Bots", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -100,28 +118,27 @@ class ArenaGameManager:
         self.latest_jpeg = None
         self.lock = threading.Lock()
         self.is_running = True
+        self.last_error = None
+        self.processing_fps = 0.
         self._init_arena()
 
     def _init_arena(self):
-        self.env = PartiallyObservableAgarEnv(
-            arena_size=self.arena_size,
-            num_players=7,
-            num_food=180,
-            num_viruses=7,
-            total_world_mass=550.0,
-            dt=self.dt
-        )
+        self.env = ArenaConfig().make()
         self.obs_dict, _ = self.env.reset(seed=int(time.time()) % 10000)
 
         # Load models
-        ppo_weights = os.path.join(PROJECT_ROOT, "outputs/agar_ppo_champion.pt")
-        diff_weights = os.path.join(PROJECT_ROOT, "outputs/agar_diffusion_champion.pt")
-        critic_weights = os.path.join(PROJECT_ROOT, "outputs/agar_diffusion_critic_champion.pt")
-
-        self.ppo_champ_1 = ChampionPPOAgent(weights_path=ppo_weights)
-        self.ppo_champ_2 = ChampionPPOAgent(weights_path=ppo_weights)
-        self.diff_champ_1 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=3, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=42)
-        self.diff_champ_2 = AgarDiffusionPolicy(model_path=diff_weights, critic_path=critic_weights, action_horizon=16, exec_horizon=3, action_dim=3, obs_dim=38, num_ddim_steps=5, seed=108)
+        directory = Path(os.environ.get('ARENA_POLICY_DIR', os.path.join(PROJECT_ROOT, 'outputs/arena_v2')))
+        self.model_manifest = json.loads((directory/'deployment.json').read_text())
+        weights = {}
+        for name, entry in self.model_manifest['models'].items():
+            path = directory/entry['file']
+            if hashlib.sha256(path.read_bytes()).hexdigest() != entry['sha256']:
+                raise ValueError(f'Deployment checksum mismatch: {name}')
+            weights[name] = path
+        self.ppo_champ_1 = ArenaPPO(weights['ppo'])
+        self.ppo_champ_2 = ArenaPPO(weights['ppo'])
+        self.diff_champ_1 = ArenaDiffusion(weights['diffusion'], weights.get('critic'), seed=42)
+        self.diff_champ_2 = ArenaDiffusion(weights['diffusion'], weights.get('critic'), seed=108)
         self.heuristic_apex = MasterHeuristicAgarBot(pid="player_5", profile="apex", seed=101)
         self.heuristic_hunter = MasterHeuristicAgarBot(pid="player_6", profile="hunter", seed=202)
 
@@ -155,6 +172,9 @@ class ArenaGameManager:
                 if human_state.reset_requested:
                     human_state.reset_requested = False
                     self.obs_dict, _ = self.env.reset(seed=int(time.time()) % 10000)
+                    for _, policy, _ in self.competitors.values():
+                        if hasattr(policy, 'reset'):
+                            policy.reset(seed=42)
 
                 human_player = self.env.players["player_0"]
                 h_action = human_state.get_action(human_player.yaw)
@@ -164,12 +184,18 @@ class ArenaGameManager:
                     _, agent, _ = self.competitors[pid]
                     actions[pid] = agent.predict(self.obs_dict[pid], deterministic=True)
 
+                previous_deaths = {pid: p.deaths for pid, p in self.env.players.items()}
                 self.obs_dict, _, _, _, _ = self.env.step(actions)
+                for pid, (_, policy, _) in self.competitors.items():
+                    if self.env.players[pid].deaths > previous_deaths[pid] and hasattr(policy, 'reset'):
+                        policy.reset(seed=42+self.env.step_count)
 
                 # Render Frame
                 frame = np.full((total_h, total_w, 3), (11, 15, 25), dtype=np.uint8)
                 main_view = frame[:, :main_w]
                 cam_x, cam_y = human_player.pos
+                def visible(x, y):
+                    return math.hypot(x-cam_x, y-cam_y) <= human_player.vision_radius
 
                 def w2s(wx, wy):
                     return int(main_w / 2.0 + (wx - cam_x) * pixels_per_meter), int(total_h / 2.0 - (wy - cam_y) * pixels_per_meter)
@@ -185,6 +211,8 @@ class ArenaGameManager:
 
                 # Food Pellets
                 for i, (fx, fy) in enumerate(self.env.food_positions):
+                    if not visible(fx, fy):
+                        continue
                     sx, sy = w2s(fx, fy)
                     if -10 <= sx < main_w + 10 and -10 <= sy < total_h + 10:
                         cv2.circle(main_view, (sx, sy), 4, self.food_colors[i % len(self.food_colors)], -1, cv2.LINE_AA)
@@ -196,7 +224,7 @@ class ArenaGameManager:
                     player = self.env.players[pid]
                     name, _, col = self.competitors[pid]
                     for pc_idx, pc in enumerate(player.pieces):
-                        if pc.mass < 36.0:
+                        if pc.mass < 36.0 and (pid == 'player_0' or visible(*pc.pos)):
                             sx, sy = w2s(pc.pos[0], pc.pos[1])
                             r_px = max(6, int(pc.radius * pixels_per_meter))
                             if -150 <= sx < main_w + 150 and -150 <= sy < total_h + 150:
@@ -214,6 +242,8 @@ class ArenaGameManager:
                 # 2. Draw Spiked Viruses (drawn over small sheltering cells as camouflage/shield)
                 v_rot = frame_idx * 0.04
                 for vx, vy, vr in self.env.viruses:
+                    if not visible(vx, vy):
+                        continue
                     vsx, vsy = w2s(vx, vy)
                     v_radius_px = int(vr * pixels_per_meter)
                     if -50 <= vsx < main_w + 50 and -50 <= vsy < total_h + 50:
@@ -224,7 +254,7 @@ class ArenaGameManager:
                     player = self.env.players[pid]
                     name, _, col = self.competitors[pid]
                     for pc_idx, pc in enumerate(player.pieces):
-                        if pc.mass >= 36.0:
+                        if pc.mass >= 36.0 and (pid == 'player_0' or visible(*pc.pos)):
                             sx, sy = w2s(pc.pos[0], pc.pos[1])
                             r_px = max(6, int(pc.radius * pixels_per_meter))
                             if -150 <= sx < main_w + 150 and -150 <= sy < total_h + 150:
@@ -279,17 +309,29 @@ class ArenaGameManager:
                     self.latest_jpeg = jpeg.tobytes()
 
                 frame_idx += 1
+                self.processing_fps = .95*self.processing_fps + .05/min(10, max(.001, time.perf_counter()-t0))
             except Exception as e:
                 logger.error(f"Error in simulation loop: {e}", exc_info=True)
+                self.last_error = str(e)
+                self.is_running = False
+                break
 
             elapsed = time.perf_counter() - t0
             sleep_time = max(0.001, (1.0 / float(self.fps)) - elapsed)
             time.sleep(sleep_time)
 
 
-arena_mgr = ArenaGameManager()
-sim_thread = threading.Thread(target=arena_mgr.run_loop, daemon=True)
-sim_thread.start()
+arena_mgr = None
+sim_thread = None
+
+
+@app.get('/status')
+async def arena_status():
+    return {'ready': arena_mgr.is_running and arena_mgr.latest_jpeg is not None,
+            'error': arena_mgr.last_error, 'observation_version': 2,
+            'control_dt': arena_mgr.env.dt, 'simulation_seconds': arena_mgr.env.step_count*arena_mgr.env.dt,
+            'processing_capacity_fps': round(arena_mgr.processing_fps, 1),
+            'models': arena_mgr.model_manifest['models']}
 
 
 class ControlInput(BaseModel):
@@ -430,7 +472,9 @@ def main():
     parser = argparse.ArgumentParser(description="Agar.io Interactive Web Arena")
     parser.add_argument("--host", type=str, default="127.0.0.1", help="Host interface")
     parser.add_argument("--port", type=int, default=8080, help="Port to run web game on")
+    parser.add_argument('--policy-dir', default=os.path.join(PROJECT_ROOT, 'outputs/arena_v2'))
     args = parser.parse_args()
+    os.environ['ARENA_POLICY_DIR'] = args.policy_dir
 
     print("\n" + "=" * 70)
     print("  AGAR.IO AI ARENA // PLAYABLE HUMAN VS NEURAL CHAMPIONS WEB SERVER")

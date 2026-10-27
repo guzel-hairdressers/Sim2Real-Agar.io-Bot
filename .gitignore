@@ -38,6 +38,8 @@ env/
 # Large raw training rollout buffers (reproducible from scripts)
 outputs/*.npz
 outputs/*.npy
+outputs/**/demonstrations.npz
+outputs/**/training.log
 outputs/agar_arena_demo.mp4
 
 # Keep key demonstration video and lightweight artifacts

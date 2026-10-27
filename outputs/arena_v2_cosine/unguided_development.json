@@ -1,0 +1,188 @@
+{
+  "config": {
+    "arena_size": 18.0,
+    "num_players": 7,
+    "num_food": 180,
+    "num_viruses": 7,
+    "total_world_mass": 550.0,
+    "dt": 0.03333333333333333,
+    "max_steps": 1200,
+    "max_pieces": 4,
+    "observation_version": 2
+  },
+  "assisted": true,
+  "algorithm": "diffusion",
+  "checkpoint_hashes": {
+    "outputs/arena_v2_cosine/diffusion.pt": "ed3d19f685997e1d303b6f1077358a31fc78c0a61f4073171a8d0134b93ea6c1",
+    "outputs/agar_ppo_champion.pt": "a5a4e685ac1ffd6531544f799cc5aad7601a7288b51d42326078b6d5d677df4a",
+    "outputs/agar_diffusion_champion.pt": "47b41d669255142592c8e787f065d32b11484bbd83d6f2fabd8f5d7485b81bff",
+    "outputs/agar_diffusion_critic_champion.pt": "1c71c9e36b036e64b0b5ca8d90cda37f58dce0657c1c2b13474d3e6caa24bab6"
+  },
+  "source_hashes": {
+    "envs/agar_env.py": "447ec015cf6bf7ac58ba07a424af65603a418bb74e899d26ba4c45a8ad4006f7",
+    "envs/arena_config.py": "3118bb710bd651243cd93bdb210ed182d7c24f6e85d911f141666394c5de19fa",
+    "src/arena_tactics.py": "648368c367d4381d444de834db390229b08fecbdba92992614adce8ecf603083",
+    "src/arena_policies.py": "15dd49defc45b3b22e1267ef12fcb1eb8fb1c83c68da325b9768e46ddc9cc4aa",
+    "src/agar_diffusion_policy.py": "f82d5da6ad1bc6603329a605518ebc45d2bb57d309d1c273b81a2e5c38589685",
+    "src/train_champion_ppo.py": "2221f6cc658aec0f11d094bcbb41067c24dcab43ad132ef66e3379bfe9cca400",
+    "src/evaluate_arena_v2.py": "c8568d9699b939858a891f4a652cab556634a8a5d726796bb15a83bcef6c8a01",
+    "benchmarks/legacy_reflex_ca3f24d.py": "4068413e6fad12f5ccec3013d7889263ed2ce122ae555a5fd1d72e70a1ccbb32"
+  },
+  "rows": [
+    {
+      "seed": 810001,
+      "groups": {
+        "new": {
+          "final_mass": 40.867853350559585,
+          "mass_gain": 27.45832499507339,
+          "piece_kills": 0,
+          "deaths": 0,
+          "wall_contacts": 1,
+          "latency_ms": 0.2521718816666654
+        },
+        "legacy": {
+          "final_mass": 32.859220426472845,
+          "mass_gain": 18.89851889577446,
+          "piece_kills": 1,
+          "deaths": 1,
+          "wall_contacts": 0,
+          "latency_ms": 0.3877938545833448
+        },
+        "heuristic": {
+          "final_mass": 25.424704945906253,
+          "mass_gain": 11.245360036916798,
+          "piece_kills": 0,
+          "deaths": 0,
+          "wall_contacts": 1,
+          "latency_ms": null
+        }
+      },
+      "algorithm": "diffusion",
+      "mass_difference": 8.559806099298932,
+      "new_wins_mass": true
+    },
+    {
+      "seed": 810038,
+      "groups": {
+        "new": {
+          "final_mass": 35.66139300015471,
+          "mass_gain": 22.081048124022477,
+          "piece_kills": 0,
+          "deaths": 0,
+          "wall_contacts": 23,
+          "latency_ms": 0.26114819166667136
+        },
+        "legacy": {
+          "final_mass": 55.698520785141255,
+          "mass_gain": 41.79628071373885,
+          "piece_kills": 4,
+          "deaths": 1,
+          "wall_contacts": 111,
+          "latency_ms": 0.38806265625000064
+        },
+        "heuristic": {
+          "final_mass": 27.327853855112483,
+          "mass_gain": 12.771213600416212,
+          "piece_kills": 0,
+          "deaths": 3,
+          "wall_contacts": 569,
+          "latency_ms": null
+        }
+      },
+      "algorithm": "diffusion",
+      "mass_difference": -19.715232589716376,
+      "new_wins_mass": false
+    },
+    {
+      "seed": 810075,
+      "groups": {
+        "new": {
+          "final_mass": 48.45860849430628,
+          "mass_gain": 34.51588624420843,
+          "piece_kills": 2,
+          "deaths": 0,
+          "wall_contacts": 0,
+          "latency_ms": 0.28187985791665077
+        },
+        "legacy": {
+          "final_mass": 17.5,
+          "mass_gain": 3.978863995012534,
+          "piece_kills": 0,
+          "deaths": 2,
+          "wall_contacts": 0,
+          "latency_ms": 0.4158286741666539
+        },
+        "heuristic": {
+          "final_mass": 24.047076833317362,
+          "mass_gain": 9.605299427294737,
+          "piece_kills": 0,
+          "deaths": 0,
+          "wall_contacts": 0,
+          "latency_ms": null
+        }
+      },
+      "algorithm": "diffusion",
+      "mass_difference": 30.537022249195896,
+      "new_wins_mass": true
+    },
+    {
+      "seed": 810112,
+      "groups": {
+        "new": {
+          "final_mass": 57.25362233341316,
+          "mass_gain": 42.485898913088455,
+          "piece_kills": 3,
+          "deaths": 0,
+          "wall_contacts": 0,
+          "latency_ms": 0.2798290558333294
+        },
+        "legacy": {
+          "final_mass": 15.5,
+          "mass_gain": 1.363061185579764,
+          "piece_kills": 1,
+          "deaths": 8,
+          "wall_contacts": 36,
+          "latency_ms": 0.41997655624999536
+        },
+        "heuristic": {
+          "final_mass": 49.28432211834467,
+          "mass_gain": 34.93756558305108,
+          "piece_kills": 7,
+          "deaths": 0,
+          "wall_contacts": 186,
+          "latency_ms": null
+        }
+      },
+      "algorithm": "diffusion",
+      "mass_difference": 41.12283772750869,
+      "new_wins_mass": true
+    }
+  ],
+  "summary": {
+    "matches": 4,
+    "mass_gain_difference": 15.126108371571785,
+    "bootstrap_95_ci": [
+      -7.152168879988308,
+      35.82992998835229
+    ],
+    "mass_wins": 3,
+    "new": {
+      "final_mass": 45.560369294608435,
+      "mass_gain": 31.63528956909819,
+      "piece_kills": 1.25,
+      "deaths": 0.0,
+      "wall_contacts": 6.0,
+      "latency_ms": 0.26875724677082924
+    },
+    "legacy": {
+      "final_mass": 30.389435302903525,
+      "mass_gain": 16.509181197526402,
+      "piece_kills": 1.5,
+      "deaths": 3.0,
+      "wall_contacts": 36.75,
+      "latency_ms": 0.4029154353124987
+    },
+    "improved": false
+  },
+  "wall_seconds": 30.150884542
+}

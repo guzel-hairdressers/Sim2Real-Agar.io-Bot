@@ -1,0 +1,459 @@
+{
+  "algorithm": "ppo",
+  "rows": [
+    {
+      "case": "head_on_predator",
+      "seed": 711,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    },
+    {
+      "case": "head_on_predator",
+      "seed": 711,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    },
+    {
+      "case": "head_on_predator",
+      "seed": 733,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    },
+    {
+      "case": "head_on_predator",
+      "seed": 733,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    },
+    {
+      "case": "head_on_predator",
+      "seed": 751,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    },
+    {
+      "case": "head_on_predator",
+      "seed": 751,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    },
+    {
+      "case": "head_on_predator",
+      "seed": 769,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.3
+    },
+    {
+      "case": "head_on_predator",
+      "seed": 769,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.26666666666666666
+    },
+    {
+      "case": "flanking_predator",
+      "seed": 711,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 8.7
+    },
+    {
+      "case": "flanking_predator",
+      "seed": 711,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.4666666666666667
+    },
+    {
+      "case": "flanking_predator",
+      "seed": 733,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 8.7
+    },
+    {
+      "case": "flanking_predator",
+      "seed": 733,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.5
+    },
+    {
+      "case": "flanking_predator",
+      "seed": 751,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 8.8
+    },
+    {
+      "case": "flanking_predator",
+      "seed": 751,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.4666666666666667
+    },
+    {
+      "case": "flanking_predator",
+      "seed": 769,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 8.7
+    },
+    {
+      "case": "flanking_predator",
+      "seed": 769,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.5
+    },
+    {
+      "case": "split_bait",
+      "seed": 711,
+      "group": "new",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 65.81613828173906,
+      "wall_contacts": 0,
+      "seconds": 0.6333333333333333
+    },
+    {
+      "case": "split_bait",
+      "seed": 711,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.36666666666666664
+    },
+    {
+      "case": "split_bait",
+      "seed": 733,
+      "group": "new",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 65.84172652299426,
+      "wall_contacts": 0,
+      "seconds": 0.5666666666666667
+    },
+    {
+      "case": "split_bait",
+      "seed": 733,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.3333333333333333
+    },
+    {
+      "case": "split_bait",
+      "seed": 751,
+      "group": "new",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 65.84172652299426,
+      "wall_contacts": 0,
+      "seconds": 0.5666666666666667
+    },
+    {
+      "case": "split_bait",
+      "seed": 751,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.3333333333333333
+    },
+    {
+      "case": "split_bait",
+      "seed": 769,
+      "group": "new",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 65.76848409441308,
+      "wall_contacts": 0,
+      "seconds": 0.7666666666666667
+    },
+    {
+      "case": "split_bait",
+      "seed": 769,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.43333333333333335
+    },
+    {
+      "case": "safe_prey",
+      "seed": 711,
+      "group": "new",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 103.61882579442222,
+      "wall_contacts": 0,
+      "seconds": 0.6333333333333333
+    },
+    {
+      "case": "safe_prey",
+      "seed": 711,
+      "group": "legacy",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 103.59885622107169,
+      "wall_contacts": 0,
+      "seconds": 0.6666666666666666
+    },
+    {
+      "case": "safe_prey",
+      "seed": 733,
+      "group": "new",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 103.67878960337625,
+      "wall_contacts": 0,
+      "seconds": 0.5333333333333333
+    },
+    {
+      "case": "safe_prey",
+      "seed": 733,
+      "group": "legacy",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 103.65879247787365,
+      "wall_contacts": 0,
+      "seconds": 0.5666666666666667
+    },
+    {
+      "case": "safe_prey",
+      "seed": 751,
+      "group": "new",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 103.65879247787365,
+      "wall_contacts": 0,
+      "seconds": 0.5666666666666667
+    },
+    {
+      "case": "safe_prey",
+      "seed": 751,
+      "group": "legacy",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 103.65879247787365,
+      "wall_contacts": 0,
+      "seconds": 0.5666666666666667
+    },
+    {
+      "case": "safe_prey",
+      "seed": 769,
+      "group": "new",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 103.5788958163803,
+      "wall_contacts": 0,
+      "seconds": 0.7
+    },
+    {
+      "case": "safe_prey",
+      "seed": 769,
+      "group": "legacy",
+      "deaths": 0,
+      "opponent_deaths": 1,
+      "piece_kills": 1,
+      "mass": 103.55894457266248,
+      "wall_contacts": 0,
+      "seconds": 0.7333333333333333
+    },
+    {
+      "case": "corner_escape",
+      "seed": 711,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    },
+    {
+      "case": "corner_escape",
+      "seed": 711,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    },
+    {
+      "case": "corner_escape",
+      "seed": 733,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.3
+    },
+    {
+      "case": "corner_escape",
+      "seed": 733,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.26666666666666666
+    },
+    {
+      "case": "corner_escape",
+      "seed": 751,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.26666666666666666
+    },
+    {
+      "case": "corner_escape",
+      "seed": 751,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.26666666666666666
+    },
+    {
+      "case": "corner_escape",
+      "seed": 769,
+      "group": "new",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    },
+    {
+      "case": "corner_escape",
+      "seed": 769,
+      "group": "legacy",
+      "deaths": 1,
+      "opponent_deaths": 0,
+      "piece_kills": 0,
+      "mass": 10.0,
+      "wall_contacts": 0,
+      "seconds": 0.23333333333333334
+    }
+  ],
+  "totals": {
+    "new": {
+      "deaths": 12,
+      "opponent_deaths": 8,
+      "piece_kills": 8,
+      "wall_contacts": 0
+    },
+    "legacy": {
+      "deaths": 16,
+      "opponent_deaths": 4,
+      "piece_kills": 4,
+      "wall_contacts": 0
+    }
+  }
+}

@@ -29,9 +29,15 @@ logger = logging.getLogger("AgarDiffusion")
 class AgarDiffusionSchedule:
     """Noise schedule for Agar.io action diffusion."""
 
-    def __init__(self, num_timesteps: int = 100, beta_start: float = 1e-4, beta_end: float = 0.02):
+    def __init__(self, num_timesteps: int = 100, beta_start: float = 1e-4, beta_end: float = 0.02, schedule='linear'):
         self.num_timesteps = num_timesteps
         self.betas = np.linspace(beta_start, beta_end, num_timesteps, dtype=np.float32)
+        if schedule == 'cosine':
+            t = np.arange(num_timesteps+1) / num_timesteps
+            cumulative = np.cos((t+.008)/1.008*np.pi/2)**2
+            self.betas = np.minimum(1-cumulative[1:]/cumulative[:-1], .999).astype(np.float32)
+        elif schedule != 'linear':
+            raise ValueError(f'Unknown noise schedule: {schedule}')
         self.alphas = 1.0 - self.betas
         self.alphas_cumprod = np.cumprod(self.alphas, axis=0)
         self.alphas_cumprod_prev = np.append(1.0, self.alphas_cumprod[:-1])
@@ -221,8 +227,11 @@ class AgarDiffusionPolicy:
         self.obs_dim = obs_dim
         self.num_ddim_steps = num_ddim_steps
         self.num_candidates = num_candidates
+        self.seed = seed
+        self.generator = torch.Generator(device='cpu').manual_seed(seed)
 
         self.schedule = AgarDiffusionSchedule(num_timesteps=100)
+        self.symmetric_actions = False
         self.net = AgarTemporalDenoisingNet(
             action_horizon=action_horizon,
             action_dim=action_dim,
@@ -247,16 +256,25 @@ class AgarDiffusionPolicy:
                         obs_dim=obs_dim,
                         hidden_dim=256
                     )
-                    t_net.load_state_dict(torch.load(pt_path, map_location="cpu"))
+                    state = torch.load(pt_path, map_location='cpu', weights_only=True)
+                    t_net.load_state_dict(state.get('state_dict', state))
+                    if state.get('schema_version') == 2:
+                        options = state.get('training', {})
+                        self.schedule = AgarDiffusionSchedule(schedule=options.get('schedule', 'linear'))
+                        self.symmetric_actions = options.get('symmetric_actions', False)
                     t_net.eval()
                     self.torch_net = t_net
                     logger.info(f"Loaded trained PyTorch Diffusion model from: {pt_path}")
                     break
                 except Exception as e:
+                    if model_path is not None:
+                        raise ValueError(f'Incompatible diffusion checkpoint: {pt_path}') from e
                     logger.warning(f"Could not load {pt_path}: {e}")
 
         # Critic loading for Value Guidance
-        critic_paths = [critic_path] if critic_path else [
+        if model_path is not None and self.torch_net is None:
+            raise FileNotFoundError(model_path)
+        critic_paths = [critic_path] if critic_path is not None else [
             "outputs/agar_diffusion_critic.pt",
             "projects/sim2real-ppo-navigation/outputs/agar_diffusion_critic.pt"
         ]
@@ -264,19 +282,24 @@ class AgarDiffusionPolicy:
             if c_path and os.path.exists(c_path):
                 try:
                     c_net = TorchAgarCritic(obs_dim=obs_dim, action_dim=action_dim, action_horizon=action_horizon, hidden_dim=128)
-                    c_net.load_state_dict(torch.load(c_path, map_location="cpu"))
+                    state = torch.load(c_path, map_location='cpu', weights_only=True)
+                    c_net.load_state_dict(state.get('state_dict', state))
                     c_net.eval()
                     self.torch_critic = c_net
                     logger.info(f"Loaded trained PyTorch Diffusion Critic from: {c_path}")
                     break
                 except Exception as e:
+                    if critic_path:
+                        raise ValueError(f'Incompatible critic checkpoint: {c_path}') from e
                     logger.warning(f"Could not load Critic from {c_path}: {e}")
 
         self.action_buffer: List[np.ndarray] = []
         self.steps_since_plan = 0
         self.last_action: Optional[np.ndarray] = None
 
-    def reset(self):
+    def reset(self, seed=None):
+        if seed is not None:
+            self.generator.manual_seed(seed)
         self.action_buffer.clear()
         self.steps_since_plan = 0
         self.last_action = None
@@ -372,7 +395,7 @@ class AgarDiffusionPolicy:
         # Value guidance: sample num_candidates in parallel if critic is available
         B = num_candidates if (self.torch_critic is not None and num_candidates > 1) else 1
         obs_t = torch.tensor(obs, dtype=torch.float32, device=device).unsqueeze(0).repeat(B, 1)
-        a_current = torch.randn(B, self.action_horizon, self.action_dim, device=device)
+        a_current = torch.randn(B, self.action_horizon, self.action_dim, generator=self.generator).to(device)
 
         for idx in range(len(ddim_timesteps)):
             t_curr = int(ddim_timesteps[idx])
@@ -386,14 +409,17 @@ class AgarDiffusionPolicy:
             alpha_bar_next = float(self.schedule.alphas_cumprod[t_next]) if t_next >= 0 else 1.0
 
             x_0_pred = (a_current - math.sqrt(1.0 - alpha_bar_t) * eps_pred) / math.sqrt(alpha_bar_t)
-            x_0_pred[..., 0] = torch.clamp(x_0_pred[..., 0], 0.0, 1.0)
+            x_0_pred[..., 0] = torch.clamp(x_0_pred[..., 0], -1.0 if self.symmetric_actions else 0.0, 1.0)
             x_0_pred[..., 1] = torch.clamp(x_0_pred[..., 1], -1.0, 1.0)
             if self.action_dim > 2:
-                x_0_pred[..., 2] = torch.clamp(x_0_pred[..., 2], 0.0, 1.0)
+                x_0_pred[..., 2] = torch.clamp(x_0_pred[..., 2], -1.0 if self.symmetric_actions else 0.0, 1.0)
 
             c1 = math.sqrt(max(0.0, 1.0 - alpha_bar_next))
             a_current = math.sqrt(alpha_bar_next) * x_0_pred + c1 * eps_pred
 
+        if self.symmetric_actions:
+            a_current[..., 0] = (a_current[..., 0]+1)/2
+            a_current[..., 2] = (a_current[..., 2]+1)/2
         if B > 1:
             with torch.no_grad():
                 q_scores = self.torch_critic(obs_t, a_current)

@@ -1,0 +1,12 @@
+{
+  "output": "outputs/arena_v2",
+  "workers": 4,
+  "episodes": 24,
+  "episode_steps": 600,
+  "steps": 120000,
+  "seed": 260271,
+  "bc_epochs": 15,
+  "diffusion_epochs": 25,
+  "device": "cpu",
+  "reuse_data": false
+}

@@ -1,0 +1,16 @@
+{
+  "output": "outputs/arena_v2_cosine",
+  "workers": 4,
+  "episodes": 24,
+  "episode_steps": 600,
+  "steps": 120000,
+  "seed": 260271,
+  "bc_epochs": 15,
+  "diffusion_epochs": 80,
+  "device": "cpu",
+  "reuse_data": true,
+  "data": "outputs/arena_v2/demonstrations.npz",
+  "diffusion_only": true,
+  "schedule": "cosine",
+  "symmetric_actions": true
+}

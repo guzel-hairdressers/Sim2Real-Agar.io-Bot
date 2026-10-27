@@ -56,7 +56,7 @@ class PlayerState:
         self.alive_steps = 0
         self.split_cooldown = 0.0
         self.max_pieces = max_pieces
-        self.action_history = deque(maxlen=5)
+        self.action_history = deque(maxlen=20)
         self.wall_contacts = 0
 
         # List of sub-cell pieces (starts with 1 single main cell)
@@ -176,7 +176,8 @@ class PartiallyObservableAgarEnv(gym.Env):
         total_world_mass: float = 400.0,
         pellet_mass: float = 0.5,
         mass_decay_multiplier: float = 1.35,
-        max_pieces: int = 4
+        max_pieces: int = 4,
+        observation_version: int = 1
     ):
         super().__init__()
         self.base_arena_size = float(arena_size)
@@ -219,7 +220,10 @@ class PartiallyObservableAgarEnv(gym.Env):
         )
 
         # Observation space: 38 continuous normalized features (including split availability and state)
-        self.obs_dim = 38
+        if observation_version not in (1, 2):
+            raise ValueError('Unsupported observation version')
+        self.observation_version = observation_version
+        self.obs_dim = 38 if observation_version == 1 else 70
         self.observation_space = spaces.Box(
             low=-np.ones(self.obs_dim, dtype=np.float32),
             high=np.ones(self.obs_dim, dtype=np.float32),
@@ -380,12 +384,14 @@ class PartiallyObservableAgarEnv(gym.Env):
         total_init_player_mass = 0.0
         for i, pid in enumerate(self.player_ids):
             angle = (2.0 * np.pi * i) / self.num_players + self.np_random.uniform(-0.2, 0.2)
-            spawn_dist = self.np_random.uniform(4.0, 7.5)
+            spawn_max = min(7.5, self.half_arena - 0.7)
+            spawn_dist = self.np_random.uniform(min(4.0, spawn_max * 0.7), spawn_max)
             pos = np.array([spawn_dist * np.cos(angle), spawn_dist * np.sin(angle)], dtype=np.float32)
             init_m = float(self.np_random.uniform(13.0, 15.0))
             total_init_player_mass += init_m
             color = self.player_colors[i % len(self.player_colors)]
             self.players[pid] = PlayerState(pid, pos, color, initial_mass=init_m, max_pieces=self.max_pieces)
+            self.players[pid].yaw = float(self.np_random.uniform(-np.pi, np.pi))
 
         # Initialize static green virus cells with guaranteed player clearance (minimum 4.5m)
         virus_list = []
@@ -479,7 +485,7 @@ class PartiallyObservableAgarEnv(gym.Env):
             # Anti-circling & winding penalty
             rewards[pid] -= 0.03 * abs(steer)
             if len(player.action_history) >= 20:
-                recent_steers = [a[1] for a in player.action_history[-20:]]
+                recent_steers = [a[1] for a in list(player.action_history)[-20:]]
                 mean_steer = float(np.mean(recent_steers))
                 if abs(mean_steer) > 0.45:
                     winding_factor = (abs(mean_steer) - 0.45) / 0.55
@@ -1107,4 +1113,59 @@ class PartiallyObservableAgarEnv(gym.Env):
             hazard_vec      # 4
         ], dtype=np.float32)
 
+        if self.observation_version == 2:
+            obs = np.concatenate([obs, self._tactical_features(pid)])
         return obs.astype(np.float32)
+
+    def _tactical_features(self, pid):
+        """Visible piece geometry and motion in body coordinates.
+
+        Legacy 38 features + own summary (4), nearest lethal/edible piece
+        (6 each), virus vector (2), wall distances (4), own velocity (2),
+        nearest food vector (2), post-split lethal piece (6) = 70.
+        Piece tuples: [dx/r, dy/r, relative_vx/6, relative_vy/6, mass/150, d/r].
+        No opponent outside the observer's visibility radius contributes.
+        """
+        p = self.players[pid]
+        r = p.vision_radius
+        c, s = math.cos(p.yaw), math.sin(p.yaw)
+        rot = np.array([[c, s], [-s, c]], dtype=np.float32)
+        velocity = sum(pc.vel * pc.mass for pc in p.pieces) / max(1e-5, p.mass)
+        largest = max(pc.mass for pc in p.pieces)
+        smallest = min(pc.mass for pc in p.pieces)
+        eligible = [pc.mass / 2 for pc in p.pieces if pc.mass >= 36]
+        half = min(eligible) if eligible else largest / 2
+        groups = [[], [], []]
+        for other_id, other in self.players.items():
+            if other_id == pid:
+                continue
+            for pc in other.pieces:
+                delta = pc.pos - p.pos
+                distance = float(np.linalg.norm(delta))
+                if distance > r:
+                    continue
+                position = rot @ delta / r
+                relative_velocity = rot @ (pc.vel - velocity) / 6
+                feature = np.array([*position, *relative_velocity, pc.mass / 150, distance / r])
+                if pc.mass - smallest >= 6 and pc.mass >= 1.2 * smallest:
+                    groups[0].append((distance - pc.radius, feature))
+                if largest - pc.mass >= 6 and largest >= 1.2 * pc.mass:
+                    groups[1].append((distance, feature))
+                if pc.mass - half >= 6 and pc.mass >= 1.2 * half:
+                    groups[2].append((distance - pc.radius, feature))
+        nearest = [min(g, key=lambda x: x[0])[1] if g else np.zeros(6) for g in groups]
+        visible_viruses = [(float(np.linalg.norm(v[:2] - p.pos)), v) for v in self.viruses
+                           if np.linalg.norm(v[:2] - p.pos) <= r]
+        virus = rot @ (min(visible_viruses, key=lambda x: x[0])[1][:2] - p.pos) / r if visible_viruses else np.zeros(2)
+        if len(self.food_positions):
+            distances = np.linalg.norm(self.food_positions - p.pos, axis=1)
+            k = int(np.argmin(distances))
+            food_vec = rot @ (self.food_positions[k] - p.pos) / r if distances[k] <= r else np.zeros(2)
+        else:
+            food_vec = np.zeros(2)
+        walls = np.array([p.pos[0] + self.half_arena, self.half_arena - p.pos[0],
+                          p.pos[1] + self.half_arena, self.half_arena - p.pos[1]]) / r
+        return np.clip(np.concatenate([
+            [largest / 150, smallest / 150, len(p.pieces) / self.max_pieces, p.split_cooldown / 0.8],
+            nearest[0], nearest[1], virus, walls, rot @ velocity / 6, food_vec, nearest[2]
+        ]), -1, 1).astype(np.float32)

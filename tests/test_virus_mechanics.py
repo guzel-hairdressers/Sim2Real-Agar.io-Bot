@@ -145,3 +145,12 @@ def test_player_respawn_virus_clearance():
             assert dist >= (v[2] + 2.5), f"Respawned too close to virus: dist={dist:.2f}m < {v[2] + 2.5:.2f}m"
 
     print("Test player_respawn_virus_clearance PASSED: all 20 respawns kept safe virus clearance!")
+
+
+def load_tests(loader, tests, pattern):
+    """Include the existing function tests in the documented unittest command."""
+    import unittest
+    for name in sorted(globals()):
+        if name.startswith('test_') and callable(globals()[name]):
+            tests.addTest(unittest.FunctionTestCase(globals()[name]))
+    return tests

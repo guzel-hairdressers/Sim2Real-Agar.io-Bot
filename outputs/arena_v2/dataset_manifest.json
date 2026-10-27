@@ -1,0 +1,50 @@
+{
+  "dataset_sha256": "5041a6b57d77a8a067b545a4897675f2eb5138493ed7feab20b64d2fbb1980b1",
+  "shapes": {
+    "obs": [
+      79800,
+      70
+    ],
+    "acts": [
+      79800,
+      3
+    ],
+    "conditions": [
+      25876,
+      70
+    ],
+    "chunks": [
+      25876,
+      16,
+      3
+    ],
+    "returns": [
+      25876
+    ],
+    "val_obs": [
+      21000,
+      70
+    ],
+    "val_acts": [
+      21000,
+      3
+    ],
+    "val_conditions": [
+      6792,
+      70
+    ],
+    "val_chunks": [
+      6792,
+      16,
+      3
+    ],
+    "val_returns": [
+      6792
+    ]
+  },
+  "teacher": "benchmarks/training_tactics_v2_initial.py",
+  "teacher_sha256": "fae91f36d14d1d7395bb4be19fccb1e16245800af7a24b081e1d691191097eaf",
+  "first_episode_replay_exact": true,
+  "constant_critic_validation_mse": 0.5967272520065308,
+  "critic_training_target": "actual discounted 16-step environment reward, no respawn-crossing chunks"
+}
