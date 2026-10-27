@@ -1,0 +1,184 @@
+{
+  "unique_original_training_states": 3115,
+  "unique_full_match_training_states": 105,
+  "unique_full_match_validation_states": 30,
+  "generic_training_states": 144,
+  "generic_validation_states": 35,
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.6429074168205261,
+      "validation_weighted_bce": 0.6087294816970825,
+      "validation_policy_advantage": 0.0,
+      "validation_proposals": 0
+    },
+    {
+      "epoch": 11,
+      "loss": 0.39965505003929136,
+      "validation_weighted_bce": 0.548477053642273,
+      "validation_policy_advantage": 0.010234161280095577,
+      "validation_proposals": 68
+    },
+    {
+      "epoch": 21,
+      "loss": 0.28052024617791177,
+      "validation_weighted_bce": 0.6098567843437195,
+      "validation_policy_advantage": 0.015456495806574821,
+      "validation_proposals": 108
+    },
+    {
+      "epoch": 31,
+      "loss": 0.20706627238541842,
+      "validation_weighted_bce": 0.6798537373542786,
+      "validation_policy_advantage": 0.018882500007748604,
+      "validation_proposals": 123
+    },
+    {
+      "epoch": 41,
+      "loss": 0.14923665598034858,
+      "validation_weighted_bce": 0.8210389614105225,
+      "validation_policy_advantage": 0.0198152344673872,
+      "validation_proposals": 156
+    },
+    {
+      "epoch": 51,
+      "loss": 0.1198859304189682,
+      "validation_weighted_bce": 0.9264131188392639,
+      "validation_policy_advantage": 0.02135278284549713,
+      "validation_proposals": 179
+    },
+    {
+      "epoch": 61,
+      "loss": 0.10011515375226736,
+      "validation_weighted_bce": 1.0469177961349487,
+      "validation_policy_advantage": 0.018426381051540375,
+      "validation_proposals": 162
+    },
+    {
+      "epoch": 71,
+      "loss": 0.08698818990960717,
+      "validation_weighted_bce": 1.1694833040237427,
+      "validation_policy_advantage": 0.02337445318698883,
+      "validation_proposals": 205
+    },
+    {
+      "epoch": 81,
+      "loss": 0.06771569373086095,
+      "validation_weighted_bce": 1.2927672863006592,
+      "validation_policy_advantage": 0.022636208683252335,
+      "validation_proposals": 196
+    },
+    {
+      "epoch": 91,
+      "loss": 0.05567381531000137,
+      "validation_weighted_bce": 1.424625039100647,
+      "validation_policy_advantage": 0.021292198449373245,
+      "validation_proposals": 187
+    },
+    {
+      "epoch": 101,
+      "loss": 0.047105560451745986,
+      "validation_weighted_bce": 1.5820295810699463,
+      "validation_policy_advantage": 0.02052919939160347,
+      "validation_proposals": 197
+    },
+    {
+      "epoch": 111,
+      "loss": 0.03386789115611464,
+      "validation_weighted_bce": 1.6813143491744995,
+      "validation_policy_advantage": 0.01940932869911194,
+      "validation_proposals": 211
+    },
+    {
+      "epoch": 121,
+      "loss": 0.025587907596491277,
+      "validation_weighted_bce": 1.8265092372894287,
+      "validation_policy_advantage": 0.02103760838508606,
+      "validation_proposals": 210
+    },
+    {
+      "epoch": 131,
+      "loss": 0.020389292179606854,
+      "validation_weighted_bce": 1.979527235031128,
+      "validation_policy_advantage": 0.019691962748765945,
+      "validation_proposals": 220
+    },
+    {
+      "epoch": 141,
+      "loss": 0.015289059979841113,
+      "validation_weighted_bce": 2.1412079334259033,
+      "validation_policy_advantage": 0.017926549538969994,
+      "validation_proposals": 208
+    },
+    {
+      "epoch": 151,
+      "loss": 0.01213336571236141,
+      "validation_weighted_bce": 2.2732558250427246,
+      "validation_policy_advantage": 0.02056032232940197,
+      "validation_proposals": 216
+    },
+    {
+      "epoch": 161,
+      "loss": 0.00864074071869254,
+      "validation_weighted_bce": 2.4056050777435303,
+      "validation_policy_advantage": 0.01928844302892685,
+      "validation_proposals": 219
+    },
+    {
+      "epoch": 171,
+      "loss": 0.005441574519500137,
+      "validation_weighted_bce": 2.560370922088623,
+      "validation_policy_advantage": 0.020558517426252365,
+      "validation_proposals": 219
+    },
+    {
+      "epoch": 181,
+      "loss": 0.004238811702816747,
+      "validation_weighted_bce": 2.7061283588409424,
+      "validation_policy_advantage": 0.020080605521798134,
+      "validation_proposals": 214
+    },
+    {
+      "epoch": 191,
+      "loss": 0.0026958865200867876,
+      "validation_weighted_bce": 2.847586154937744,
+      "validation_policy_advantage": 0.01789105124771595,
+      "validation_proposals": 222
+    },
+    {
+      "epoch": 201,
+      "loss": 0.002054411900462583,
+      "validation_weighted_bce": 3.041826009750366,
+      "validation_policy_advantage": 0.016727756708860397,
+      "validation_proposals": 220
+    },
+    {
+      "epoch": 211,
+      "loss": 0.001345206999394577,
+      "validation_weighted_bce": 3.163071632385254,
+      "validation_policy_advantage": 0.01704472303390503,
+      "validation_proposals": 220
+    },
+    {
+      "epoch": 221,
+      "loss": 0.0012519584066467359,
+      "validation_weighted_bce": 3.271162271499634,
+      "validation_policy_advantage": 0.01691475510597229,
+      "validation_proposals": 214
+    },
+    {
+      "epoch": 231,
+      "loss": 0.0008449986999039538,
+      "validation_weighted_bce": 3.3696656227111816,
+      "validation_policy_advantage": 0.017683295533061028,
+      "validation_proposals": 217
+    },
+    {
+      "epoch": 240,
+      "loss": 0.0006156378680316265,
+      "validation_weighted_bce": 3.487156867980957,
+      "validation_policy_advantage": 0.017387691885232925,
+      "validation_proposals": 216
+    }
+  ]
+}

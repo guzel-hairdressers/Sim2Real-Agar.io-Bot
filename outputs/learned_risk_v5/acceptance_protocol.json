@@ -1,0 +1,29 @@
+{
+  "declared_before_final_evaluation": true,
+  "training_cases": 4000,
+  "training_seed": 4800001,
+  "training_horizon_steps": 60,
+  "training_epochs": 240,
+  "development_pilot_seed": 4700001,
+  "final_encounter_seed": 4900001,
+  "final_encounter_cases": 600,
+  "retention_seed_start": 5000001,
+  "retention_matches": 12,
+  "retention_steps": 1800,
+  "minimum_final_mass_ratio_vs_v3": 0.9,
+  "maximum_additional_total_deaths_vs_v3": 2,
+  "split_execution_constraints": "Simulator can_split only: eligible mass, piece capacity, cooldown. No risk vetoes.",
+  "labels": "Measured paired split-minus-hold utility, not split_is_safe or threat-distance rules",
+  "movement": "Previous continuous weights and steering interventions retained; no rule may overwrite the split bit",
+  "final_league_seed_start": 5100001,
+  "final_league_matches": 12,
+  "encounter_acceptance": {
+    "minimum_valid_cases": 550,
+    "minimum_positive_opportunities": 50,
+    "minimum_mean_utility_difference_vs_v3": -0.03,
+    "maximum_additional_deaths": "max(2, floor(0.01 * valid_cases))",
+    "physical_violations": 0,
+    "nonphysical_split_vetoes": 0,
+    "minimum_measured_useful_initial_splits_outside_old_guard": 10
+  }
+}
