@@ -70,6 +70,7 @@ def promote(directory,output=None):
         if 'match_refinement' in config:
             refinement=config['match_refinement']
             if any(refinement['seed']<=r['seed']<refinement['seed']+refinement['episodes'] for r in rows):raise ValueError('Outcome seeds overlap on-policy refinement')
+            if any(r['seed'] in refinement.get('prior_seeds',[]) for r in rows):raise ValueError('Outcome seeds overlap prior corrections')
     reports=[outcome_path]
     for algorithm in ('ppo','diffusion'):
         path=directory/f'{algorithm}_retention.json';report=json.loads(path.read_text());reports.append(path)
@@ -99,5 +100,5 @@ def promote(directory,output=None):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v7');args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v8');args=p.parse_args()
     promote(args.directory);print(f'Accepted: {args.directory}/deployment.json')

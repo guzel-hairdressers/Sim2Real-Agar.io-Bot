@@ -78,13 +78,13 @@ def retention_summary(rows):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v7')
+    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v8')
     p.add_argument('--mode',choices=['retention','league'],required=True);p.add_argument('--algorithm',choices=['ppo','diffusion'])
     p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=2)
     p.add_argument('--steps',type=int,default=1800);p.add_argument('--seeds',type=int,nargs='+')
     args=p.parse_args()
     if args.mode=='retention' and not args.algorithm:p.error('Retention needs --algorithm')
-    seeds=args.seeds or [(5000001 if args.mode=='retention' else 5100001)+37*i for i in range(12)]
+    seeds=args.seeds or [(5300001 if args.mode=='retention' else 5400001)+37*i for i in range(12)]
     started=time.perf_counter();jobs=[(args.mode,args.algorithm,str(args.directory),s,args.steps) for s in seeds];rows=[]
     with ProcessPoolExecutor(args.workers,mp_context=mp.get_context('spawn')) as pool:
         for row in pool.map(match,jobs):
