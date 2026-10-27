@@ -30,7 +30,7 @@
     "dev_30720.json": "fcea5d0b7f6daba431513b3e58999e1ff472017b55af8fd9c7316affd244a752",
     "dev_final.json": "2404467cbfde6d204c8bf858bb835baca4f58d412278f8023cc961a0d4431007",
     "selection.json": "2334138d273e6237c1f0794fc095e46fb94ddd368d094e1426cb363d14878a73",
-    "verification.json": "41798021f6b8597c1a55f6dd5ce64357514ea8d32b3fcb39e2d146f02868fe6d"
+    "verification.json": "5f3261999975527e300a0c6a31e6a79484aeec5381dd70d5913a0e5913513428"
   },
   "failed_gates": [
     "Development growth retention 89.3414% is below 90%; no fresh acceptance tests run."

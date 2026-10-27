@@ -21,5 +21,13 @@
   ],
   "all_losses_finite": true,
   "steps_in_continuation": 90112,
-  "total_with_parent": 120832
+  "total_with_parent": 120832,
+  "selected_preoverflow_checkpoint": {
+    "file": "outputs/balanced_split_v11/training/ppo_30720.pt",
+    "sha256": "19d27e75c1d80d752e3696850b2b42ea315dad3554ecc756fb44b566dfdc17df",
+    "finite": true,
+    "continuous_actor_frozen": true,
+    "all_losses_finite_through_checkpoint": true,
+    "last_verified_loss_step": 30720
+  }
 }
