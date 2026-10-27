@@ -6,9 +6,9 @@ Agents steer through an Agar-style arena, collect food, grow, avoid hazards, and
 
 [![Watch the agents navigate and compete](docs/media/showcase/gameplay.gif)](docs/media/showcase/gameplay.mp4)
 
-**[Full 60-second gameplay video](docs/media/showcase/gameplay.mp4)** · [Screenshots and demo gallery](docs/media.md) · [Benchmark protocol and raw results](docs/benchmarks.md) · [Run locally](#play-against-the-agents)
+**[Full 60-second gameplay video at 2×](docs/media/showcase/gameplay.mp4)** · [Screenshots and demo gallery](docs/media.md) · [Benchmark protocol and raw results](docs/benchmarks.md) · [Run locally](#play-against-the-agents)
 
-*Actual simulator recording at real-time speed. Blue: PPO; green: diffusion; amber: heuristic opponents; pink: virus hazards. The dashed circle marks one agent's sensing range. The animation is a ten-second excerpt; the linked video contains the entire match.*
+*Actual autonomous clashes at 2× speed. Blue: PPO; green: diffusion; amber: heuristic opponents; pink: virus hazards. The rectangle marks the spectator clash camera; red rings mark measured captures. The 30-second animation previews a full 60-second video covering 120 simulator seconds.*
 
 ## What this project explores
 
@@ -23,13 +23,13 @@ The current deliverable is a **simulation research testbed**. Despite the histor
 
 ## See what the agents do
 
-![A complete arena beside one agent's local sensing footprint and current state](docs/media/showcase/overview.png)
+![A shared arena with an automatically focused clash camera and actual capture counts](docs/media/showcase/overview.png)
 
-The left panel is the spectator's full arena. The right panel illustrates the local sensing footprint used to construct one agent's observation; the policy receives numeric features, not this picture. The table records mass, piece captures, full deaths, and actual split executions.
+The full-arena view and spectator zoom follow real encounters. Capture rings and event labels come from simulator consumption events. Policies still receive local numeric observations, not either rendered view.
 
-[![Current PPO and diffusion agents choose a split attack or preserve their mass](docs/media/showcase/split_decisions.gif)](docs/media/showcase/split_decisions.mp4)
+[![PPO and diffusion in separate active matches from identical initial conditions](docs/media/showcase/policy_comparison.gif)](docs/media/showcase/policy_comparison.mp4)
 
-**[Split-decision video](docs/media/showcase/split_decisions.mp4)** — a controlled demonstration of both current policies. A 90-unit actor can halve itself and still capture a 20-unit target. A 45-unit actor holds its split against a 30-unit target because its launched half would be too small. Targets are stationary; the video is slowed to **1/6 speed**, with simulator time shown. Split commands come from the deployed policies.
+**[PPO vs diffusion comparison — 60 seconds at 2×](docs/media/showcase/policy_comparison.mp4)**. Each rollout starts with the same positions, masses, food and hazards, with one learned focus agent and six reactive heuristic opponents. The opponents respond independently as the policies diverge. Zoom views, minimaps and focus-agent counters show captures, deaths and actual splits. This is a qualitative comparison, not a direct duel or an additional benchmark win-rate claim.
 
 ## Current capabilities: benchmarks
 
@@ -46,7 +46,7 @@ These results describe the **current models**, with no historical agents in the 
 
 Inference includes safety checks and was measured under parallel evaluation load; it excludes rendering and is not browser FPS. A full death means losing all pieces; respawns remain part of the match. Mass is a simulator quantity, not a physical measurement.
 
-![Current-agent growth, death-free runs, capture rate, and separate split-opportunity evaluation](docs/media/showcase/benchmarks.png)
+![Current-agent growth, death-free runs, capture rate, and CPU inference latency](docs/media/showcase/benchmarks.png)
 
 A separate held-out split test contains **996 valid encounters per learned policy**. PPO captured **120/125 beneficial opportunities (96.0%)** and diffusion **119/126 (94.4%)** with a launched piece. Neither executed a split that violated the current safety checks. These percentages apply to known beneficial opportunities in that test; they are **not game win rates or general combat accuracy**.
 
@@ -69,7 +69,7 @@ flowchart LR
 
 PPO uses imitation initialization followed by reinforcement learning. Diffusion learns short action sequences from demonstrations; a return critic ranks candidates, and the agent executes a short prefix before replanning. Both use separately trained binary split decisions and a safety layer that can reject unsafe splits or alter movement near immediate hazards. Splitting is supervised using paired physical trials in which splitting captures a target earlier than holding.
 
-The models share the same observation contract and physics. Benchmark runs record seeds, individual agent outcomes, model hashes, and source hashes. The exported demonstration is rendered from the first benchmark seed, chosen before its outcome, rather than from a selected winning run.
+The models share the same observation contract and physics. Benchmark runs record seeds, individual agent outcomes, model hashes, and source hashes. The shared-match demonstration extends the first benchmark seed to 120 simulator seconds. The paired comparison uses seed 4200001. These active recordings are separate from the twelve 60-second benchmark matches.
 
 ## Play against the agents
 

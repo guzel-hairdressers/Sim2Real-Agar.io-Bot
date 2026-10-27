@@ -1,63 +1,68 @@
-# Demo gallery
+# Clashes and policy comparisons
 
-These are recordings and screenshots of the **current accepted policies and actual simulator state**. The light presentation is an offline spectator renderer; the interactive browser game's styling is separate. There are no fabricated gameplay frames or scripted split commands.
+Actual autonomous matches with the accepted policies. Both full videos run for **60 seconds at 2× speed**, showing **120 simulator seconds**. There are no stationary-target demonstrations or forced split commands. The light layout is an offline spectator presentation; the browser game's styling is separate.
 
-## Gameplay
+## Shared match: PPO, diffusion and reactive opponents
 
-[![Ten seconds of real-time gameplay](media/showcase/gameplay.gif)](media/showcase/gameplay.mp4)
+[![Thirty-second preview of autonomous clashes at two-times speed](media/showcase/gameplay.gif)](media/showcase/gameplay.mp4)
 
-**[Full gameplay video — MP4, 60 seconds, 1440 × 900](media/showcase/gameplay.mp4)**
+**[Full gameplay — MP4, 60 seconds, 2× speed, 1440 × 900](media/showcase/gameplay.mp4)**
 
-Two PPO agents, two diffusion agents and three heuristic opponents compete individually. The movie shows the full first benchmark match, seed `4100001`, selected before looking at outcomes. It runs at **1× real time** with no cuts. The animation above shows seconds 5–15. Physics and decisions run at 30 Hz; video records every second state at 15 fps. All intermediate observations were processed.
+Two PPO agents, two diffusion agents and three heuristic opponents compete individually. Seed `4100001`, extended to 120 simulator seconds. The full recording contains **10 piece captures and 4 full deaths**. A spectator camera follows encounters; red rings and event labels mark actual consumption events. The map rectangle shows the zoomed area. The full video is uncut; the animation shows its first 30 playback seconds.
 
-The dashed circle on the spectator map follows PPO-1's sensing radius. The inset displays its local visibility footprint; policies receive a numeric observation, not rendered images. Colors: blue PPO, green diffusion, amber heuristics, pink viruses, small pale dots food. Short labels P1/P2 and D1/D2 identify learned agents; HA/HH/HS identify apex/hunter/survivor heuristic profiles. The leaderboard reports actual mass, opponent-piece captures, full deaths and executed splits.
+Blue: PPO; green: diffusion; amber: heuristic opponents; pink: virus hazards; pale dots: food. The leaderboard records actual mass, piece captures, full deaths and split executions. Virus contact can fragment a player without a split command, so multiple pieces do not necessarily imply an executed split.
 
-Virus contact can fragment a large player without a split command. Multiple visible pieces therefore do not always imply a nonzero executed-split count.
+## PPO vs diffusion: identical starts, active opponents
 
-## Screenshots
+[![Current PPO and diffusion policies in active paired rollouts](media/showcase/policy_comparison.gif)](media/showcase/policy_comparison.mp4)
 
-**[Arena overview at 15 seconds — full-resolution PNG](media/showcase/overview.png)**
+**[Full comparison — MP4, 60 seconds, 2× speed, 1440 × 900](media/showcase/policy_comparison.mp4)** · [Comparison screenshot](media/showcase/policy_comparison.png)
 
-![Arena overview and local sensing footprint at 15 seconds](media/showcase/overview.png)
+Each side begins with the same ordinary arena reset, seed `4200001`: identical positions, masses, food and hazards. One learned focus agent faces six heuristic opponents, with two each of the apex, hunter and survivor profiles. Opponents act throughout and react independently as each rollout evolves. This is **not a direct duel**: the two policies run in separate copies of the starting arena.
 
-**[Local sensing and agent state at 45 seconds — full-resolution PNG](media/showcase/local_sensing.png)**
+| Outcome in this single paired demonstration | PPO focus agent | Diffusion focus agent |
+| --- | ---: | ---: |
+| Opponent pieces captured | 4 | 3 |
+| Full deaths | 0 | 0 |
+| Executed splits | 2 | 0 |
+| Final mass | 118.0 | 113.8 |
+| Whole-arena captures, including opponents | 14 | 17 |
 
-![The same recorded match at 45 seconds](media/showcase/local_sensing.png)
+Every split is a deployed-policy action. The comparison does not force matching split counts or manufacture a favorable result. It illustrates behavior in one starting state; use the [twelve-match benchmark](benchmarks.md) for aggregate measurements. These recordings use the accepted v3 models and their existing safety layer. Physical-only split constraints and longer outcome-based risk training are being developed separately; the footage is not presented as evidence for an unvalidated model.
 
-## Split decisions
+## Screenshots of real clashes
 
-[![Both learned policies attack safe prey and preserve mass against unsafe split bait](media/showcase/split_decisions.gif)](media/showcase/split_decisions.mp4)
+![Shared match with spectator zoom on a recorded capture](media/showcase/overview.png)
 
-**[Split-decision video — MP4, 9.2 seconds, 1440 × 900](media/showcase/split_decisions.mp4)** · [Still image](media/showcase/split_decisions.png)
+[Download full-resolution overview](media/showcase/overview.png). The poster shows an actual capture near simulator time 27.6 seconds, rather than an empty opening frame.
 
-Four controlled cases show the current PPO and diffusion policies against stationary targets. The left column starts at actor mass 90 / target 20; splitting leaves a 45-unit launched half, and both policies capture the target. The right column starts at 45 / 30; a 22.5-unit half cannot eat the target, so both keep their split. The target can still be captured later by ordinary body contact; holding a split does not require stopping movement.
+![Another recorded clash in the same match](media/showcase/local_sensing.png)
 
-The video shows **1.2 simulator seconds at 1/6 speed**, plus one-second opening and closing holds. The actual simulator clock is printed. These are explicitly illustrative cases, not a random combat sample or part of the final benchmark. Every action comes through the deployed policy and safety layer; the renderer does not force a split. [Recorded scene outcomes](../outputs/showcase_v1/illustrative_decisions.json) include the capture step and executed split count.
+[Download the later clash screenshot](media/showcase/local_sensing.png). This frame is near simulator time 110.9 seconds. Spectator views may show the full state; policies receive 70 local numeric features and never these images.
 
-## Benchmark graphic
+## Measured comparisons
 
-![Absolute capability benchmarks for current agents](media/showcase/benchmarks.png)
+![Current-policy growth, death-free runs, captures and inference latency](media/showcase/benchmarks.png)
 
-**[Download full-resolution chart](media/showcase/benchmarks.png)** · [Metric definitions and protocol](benchmarks.md) · [Raw match data](../outputs/showcase_v1/benchmark.json)
+[Full-resolution chart](media/showcase/benchmarks.png) · [Metric definitions and protocol](benchmarks.md) · [Raw benchmark data](../outputs/showcase_v1/benchmark.json)
 
-The chart shows growth, death-free agent runs, captures per agent-minute, and a separately labeled split-opportunity test. It does not use historical policies as the main comparison.
+The chart compares current PPO, diffusion and heuristic behavior across twelve independent standard matches. The demonstration videos are longer, separate recordings and do not replace or inflate those benchmark results.
 
-## Rebuild the showcase
+## Rebuild
 
-Install the usual project requirements, the optional `requirements-media.txt`, and the `ffmpeg` executable (including `ffprobe`). Run from the repository root:
+Install the project requirements, optional `requirements-media.txt`, and the `ffmpeg` executable (including `ffprobe`). From the repository root:
 
 ```bash
 python -m pip install -r requirements-media.txt
 
-# Optional: generate a new benchmark and its first-seed trace. This overwrites
-# the showcase outputs, so preserve shipped artifacts if comparing runs.
-PYTHONDONTWRITEBYTECODE=1 python -m src.benchmark_showcase
+# Re-record all three active rollouts, with every policy acting at 30 Hz.
+PYTHONDONTWRITEBYTECODE=1 python -m src.record_clashes
 
-# Or render directly from the shipped trace and benchmark, without a rerun.
+# Or render from the shipped traces without re-running inference.
 PYTHONDONTWRITEBYTECODE=1 python scripts/build_showcase.py
 PYTHONDONTWRITEBYTECODE=1 python scripts/verify_showcase.py
 ```
 
-The renderer reads `outputs/showcase_v1/demo_trace.json.gz`; rebuilding ordinary gameplay does not run policy inference. The split illustration does run the accepted policies. Font selection prefers Arial on macOS, falling back to DejaVu Sans. Fonts, ffmpeg and library versions can change image/video bytes; the trace and policy outcomes are the underlying evidence.
+Recording retains every second state (15 Hz) and all capture/split/death events. Rendering at 30 fps produces exactly 2× speed without skipping control observations. Each full video has 1,800 frames / 60 seconds. The animated previews are 30 playback seconds. Camera selection uses actual encounter geometry and nearby recorded capture events; it has no influence on policy actions or physics. Posters intentionally feature clashes.
 
-The [media manifest](../outputs/showcase_v1/media_manifest.json) records asset checksums, source trace checksum, model checksums, seed and playback speeds. [Verification](../outputs/showcase_v1/verification.json) checks source/model/data hashes, benchmark arithmetic, trace timesteps, video codecs/dimensions/frame counts, image decoding and local documentation links. Legacy demo scripts target older experiments; use `scripts/build_showcase.py` for these accepted models.
+Provenance: [recordings and model/source hashes](../outputs/showcase_clashes/recordings.json), [media hashes and playback metadata](../outputs/showcase_v1/media_manifest.json), [verification](../outputs/showcase_v1/verification.json). Font and encoder versions can change media bytes when rebuilding; trace states and actual policy outcomes are the underlying evidence. Historical stationary-target illustrations are not used in this gallery.

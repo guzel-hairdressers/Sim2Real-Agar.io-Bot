@@ -1,9 +1,8 @@
-"""Render real simulator traces, current-policy decisions and benchmark figures.
+"""Render full active matches and paired comparisons at two-times speed.
 
 No generated gameplay, hand-scripted split commands or historical checkpoints.
 Requires Pillow and ffmpeg for export; these are optional media-build tools.
 """
-import argparse
 import gzip
 import hashlib
 import json
@@ -13,16 +12,13 @@ import subprocess
 import sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from src.benchmark_showcase import model_paths, snapshot
-from src.arena_policies import ArenaPPO, ArenaDiffusion
-from envs.agar_env import PartiallyObservableAgarEnv
 
 OUT = ROOT/'docs/media/showcase'
 DATA = ROOT/'outputs/showcase_v1'
+CLASHES = ROOT/'outputs/showcase_clashes'
 COLORS = dict(ppo='#3569D4',diffusion='#00836F',heuristic='#B47620')
 INK, MUTED, BORDER = '#17243B','#64748B','#DCE4EE'
 FONT = Path('/System/Library/Fonts/Supplemental/Arial.ttf')
@@ -79,7 +75,7 @@ def world(state,size,center=(0,0),scale=38,observer=None):
             d.line([(x+math.cos(player['yaw'])*r*.58,y-math.sin(player['yaw'])*r*.58),(hx,hy)],fill='white',width=2)
             if observer is None and r>13:
                 short=player['name'].replace('PPO-','P').replace('DIFF-','D').replace('RULE-','H')
-                if short.startswith('H'): short={'RULE-APEX':'HA','RULE-HUNTER':'HH','RULE-SURVIVOR':'HS'}.get(player['name'],'T')
+                if short.startswith('H'): short={'RULE-APEX':'HA','RULE-HUNTER':'HH','RULE-SURVIVOR':'HS'}.get(player['name'],'H'+player['id'][-1])
                 text(d,(x,y-6),short,11,'white',True,'mm')
                 text(d,(x,y+8),round(piece['mass']),10,'white',False,'mm')
     if observer is not None:
@@ -90,43 +86,9 @@ def world(state,size,center=(0,0),scale=38,observer=None):
     return image
 
 
-def gameplay_frame(state,duration):
-    image=Image.new('RGB',(1440,900),'#F3F6FA');d=ImageDraw.Draw(image)
-    text(d,(30,20),'SIM2REAL / AGAR CONTROL',12,MUTED,True)
-    text(d,(30,43),'Learning to navigate and compete',32,INK,True)
-    text(d,(31,87),'PPO and diffusion agents in a shared, partially observed world.',17,MUTED)
-    card(d,(1190,22,1410,105))
-    text(d,(1210,35),'RECORDED SIMULATION',11,MUTED,True)
-    text(d,(1210,57),f"{state['seconds']:05.1f}s / {duration:.0f}s",25,INK,True)
-    card(d,(28,125,810,850));card(d,(834,125,1412,528));card(d,(834,546,1412,850))
-    focus=next(p for p in state['players'] if p['name']=='PPO-1')
-    image.paste(world(state,(692,692),scale=38),(73,143))
-    # Dashed sensing-radius outline on the spectator map, clipped to the map.
-    overlay=Image.new('RGBA',(692,692),(0,0,0,0));od=ImageDraw.Draw(overlay)
-    x,y=346+focus['pos'][0]*38,346-focus['pos'][1]*38;r=focus['vision_radius']*38
-    for a in range(0,360,12): od.arc((x-r,y-r,x+r,y+r),a,a+6,fill=COLORS['ppo'],width=2)
-    image.paste(overlay,(73,143),overlay)
-    text(d,(854,144),'Local sensing footprint',21,INK,True)
-    text(d,(855,177),f"PPO-1 · {focus['vision_radius']:.1f} m range · 70 numeric inputs",15,MUTED)
-    image.paste(world(state,(530,274),center=focus['pos'],scale=118/focus['vision_radius'],observer=focus),(858,214))
-    text(d,(855,500),'Illustration of visibility; policies do not receive images.',13,MUTED)
-    text(d,(854,565),'Live agent state',21,INK,True)
-    for x,label in [(1135,'MASS'),(1220,'CAPTURES'),(1302,'DEATHS'),(1384,'SPLITS')]:
-        text(d,(x,600),label,10,MUTED,True,'ra')
-    for i,p in enumerate(sorted(state['players'],key=lambda p:p['mass'],reverse=True)):
-        y=630+i*28
-        d.ellipse((855,y+2,864,y+11),fill=COLORS[p['group']])
-        text(d,(876,y),p['name'],14,INK,True)
-        for x,v in [(1135,f"{p['mass']:.1f}"),(1220,p['kills']),(1302,p['deaths']),(1384,p['splits'])]:
-            text(d,(x,y),v,14,INK,False,'ra')
-    x=35
-    for label,color in [('Food','#A5B8A7'),('PPO ×2',COLORS['ppo']),('Diffusion ×2',COLORS['diffusion']),('Rules ×3',COLORS['heuristic']),('Virus hazard','#B97985')]:
-        d.ellipse((x,866,x+9,875),fill=color);text(d,(x+16,862),label,12,MUTED);x+=140
-    text(d,(1410,866),'30 Hz decisions · 15 fps recording · 1× speed',13,MUTED,False,'ra')
-    return image
 
 
-def encode(path,frames,fps=15):
+def encode(path,frames,fps=30):
     with open('/tmp/arena_showcase_ffmpeg.log','ab') as log:
         p=subprocess.Popen(['ffmpeg','-y','-loglevel','error','-f','rawvideo','-pix_fmt','rgb24',
             '-s','1440x900','-r',str(fps),'-i','-','-an','-c:v','libx264','-preset','fast',
@@ -144,52 +106,113 @@ def gif(video,path,start,duration):
                     '-filter_complex',filters,'-loop','0',str(path)],check=True)
 
 
-def encounter_states():
-    paths,_=model_paths();torch.set_num_threads(1)
-    scenes=[]
-    for algorithm in ('ppo','diffusion'):
-        for own,prey in [(90,20),(45,30)]:
-            env=PartiallyObservableAgarEnv(arena_size=18,num_players=2,num_food=0,num_viruses=0,
-                                         observation_version=2,dt=1/30,max_steps=90)
-            env.reset(seed=79);a,b=env.players.values()
-            a.mass,b.mass=own,prey;a.pos=np.array([0.,0.],np.float32);a.yaw=0.
-            b.pos=np.array([1.5,0.],np.float32);b.yaw=math.pi;env.reserve_mass=0
-            policy=ArenaPPO(paths['ppo']) if algorithm=='ppo' else ArenaDiffusion(paths['diffusion'],paths['critic'],seed=79)
-            seats={'player_0':dict(group=algorithm,name='PPO-1' if algorithm=='ppo' else 'DIFF-1'),
-                   'player_1':dict(group='heuristic',name='TARGET')}
-            splits=dict.fromkeys(env.player_ids,0);states=[snapshot(env,seats,splits,{})];capture=None
-            for step in range(36):
-                action=policy.predict(env._get_obs('player_0'))
-                splits['player_0']+=int(action[2]>.5 and a.can_split)
-                env.step({'player_0':action,'player_1':np.zeros(3,np.float32)})
-                if capture is None and any(e['predator']=='player_0' and e['prey']=='player_1' for e in env.predation_events): capture=step+1
-                states.append(snapshot(env,seats,splits,{'player_0':action}))
-            scenes.append(dict(algorithm=algorithm,own=own,target=prey,states=states,capture_step=capture,
-                               executed_splits=splits['player_0']))
-    return scenes
+def short_name(state,pid):
+    p=next(p for p in state['players'] if p['id']==pid)
+    return p['name'].replace('PPO-','P').replace('DIFF-','D').replace('RULE-','H-')
 
 
-def decision_frame(scenes,index):
-    image=Image.new('RGB',(1440,900),'#F3F6FA');d=ImageDraw.Draw(image)
-    text(d,(30,20),'CONTROLLED CURRENT-POLICY DEMONSTRATION',12,MUTED,True)
-    text(d,(30,44),'When should an agent split?',34,INK,True)
-    text(d,(31,94),'Actual policy outputs and simulator physics. Stationary targets. Playback slowed to 1/6 speed.',17,MUTED)
-    for k,scene in enumerate(scenes):
-        x,y=28+(k%2)*706,143+(k//2)*342
-        card(d,(x,y,x+678,y+320))
-        text(d,(x+20,y+17),scene['algorithm'].upper(),17,COLORS[scene['algorithm']],True)
-        text(d,(x+20,y+47),'Safe split opportunity' if k%2==0 else 'Keep enough mass: hold the split',20,INK,True)
-        text(d,(x+20,y+80),f"Actor {scene['own']} · target {scene['target']} · half-mass {scene['own']/2:g}",14,MUTED)
-        state=scene['states'][index]
-        image.paste(world(state,(636,170),center=(1.,state['players'][0]['pos'][1]),scale=62),(x+20,y+110))
-        actor=state['players'][0]
-        note=f"Splits executed: {actor['splits']}"
-        if scene['capture_step'] and index>=scene['capture_step']:
-            note+=f"   ·   Target captured at {scene['capture_step']/30:.2f}s"
-        text(d,(x+20,y+291),note,15,INK,True)
-    text(d,(30,864),'Splitting halves a piece: a smaller target can still be too large for the launched half.',15,MUTED)
-    text(d,(1410,864),f'Simulator time {index/30:.2f}s',15,MUTED,False,'ra')
+def camera_target(state,events,focus=None):
+    t=state['seconds']
+    near=[e for e in events if e['kind']=='capture' and t-1<=e['seconds']<=t+3 and
+          (focus is None or focus in (e['predator'],e['prey']))]
+    if near:
+        return np.array(min(near,key=lambda e:abs(e['seconds']-t))['pos'])
+    best=None
+    for p in state['players']:
+        if focus is not None and p['id']!=focus:continue
+        for q in state['players']:
+            if p['id']==q['id']:continue
+            for a in p['pieces']:
+                for b in q['pieces']:
+                    dist=math.dist(a['pos'],b['pos'])
+                    gap=dist-a['radius']-b['radius']
+                    if best is None or gap<best[0]:best=(gap,a['pos'],b['pos'],dist)
+    if focus is not None and best[3]>5:
+        return np.array(next(p for p in state['players'] if p['id']==focus)['pos'])
+    return (np.array(best[1])+best[2])/2
+
+
+def marked_world(state,events,size,center,scale):
+    image=world(state,size,center=center,scale=scale);d=ImageDraw.Draw(image)
+    for e in events:
+        age=state['seconds']-e['seconds']
+        if e['kind']!='capture' or not 0<=age<2:continue
+        x=size[0]/2+(e['pos'][0]-center[0])*scale;y=size[1]/2-(e['pos'][1]-center[1])*scale
+        if 0<x<size[0] and 0<y<size[1]:
+            r=12+age*10
+            d.ellipse((x-r,y-r,x+r,y+r),outline='#D14D57',width=3)
     return image
+
+
+def recent_labels(state,events,focus=None,count=2):
+    found=[]
+    for e in reversed(events):
+        if e['seconds']>state['seconds']:continue
+        ids=(e['predator'],e['prey']) if e['kind']=='capture' else (e['player'],)
+        if focus is not None and focus not in ids:continue
+        if e['kind']=='capture':label=f"{short_name(state,e['predator'])} captured {short_name(state,e['prey'])}"
+        elif e['kind']=='death':label=f"{short_name(state,e['player'])} full death / respawn"
+        else:label=f"{short_name(state,e['player'])} executed a split"
+        found.append(f"{e['seconds']:.1f}s · {label}")
+        if len(found)==count:break
+    return found or ['Awaiting first capture or split']
+
+
+def gameplay_frame(state,events,center):
+    image=Image.new('RGB',(1440,900),'#F3F6FA');d=ImageDraw.Draw(image)
+    text(d,(30,20),'SIM2REAL / AGAR CONTROL',12,MUTED,True)
+    text(d,(30,43),'PPO + diffusion in a shared arena',32,INK,True)
+    text(d,(31,87),'Autonomous match · reactive opponents · 2× playback · actual captures marked in red',17,MUTED)
+    card(d,(1190,22,1410,105));text(d,(1210,35),'SIMULATOR TIME / 2×',11,MUTED,True)
+    text(d,(1210,57),f"{state['seconds']:05.1f}s / 120s",25,INK,True)
+    card(d,(28,125,810,850));card(d,(834,125,1412,528));card(d,(834,546,1412,850))
+    image.paste(marked_world(state,events,(692,692),(0,0),38),(73,143))
+    overlay=Image.new('RGBA',(692,692),(0,0,0,0));od=ImageDraw.Draw(overlay)
+    x,y=346+center[0]*38,346-center[1]*38
+    od.rectangle((x-530/66*19,y-274/66*19,x+530/66*19,y+274/66*19),outline=INK,width=2)
+    image.paste(overlay,(73,143),overlay)
+    text(d,(854,144),'Clash camera',21,INK,True)
+    text(d,(855,177),'Automatic spectator zoom on nearby encounters',15,MUTED)
+    image.paste(marked_world(state,events,(530,274),center,66),(858,214))
+    label=recent_labels(state,events,count=1)[0]
+    text(d,(855,500),label,13,MUTED)
+    text(d,(854,565),'Live agent state',21,INK,True)
+    for x,label in [(1135,'MASS'),(1220,'CAPTURES'),(1302,'DEATHS'),(1384,'SPLITS')]:text(d,(x,600),label,10,MUTED,True,'ra')
+    for i,p in enumerate(sorted(state['players'],key=lambda p:p['mass'],reverse=True)):
+        y=630+i*28;d.ellipse((855,y+2,864,y+11),fill=COLORS[p['group']]);text(d,(876,y),p['name'],14,INK,True)
+        for x,v in [(1135,f"{p['mass']:.1f}"),(1220,p['kills']),(1302,p['deaths']),(1384,p['splits'])]:text(d,(x,y),v,14,INK,False,'ra')
+    x=35
+    for label,color in [('Food','#A5B8A7'),('PPO ×2',COLORS['ppo']),('Diffusion ×2',COLORS['diffusion']),('Rules ×3',COLORS['heuristic']),('Virus hazard','#B97985')]:
+        d.ellipse((x,866,x+9,875),fill=color);text(d,(x+16,862),label,12,MUTED);x+=140
+    text(d,(1410,866),'30 Hz decisions · 2× playback · spectator view',13,MUTED,False,'ra')
+    return image
+
+
+def comparison_frame(states,events,centers):
+    image=Image.new('RGB',(1440,900),'#F3F6FA');d=ImageDraw.Draw(image)
+    text(d,(30,20),'PAIRED CURRENT-POLICY COMPARISON',12,MUTED,True)
+    text(d,(30,43),'PPO vs diffusion',34,INK,True)
+    text(d,(31,90),'Same starting state · six reactive heuristic opponents per run · 2× playback',17,MUTED)
+    card(d,(1190,22,1410,105));text(d,(1210,35),'SIMULATOR TIME / 2×',11,MUTED,True)
+    text(d,(1210,57),f"{states[0]['seconds']:05.1f}s / 120s",25,INK,True)
+    for k,(state,ev,center,group) in enumerate(zip(states,events,centers,['ppo','diffusion'])):
+        x=28+k*706;y=130;card(d,(x,y,x+678,852))
+        text(d,(x+20,y+19),'PPO' if group=='ppo' else 'DIFFUSION',24,COLORS[group],True)
+        text(d,(x+20,y+56),'One learned focus agent + six independently reacting opponents',14,MUTED)
+        image.paste(marked_world(state,ev,(638,440),center,64),(x+20,y+90))
+        image.paste(marked_world(state,ev,(148,148),(0,0),8),(x+20,y+550))
+        p=next(p for p in state['players'] if p['id']=='player_0')
+        for i,(label,value) in enumerate([('MASS',f"{p['mass']:.1f}"),('CAPTURES',p['kills']),('DEATHS',p['deaths']),('SPLITS',p['splits'])]):
+            tx=x+194+i*111;text(d,(tx,y+550),label,11,MUTED,True);text(d,(tx,y+572),value,26,INK,True)
+        for i,label in enumerate(recent_labels(state,ev,focus='player_0')):text(d,(x+194,y+628+i*25),label,12,MUTED)
+        text(d,(x+194,y+690),'Deployed model actions + safety layer',12,MUTED)
+    text(d,(30,868),'Separate rollouts from identical positions, masses and hazards; this is not a direct duel.',14,MUTED)
+    text(d,(1410,868),'Blue: PPO · green: diffusion · amber: heuristics',13,MUTED,False,'ra')
+    return image
+
+
+
+
 
 
 def benchmark_figure(report):
@@ -222,47 +245,65 @@ def benchmark_figure(report):
     bars=ax.bar(labels,rates,color=colors,width=.55)
     for b,v in zip(bars,rates): ax.text(b.get_x()+b.get_width()/2,b.get_height()+.06,f'{v:.2f}',ha='center',fontweight='bold')
     ax.set(title='Captures in mixed-agent matches',ylabel='Opponent pieces captured / agent-minute',ylim=(0,max(rates)*1.3+.1));ax.grid(axis='y',alpha=.15)
-    combat=json.loads((ROOT/'outputs/split_combat_v3/combat_acceptance.json').read_text())
-    for name in ('ppo','diffusion'):
-        if combat['checkpoint_hashes'][name+'.pt']!=report['models'][name]['sha256']:
-            raise ValueError('Split benchmark does not describe these models')
-    ax=axes[1,1];cs=[combat['summary'][g] for g in groups[:2]]
-    rates=[c['positive_projectile_capture_rate']*100 for c in cs]
-    bars=ax.bar(labels[:2],rates,color=colors[:2],width=.45)
-    for b,c in zip(bars,cs):
-        hit=round(c['positive_projectile_capture_rate']*c['positive_opportunities'])
-        ax.text(b.get_x()+b.get_width()/2,b.get_height()+3,f"{hit}/{c['positive_opportunities']}",ha='center',fontweight='bold')
-    ax.set(title='Separate split-opportunity test',ylabel='Beneficial opportunities captured (%)',ylim=(0,115));ax.grid(axis='y',alpha=.15)
-    fig.supxlabel('12 independent matches · 2 PPO + 2 diffusion + 3 heuristics · shaded bands: match-bootstrap 95% CI\nSplit panel: 996 valid encounters per policy; denominator is known beneficial opportunities, not all combat.',fontsize=10,color=MUTED)
+    ax=axes[1,1];positions=np.arange(3);width=.33
+    mean=[report['summary'][g]['inference_mean_ms'] for g in groups]
+    p95=[report['summary'][g]['mean_per_match_inference_p95_ms'] for g in groups]
+    ax.bar(positions-width/2,mean,width,color=colors,label='Mean')
+    ax.bar(positions+width/2,p95,width,color=colors,alpha=.35,label='Mean per-match p95')
+    ax.set(title='Policy inference on this Mac (CPU)',ylabel='Milliseconds per action',xticks=positions,xticklabels=labels)
+    ax.legend(frameon=False);ax.grid(axis='y',alpha=.15)
+    fig.supxlabel('12 independent matches · 2 PPO + 2 diffusion + 3 heuristics · shaded bands: match-bootstrap 95% CI\nTiming includes deployed safety checks under concurrent load; excludes rendering and is not browser FPS.',fontsize=10,color=MUTED)
     fig.savefig(OUT/'benchmarks.png',dpi=150,facecolor='white');plt.close(fig)
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--gameplay-only',action='store_true');args=p.parse_args()
     OUT.mkdir(parents=True,exist_ok=True)
-    with gzip.open(DATA/'demo_trace.json.gz','rt') as f:trace=json.load(f)
-    duration=trace['config']['max_steps']/30
-    states=trace['frames']
-    # The final state is a still, not an additional video-time interval.
-    encode(OUT/'gameplay.mp4',(gameplay_frame(s,duration) for s in states[:-1]))
-    gameplay_frame(states[min(225,len(states)-1)],duration).save(OUT/'overview.png')
-    gameplay_frame(states[min(675,len(states)-1)],duration).save(OUT/'local_sensing.png')
-    gif(OUT/'gameplay.mp4',OUT/'gameplay.gif',5,10)
-    if args.gameplay_only:return
-    scenes=encounter_states()
-    frames=[0]*15+[i for i in range(1,37) for _ in range(3)]+[36]*15
-    encode(OUT/'split_decisions.mp4',(decision_frame(scenes,i) for i in frames))
-    decision_frame(scenes,9).save(OUT/'split_decisions.png')
-    gif(OUT/'split_decisions.mp4',OUT/'split_decisions.gif',0,9.2)
-    (DATA/'illustrative_decisions.json').write_text(json.dumps([{k:v for k,v in s.items() if k!='states'} for s in scenes],indent=2))
+    recording=json.loads((CLASHES/'recordings.json').read_text());traces={}
+    for item in recording['recordings']:
+        path=CLASHES/item['file']
+        if hashlib.sha256(path.read_bytes()).hexdigest()!=item['sha256']:raise ValueError('Recording hash mismatch')
+        with gzip.open(path,'rt') as f:traces[item['kind']]=json.load(f)
+    mixed=traces['mixed'];events=mixed['events'];frames=mixed['frames']
+    def mixed_frames():
+        center=camera_target(frames[0],events)
+        for state in frames[:-1]:
+            center=.82*center+.18*camera_target(state,events)
+            yield gameplay_frame(state,events,center)
+    encode(OUT/'gameplay.mp4',mixed_frames())
+    # Posters intentionally show actual clashes; the full videos are uncut.
+    first=next(e for e in events if e['kind']=='capture')
+    poster=frames[min(len(frames)-1,round((first['seconds']+.3)*15))]
+    gameplay_frame(poster,events,np.array(first['pos'])).save(OUT/'overview.png')
+    later=[e for e in events if e['kind']=='capture'][-1]
+    state=frames[min(len(frames)-1,round((later['seconds']+.3)*15))]
+    gameplay_frame(state,events,np.array(later['pos'])).save(OUT/'local_sensing.png')
+    left,right=traces['ppo'],traces['diffusion'];ev=[left['events'],right['events']]
+    def paired_frames():
+        centers=[camera_target(t['frames'][0],t['events'],focus='player_0') for t in (left,right)]
+        for states in zip(left['frames'][:-1],right['frames'][:-1]):
+            centers=[.82*c+.18*camera_target(s,e,focus='player_0') for c,s,e in zip(centers,states,ev)]
+            yield comparison_frame(states,ev,centers)
+    encode(OUT/'policy_comparison.mp4',paired_frames())
+    focus_event=next(e for e in left['events'] if e['kind']=='capture' and e['predator']=='player_0')
+    index=min(len(left['frames'])-1,round((focus_event['seconds']+.3)*15))
+    states=[left['frames'][index],right['frames'][index]]
+    centers=[camera_target(s,e,focus='player_0') for s,e in zip(states,ev)]
+    comparison_frame(states,ev,centers).save(OUT/'policy_comparison.png')
+    gif(OUT/'gameplay.mp4',OUT/'gameplay.gif',0,30)
+    gif(OUT/'policy_comparison.mp4',OUT/'policy_comparison.gif',0,30)
     report=json.loads((DATA/'benchmark.json').read_text());benchmark_figure(report)
     assets={p.name:dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in OUT.iterdir() if p.is_file()}
-    manifest=dict(assets=assets,gameplay_seed=trace['seed'],gameplay_seconds=duration,
-        simulation_hz=30,gameplay_video_hz=15,gameplay_speed=1,split_demo_speed=1/6,
-        trace_sha256=hashlib.sha256((DATA/'demo_trace.json.gz').read_bytes()).hexdigest(),
-        renderer_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),models=report['models'])
-    (DATA/'media_manifest.json').write_text(json.dumps(manifest,indent=2))
-    print(json.dumps(manifest),flush=True)
+    manifest=dict(schema_version=2,assets=assets,simulation_hz=30,source_recording_hz=15,
+        video_hz=30,playback_speed=2,video_seconds=60,simulation_seconds=120,preview_seconds=30,
+        recordings_sha256=hashlib.sha256((CLASHES/'recordings.json').read_bytes()).hexdigest(),
+        renderer_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),models=report['models'],
+        poster_simulator_seconds=dict(overview=poster['seconds'],local_sensing=state['seconds'],comparison=states[0]['seconds']))
+    (DATA/'media_manifest.json').write_text(json.dumps(manifest,indent=2));print(json.dumps(manifest),flush=True)
 
 
 if __name__=='__main__':main()
+
+
+
+
+

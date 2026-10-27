@@ -1,0 +1,149 @@
+{
+  "recordings": [
+    {
+      "kind": "mixed",
+      "seed": 4100001,
+      "file": "mixed_trace.json.gz",
+      "sha256": "600b171e8c86a9ae69022ff8af7382292e2455e2651ba71b933e5d0faf237a96",
+      "captures": 10,
+      "splits": 1,
+      "full_deaths": 4,
+      "focus_agent": null
+    },
+    {
+      "kind": "ppo",
+      "seed": 4200001,
+      "file": "ppo_trace.json.gz",
+      "sha256": "97924eeb03c18acc54e23b818ce0cb4416a6a9235ea0925da55275ed15dce372",
+      "captures": 14,
+      "splits": 8,
+      "full_deaths": 12,
+      "focus_agent": {
+        "id": "player_0",
+        "group": "ppo",
+        "name": "PPO-1",
+        "pos": [
+          4.545792102813721,
+          0.8707672953605652
+        ],
+        "yaw": -2.4919151307369747,
+        "mass": 117.99444604940518,
+        "vision_radius": 8.658290578540115,
+        "kills": 4,
+        "deaths": 0,
+        "splits": 2,
+        "action": [
+          0.9793215394020081,
+          0.0015546471113339067,
+          0.0
+        ],
+        "pieces": [
+          {
+            "pos": [
+              5.3392157554626465,
+              -0.010648481547832489
+            ],
+            "radius": 0.4884533938764341,
+            "mass": 29.214700161968192
+          },
+          {
+            "pos": [
+              4.651575088500977,
+              -0.9412357211112976
+            ],
+            "radius": 0.48845366564257714,
+            "mass": 29.214732670980066
+          },
+          {
+            "pos": [
+              5.32541561126709,
+              1.6264244318008423
+            ],
+            "radius": 0.49190309173778735,
+            "mass": 29.62881448912581
+          },
+          {
+            "pos": [
+              2.8966383934020996,
+              2.751375198364258
+            ],
+            "radius": 0.4944481330465351,
+            "mass": 29.936198727331114
+          }
+        ]
+      }
+    },
+    {
+      "kind": "diffusion",
+      "seed": 4200001,
+      "file": "diffusion_trace.json.gz",
+      "sha256": "36fc77de7afd1e7d19552761e998aeb0b9e3fc30c39c29bee858445d6d7e74a9",
+      "captures": 17,
+      "splits": 4,
+      "full_deaths": 7,
+      "focus_agent": {
+        "id": "player_0",
+        "group": "diffusion",
+        "name": "DIFF-1",
+        "pos": [
+          4.948775291442871,
+          2.66290020942688
+        ],
+        "yaw": -0.9120449812800744,
+        "mass": 113.84828736842323,
+        "vision_radius": 8.590420893630867,
+        "kills": 3,
+        "deaths": 0,
+        "splits": 0,
+        "action": [
+          0.45354965329170227,
+          0.0988493487238884,
+          0.0
+        ],
+        "pieces": [
+          {
+            "pos": [
+              4.948775291442871,
+              2.66290020942688
+            ],
+            "radius": 0.9642411594143809,
+            "mass": 113.84828736842323
+          }
+        ]
+      }
+    }
+  ],
+  "models": {
+    "ppo": {
+      "file": "ppo.pt",
+      "sha256": "edbe9776f665c148e3e9a0411ef17345cfccabf6c115c67f1045c03893071da6"
+    },
+    "diffusion": {
+      "file": "diffusion.pt",
+      "sha256": "18d3f31b0e88f526295b63ba8f273c86e5aa12a5fa52dfdb0d9e42569a59517c"
+    },
+    "critic": {
+      "file": "../arena_v2_cosine/critic.pt",
+      "sha256": "b7038895092ca19e66b406de3c299e6d90913c8ddb6129e70efefd76909b54ef"
+    }
+  },
+  "simulation_hz": 30,
+  "recording_hz": 15,
+  "simulation_seconds": 120,
+  "playback_speed": 2,
+  "video_seconds": 60,
+  "comparison": "Same standard initial state, one learned focus agent plus six reactive heuristics; separate rollouts, not a direct duel",
+  "footage_is_benchmark": false,
+  "source_hashes": {
+    "src/record_clashes.py": "2893188a24a6a64274fc5cfb2874417c1d67861dac717a5ad3efb9e5ea8c913e",
+    "src/benchmark_showcase.py": "e91ad5c548a1bbebb7cd69a1d748798a3fab9a8c6f40ab2cfab40f9080d4e70b",
+    "envs/agar_env.py": "ff77a8ef2321a4c4768940cf3bda190d1339accac123a435803f23a54f778e3d",
+    "envs/arena_config.py": "3118bb710bd651243cd93bdb210ed182d7c24f6e85d911f141666394c5de19fa",
+    "src/arena_policies.py": "fd6af4acb965f1db2cdc7dd8a7ee9707570c51f73fb4532d96bda152bc243118",
+    "src/arena_tactics.py": "648368c367d4381d444de834db390229b08fecbdba92992614adce8ecf603083",
+    "src/train_champion_ppo.py": "cf80816a826cf9a731e2d47041e9a1bfe8416c972bf67be09ccc967100db794b",
+    "src/split_head.py": "03d06794483b592b2511d098dd1d9f92865bdd6bf7b6e38aca52f589120921a9",
+    "src/agar_diffusion_policy.py": "f82d5da6ad1bc6603329a605518ebc45d2bb57d309d1c273b81a2e5c38589685",
+    "src/heuristic_agent.py": "bf4ab693b7df66397ee837b4508d2db5bd1768d5db5d138720ff3ca354c22bd9"
+  }
+}

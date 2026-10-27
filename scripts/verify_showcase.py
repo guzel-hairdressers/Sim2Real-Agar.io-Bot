@@ -27,7 +27,26 @@ def main():
     assert report['models']==manifest['models']==models['models']
     for source,digest in report['source_hashes'].items(): assert sha(ROOT/source)==digest,source
     assert sha(ROOT/'scripts/build_showcase.py')==manifest['renderer_sha256']
-    assert sha(data/'demo_trace.json.gz')==report['trace_sha256']==manifest['trace_sha256']
+    assert sha(data/'demo_trace.json.gz')==report['trace_sha256']
+    clash_dir=ROOT/'outputs/showcase_clashes'
+    recordings=json.loads((clash_dir/'recordings.json').read_text())
+    assert sha(clash_dir/'recordings.json')==manifest['recordings_sha256']
+    assert recordings['models']==manifest['models']
+    assert manifest['playback_speed']==2 and manifest['video_seconds']>=30
+    for source,digest in recordings['source_hashes'].items():assert sha(ROOT/source)==digest,source
+    traces={}
+    for item in recordings['recordings']:
+        path=clash_dir/item['file'];assert sha(path)==item['sha256']
+        with gzip.open(path,'rt') as f:traces[item['kind']]=json.load(f)
+        trace=traces[item['kind']]
+        assert [frame['step'] for frame in trace['frames']]==list(range(0,3601,2))
+        assert trace['frames'][-1]['seconds']==120
+        assert sum(e['kind']=='capture' for e in trace['events'])==item['captures']>=5
+        assert sum(p['kills'] for p in trace['frames'][-1]['players'])==item['captures']
+        assert sum(p['splits'] for p in trace['frames'][-1]['players'])==item['splits']
+    for field in ('food','viruses'):assert traces['ppo']['frames'][0][field]==traces['diffusion']['frames'][0][field]
+    for first,second in zip(traces['ppo']['frames'][0]['players'],traces['diffusion']['frames'][0]['players']):
+        for field in ('id','pos','yaw','mass','pieces'):assert first[field]==second[field]
     assert len(report['rows'])==len({r['seed'] for r in report['rows']})==12
     assert summarize(report['rows'],1800)==report['summary']
     for row in report['rows']:
@@ -37,7 +56,7 @@ def main():
             assert sum(p['group']==group for p in row['players'])==count
         assert all(np.isfinite(p['final_mass']) for p in row['players'])
     with gzip.open(data/'demo_trace.json.gz','rt') as f: trace=json.load(f)
-    assert trace['seed']==report['rows'][0]['seed']==manifest['gameplay_seed']
+    assert trace['seed']==report['rows'][0]['seed']
     assert [f['step'] for f in trace['frames']]==list(range(0,1801,2))
     assert trace['frames'][-1]['seconds']==60
     before={p['id']:p['pos'] for p in trace['frames'][0]['players']}
@@ -58,16 +77,16 @@ def main():
                     for i in range(image.n_frames):
                         image.seek(i);duration+=image.info.get('duration',0)
                     item['seconds']=duration/1000
-                    assert 8<item['seconds']<=10.5
+                    assert 29.9<=item['seconds']<=30.2
                 assets[name]=item
-    for name,frames,seconds in [('gameplay.mp4',900,60.),('split_decisions.mp4',138,9.2)]:
+    for name,frames,seconds in [('gameplay.mp4',1800,60.),('policy_comparison.mp4',1800,60.)]:
         path=media/name
         meta=json.loads(subprocess.check_output(['ffprobe','-v','error','-select_streams','v:0',
             '-show_entries','stream=codec_name,width,height,nb_frames,r_frame_rate,duration','-of','json',str(path)],text=True))['streams'][0]
         assert meta['codec_name']=='h264'
         assert (meta['width'],meta['height'])==(1440,900)
         assert int(meta['nb_frames'])==frames and abs(float(meta['duration'])-seconds)<.01
-        assert meta['r_frame_rate']=='15/1'
+        assert meta['r_frame_rate']=='30/1'
         video=cv2.VideoCapture(str(path));samples=[]
         for frame in [0,frames//2,frames-1]:
             video.set(cv2.CAP_PROP_POS_FRAMES,frame);ok,image=video.read()
@@ -75,12 +94,7 @@ def main():
             samples.append(hashlib.sha256(image.tobytes()).hexdigest())
         video.release();assert len(set(samples))==3
         assets[name]=meta
-    scenes=json.loads((data/'illustrative_decisions.json').read_text())
-    assert len(scenes)==4
-    for scene in scenes:
-        if scene['own']==90:
-            assert scene['executed_splits']==1 and scene['capture_step']==1
-        else: assert scene['executed_splits']==0
+    assert not list(media.glob('split_decisions.*'))
     output=data/'verification.json';checked=0
     for doc in [ROOT/'README.md',ROOT/'docs/media.md',ROOT/'docs/benchmarks.md',ROOT/'docs/checkpoint_history_2026-10-27.md']:
         for target in re.findall(r'!?\[[^\]]*\]\(([^)]+)\)',doc.read_text()):
@@ -91,6 +105,7 @@ def main():
     result=dict(passed=True,matches=12,agent_runs=84,simulation_steps=12*1800,
         policy_decisions=12*1800*7,trace_frames=901,local_links_checked=checked,
         model_source_and_data_hashes_verified=True,benchmark_arithmetic_verified=True,
+        identical_comparison_initial_states_verified=True,playback_speed=2,
         media=assets,benchmark_sha256=sha(data/'benchmark.json'),media_manifest_sha256=sha(data/'media_manifest.json'))
     output.write_text(json.dumps(result,indent=2));print(json.dumps(result))
 
