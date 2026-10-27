@@ -55,6 +55,9 @@ def promote(directory,output=None):
         if any(not outcome['seed']<=r['seed']<outcome['seed']+outcome['cases_requested'] for r in rows):raise ValueError('Outcome seed outside declared range')
         config=load_package(models[algorithm],algorithm)['risk_training']
         if any(config['seed']<=r['seed']<config['seed']+config['cases'] for r in rows):raise ValueError('Outcome seeds overlap training')
+        if 'match_refinement' in config:
+            refinement=config['match_refinement']
+            if any(refinement['seed']<=r['seed']<refinement['seed']+refinement['episodes'] for r in rows):raise ValueError('Outcome seeds overlap on-policy refinement')
     reports=[outcome_path]
     for algorithm in ('ppo','diffusion'):
         path=directory/f'{algorithm}_retention.json';report=json.loads(path.read_text());reports.append(path)
@@ -82,5 +85,5 @@ def promote(directory,output=None):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v4');args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--directory',type=Path,default=ROOT/'outputs/learned_risk_v5');args=p.parse_args()
     promote(args.directory);print(f'Accepted: {args.directory}/deployment.json')

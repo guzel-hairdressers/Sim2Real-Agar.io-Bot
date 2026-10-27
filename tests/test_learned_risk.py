@@ -1,4 +1,5 @@
 import unittest
+import copy
 from pathlib import Path
 import tempfile
 from unittest.mock import patch
@@ -8,6 +9,9 @@ from envs.agar_env import PartiallyObservableAgarEnv,SubPiece
 from src.learned_risk import physical_split_filter,load_policy,LearnedRiskPPO,LearnedRiskDiffusion
 from src.train_learned_risk import outcome
 from src.arena_policies import TacticalTeacher
+from src.refine_match_risk import branch as match_branch
+from src.heuristic_agent import MasterHeuristicAgarBot
+from envs.arena_config import ArenaConfig
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -21,6 +25,28 @@ def scene(mass=90,other=20,pos=(0,0),target=(1.5,0)):
 
 
 class PhysicalSplitTests(unittest.TestCase):
+    def test_counterfactual_query_cannot_mutate_live_world_or_policy(self):
+        env=ArenaConfig().make();obs,_=env.reset(seed=79)
+        policies={'player_0':LearnedRiskDiffusion(ROOT/'outputs/split_combat_v3/diffusion.pt',ROOT/'outputs/arena_v2_cosine/critic.pt')}
+        policies.update({pid:MasterHeuristicAgarBot(seed=79+i) for i,pid in enumerate(env.player_ids[1:])})
+        first={pid:p.predict(obs[pid]) for pid,p in policies.items()}
+        poses={pid:p.pos.copy() for pid,p in env.players.items()};mass={pid:p.mass for pid,p in env.players.items()}
+        generator=policies['player_0'].policy.generator.get_state().clone()
+        observations=policies['player_0'].observations
+        buffers=[a.copy() for a in policies['player_0'].policy.action_buffer]
+        env_rng=copy.deepcopy(env.np_random.bit_generator.state)
+        random_state=np.random.get_state()
+        match_branch(env,policies,first,'player_0',random_state,True)
+        np.random.set_state(random_state)
+        self.assertEqual(env.step_count,0)
+        for pid,p in env.players.items():
+            np.testing.assert_array_equal(p.pos,poses[pid]);self.assertEqual(p.mass,mass[pid])
+        self.assertEqual(env.np_random.bit_generator.state,env_rng)
+        self.assertEqual(policies['player_0'].observations,observations)
+        torch.testing.assert_close(policies['player_0'].policy.generator.get_state(),generator,rtol=0,atol=0)
+        self.assertEqual(len(policies['player_0'].policy.action_buffer),len(buffers))
+        for a,b in zip(policies['player_0'].policy.action_buffer,buffers):np.testing.assert_array_equal(a,b)
+
     def test_virus_fragmentation_outcome_uses_controlled_randomness(self):
         env=PartiallyObservableAgarEnv(arena_size=18,num_players=3,num_food=0,num_viruses=0,
                                      observation_version=2,dt=1/30,max_steps=90)

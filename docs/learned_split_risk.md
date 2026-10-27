@@ -31,6 +31,16 @@ The curriculum includes varied masses and relative velocities, third-party hunte
 
 The small pilot was rejected: removing risk vetoes while using an insufficiently trained head caused extra splits and worse utility. Its weights are not the accepted deployment. The larger curriculum adds already-split states and uses the observed class prior to address that failure without restoring nonphysical action vetoes.
 
+## Full-match corrective learning
+
+The first longer run (`learned_risk_v4`) was **not accepted**. On 187 valid development scenes its mean utility difference from guarded v3 was −0.0138 for PPO and −0.0321 for diffusion. In a small two-match development check diffusion finished with mean mass 29.34 versus 60.13 for v3. More captures did not compensate for mass lost after repeated splits. These are development results, not final test results.
+
+The next candidate (`learned_risk_v5`) adds counterfactual queries at actual physically possible split requests in **24 ordinary seven-agent matches**, seeds `4830001..4830024`. Each query clones the entire world, all controller states, pending action buffers and random generators. It compares splitting now with holding for **120 steps / four seconds**. Other agents keep reacting; the queried actor's subsequent split commands are held in both branches to isolate the immediate decision. The query cannot mutate the real match, and its NumPy random state is restored before normal play continues.
+
+Full episodes, rather than adjacent observations, are separated into fitting and development sets (19 fitting, five development episodes). Fitting retains the original curriculum, replays actual-match corrections six times and a completed prefix of exploratory on-policy scenes twice. Replay multipliers are sampling weights, not counts of independent examples. The exploratory prefix is saved as `generic_corrections_used.json` so an interrupted exploratory collection cannot silently change the training data. Both heads are fitted for another 240 epochs; movement/value/critic weights remain frozen.
+
+This remains outcome-supervised learning of the split heads. It is not additional end-to-end PPO optimization or diffusion-policy training. Longer learning targets the requested split behavior while preserving the accepted movement baseline.
+
 ## Controlled randomness and resuming collection
 
 The environment has its own cloned random generator, but virus-fragment launch speed also uses global NumPy randomness. Each split/hold branch now resets that generator as well as the policy/opponent seeds. A regression test exercises actual virus fragmentation and verifies that outcomes no longer depend on the incoming global random state.
@@ -57,14 +67,18 @@ python -m src.train_learned_risk --cases 4000 --epochs 240 --workers 4
 # Use --reuse-data instead if collection is complete and only fitting changes.
 python -m src.train_learned_risk --cases 4000 --epochs 240 --workers 4 --resume-data
 
-python -m src.evaluate_learned_risk --directory outputs/learned_risk_v4 \
-  --output outputs/learned_risk_v4/outcomes.json
-python -m src.evaluate_risk_league --directory outputs/learned_risk_v4 \
-  --mode retention --algorithm ppo --output outputs/learned_risk_v4/ppo_retention.json
-python -m src.evaluate_risk_league --directory outputs/learned_risk_v4 \
-  --mode retention --algorithm diffusion --output outputs/learned_risk_v4/diffusion_retention.json
-python -m src.evaluate_risk_league --directory outputs/learned_risk_v4 \
-  --mode league --output outputs/learned_risk_v4/league.json
+# Full-match corrective learning, after the base collection and fit finish.
+python -m src.refine_match_risk --base outputs/learned_risk_v4 \
+  --output outputs/learned_risk_v5 --episodes 24 --epochs 240 --workers 4
+
+python -m src.evaluate_learned_risk --directory outputs/learned_risk_v5 \
+  --output outputs/learned_risk_v5/outcomes.json
+python -m src.evaluate_risk_league --directory outputs/learned_risk_v5 \
+  --mode retention --algorithm ppo --output outputs/learned_risk_v5/ppo_retention.json
+python -m src.evaluate_risk_league --directory outputs/learned_risk_v5 \
+  --mode retention --algorithm diffusion --output outputs/learned_risk_v5/diffusion_retention.json
+python -m src.evaluate_risk_league --directory outputs/learned_risk_v5 \
+  --mode league --output outputs/learned_risk_v5/league.json
 python scripts/promote_learned_risk.py
 ```
 
