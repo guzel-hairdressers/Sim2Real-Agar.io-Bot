@@ -1,0 +1,22 @@
+{
+  "selected": "outputs/balanced_split_v11/training/ppo_30720.pt",
+  "sha256": "19d27e75c1d80d752e3696850b2b42ea315dad3554ecc756fb44b566dfdc17df",
+  "promoted": false,
+  "purpose": "Experimental development preview only",
+  "selection_reason": "Highest mean development mass among tested physical-only split heads with no more deaths than v8 on the same cases",
+  "development_seed_clusters": 4,
+  "focus_cases": 8,
+  "mean_mass_difference_vs_v8": 7.526758742554276,
+  "difference_seed_bootstrap_95_ci": [
+    -12.888961590683373,
+    33.059937284795055
+  ],
+  "growth_retention_fraction": 0.8934142095972125,
+  "required_growth_retention": 0.9,
+  "acceptance": "Failed development growth gate; no fresh final seeds consumed",
+  "limitations": [
+    "Four consumed development seeds; no unseen acceptance evidence",
+    "Zero recent-projectile captures in paired development; no claim of improved split attacks",
+    "Continuous movement assistance retained explicitly; only split risk must be learned"
+  ]
+}

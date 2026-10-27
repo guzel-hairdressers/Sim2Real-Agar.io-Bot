@@ -1,0 +1,25 @@
+{
+  "purpose": "Verify common control trajectories were unchanged by added diagnostic forwards and report counters",
+  "all_control_outcomes_identical": true,
+  "seed_clusters_per_report": 4,
+  "players_per_control_world": 7,
+  "compared_gameplay_fields": [
+    "final_mass",
+    "full_deaths",
+    "captures",
+    "splits",
+    "projectile_captures",
+    "wall_contact_frames",
+    "physical_violations"
+  ],
+  "excluded_fields": "Action audit fields changed scope; old unmeasured zeros are not treated as measurements",
+  "reports": {
+    "outputs/balanced_v9/dev_30720.json": "c7e94902e4a69882a2d2788564c1e6ef0943e98d80f333abb3adc4c039900c4d",
+    "outputs/balanced_v9/dev_120832.json": "48290f603931daca292ba6bb41a889062e75072d219b85e5f628589a8fd6f749",
+    "outputs/balanced_v9/dev_v8_assisted.json": "f89767132bc38fa802900a4461ec9bd005e09cf39e8f77a1749130660f696f26",
+    "outputs/balanced_v10/dev_warmstart.json": "ef21dd7c8cf17caee0bc107744cdedb0e4c374ad260c66986ea0066e78108553",
+    "outputs/balanced_v10/dev_61440.json": "d0bb96123cf22115e5d9dbae4fcc3c70d6002f34f72ca50c3a258459e04c3217",
+    "outputs/balanced_v10/dev_241664.json": "4eafd844df6d956af75aaf88853448732ae2a1ce943ea6742fd1e38f4ab28826",
+    "outputs/balanced_split_v11/dev_30720.json": "fcea5d0b7f6daba431513b3e58999e1ff472017b55af8fd9c7316affd244a752"
+  }
+}

@@ -18,6 +18,7 @@ import logging
 import threading
 import json
 import hashlib
+import html
 from pathlib import Path
 from contextlib import asynccontextmanager
 import torch
@@ -469,7 +470,9 @@ async def serve_index():
 </html>
 """
     if arena_mgr.model_manifest.get('acceptance_status','accepted')!='accepted':
-        page=page.replace('<body>','<body><div style="position:fixed;top:0;left:0;right:0;z-index:100;padding:8px;text-align:center;background:#fff4cc;color:#513c00;font:13px sans-serif">Experimental learned splits: survival regression under evaluation.</div>',1)
+        warning=html.escape(arena_mgr.model_manifest.get('warning',
+            'Experimental learned splits: survival regression under evaluation.'))
+        page=page.replace('<body>',f'<body><div style="position:fixed;top:0;left:0;right:0;z-index:100;padding:8px;text-align:center;background:#fff4cc;color:#513c00;font:13px sans-serif">{warning}</div>',1)
     return HTMLResponse(page)
 
 

@@ -1,0 +1,38 @@
+{
+  "schema_version": 2,
+  "observation_version": 2,
+  "split_control": "learned_risk_physical_only",
+  "movement_control": "assisted",
+  "acceptance_status": "experimental_below_development_growth_gate",
+  "promoted": false,
+  "warning": "Experimental learned splits: development growth retention 89.3%; 90% required. Unseen validation pending.",
+  "models": {
+    "ppo": {
+      "file": "../training/ppo_30720.pt",
+      "sha256": "19d27e75c1d80d752e3696850b2b42ea315dad3554ecc756fb44b566dfdc17df"
+    },
+    "diffusion": {
+      "file": "../../learned_risk_v8/diffusion.pt",
+      "sha256": "7c88cb79cfafa82a05b363e97e5400421d7077f12b1684f253a2cbbaabb4f5bd"
+    },
+    "critic": {
+      "file": "../../arena_v2_cosine/critic.pt",
+      "sha256": "b7038895092ca19e66b406de3c299e6d90913c8ddb6129e70efefd76909b54ef"
+    }
+  },
+  "evaluations": [
+    "../dev_30720.json",
+    "../dev_final.json",
+    "../selection.json",
+    "../verification.json"
+  ],
+  "evaluation_sha256": {
+    "dev_30720.json": "fcea5d0b7f6daba431513b3e58999e1ff472017b55af8fd9c7316affd244a752",
+    "dev_final.json": "2404467cbfde6d204c8bf858bb835baca4f58d412278f8023cc961a0d4431007",
+    "selection.json": "2334138d273e6237c1f0794fc095e46fb94ddd368d094e1426cb363d14878a73",
+    "verification.json": "41798021f6b8597c1a55f6dd5ce64357514ea8d32b3fcb39e2d146f02868fe6d"
+  },
+  "failed_gates": [
+    "Development growth retention 89.3414% is below 90%; no fresh acceptance tests run."
+  ]
+}

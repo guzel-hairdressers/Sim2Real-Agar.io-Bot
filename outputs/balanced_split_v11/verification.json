@@ -1,0 +1,25 @@
+{
+  "checkpoints": [
+    {
+      "file": "ppo_30720.pt",
+      "finite": true,
+      "continuous_actor_frozen": true,
+      "split_head_changed": true
+    },
+    {
+      "file": "ppo_61440.pt",
+      "finite": true,
+      "continuous_actor_frozen": true,
+      "split_head_changed": true
+    },
+    {
+      "file": "ppo_90112.pt",
+      "finite": true,
+      "continuous_actor_frozen": true,
+      "split_head_changed": true
+    }
+  ],
+  "all_losses_finite": true,
+  "steps_in_continuation": 90112,
+  "total_with_parent": 120832
+}

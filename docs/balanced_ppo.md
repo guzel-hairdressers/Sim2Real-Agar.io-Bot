@@ -4,6 +4,14 @@ The requested objective is **balance growth and survival**. V8's original
 PPO retention gate remains failed (7 deaths versus 2); its reports are immutable.
 The accepted demo remains v3, with v8 available separately as experimental.
 
+**Round completed; no replacement was promoted.** The best split-only
+checkpoint reached **65.74 mean final mass / 1 death**, versus **58.21 / 1**
+for v8 on the same eight development focus cases. The same-seat v3 control
+reached **73.58 / 0**. Growth retention is **89.34%**, below the unchanged
+90% gate. Try the clearly marked experimental checkpoint at
+**[localhost:8081](http://localhost:8081/)**; accepted v3 stays on port 8080.
+All 97 regression tests passed. No fresh final seed reserves were consumed.
+
 ## Causal audit
 
 `python -m src.audit_ppo_survival` replays all four fatal candidate-agent cases
@@ -126,8 +134,8 @@ mark unmeasured control counters unavailable rather than report zero.
 V10's 61,440-transition checkpoint regressed to 46.02 mass / 3 deaths.
 V8 with its original movement assistance reached 58.21 / 1 on the same
 cases; it also misses the growth threshold. These remain rejected development
-results. The v10 movement run completed 241,664 transitions and awaits its
-final development comparison.
+results. The v10 movement run completed 241,664 transitions and failed its
+final development comparison, reported below.
 
 A separate controlled branch, `src.train_balanced_splits`, keeps v8's
 continuous neural weights and historical movement assistance frozen and
@@ -183,3 +191,70 @@ split checkpoint is not an all-hold head: 68 proposals, 42.7% initial recall
 and 22 known useful initial splits outside the old guard. Precision is only
 55.9%, below v8's 73.9%; these classification results do not prove improved
 match outcomes or fresh generalization.
+
+## Completed split-only comparison
+
+| Checkpoint, same 8 development focus cases | Mean final mass | Full deaths | Piece captures | Splits |
+| --- | ---: | ---: | ---: | ---: |
+| Guarded v3, same-seat control | 73.58 | 0 | 13 | 1 |
+| Physical-only v8 | 58.21 | 1 | 8 | 22 |
+| Split PPO, 30,720 transitions | **65.74** | 1 | 12 | 24 |
+| Split PPO, 120,832 valid transitions total | 58.82 | 1 | 8 | 23 |
+
+More training did not improve this checkpoint. The best early split head is
+selected for an **experimental preview only**, with no more development
+deaths than v8. The mean mass gain versus v8 is +7.53, but its four-seed
+bootstrap interval is [-12.89, +33.06], which includes zero. Selection and
+testing on these consumed development seeds do not establish generalization.
+There were zero recent-projectile captures for both v11 checkpoints in this
+comparison: do not claim improved split attacks. Their zero physical
+violations and zero changed feasible split requests establish the execution
+contract, not safety or combat quality. Historical movement override counts
+are unavailable, rather than zero.
+
+The stable continuation's weights and losses are all finite, its continuous
+actor is bit-identical to v8, and its split head changed. The original 30,720
+checkpoint predates the numerical overflow. Post-overflow trial weights are
+excluded from selection. See `outputs/balanced_split_v11/verification.json`,
+`selection.json`, `control_world_audit.json`, and the raw `dev_*.json` reports.
+The control-world audit confirms identical initial observations and every
+control player's gameplay outcomes across all development report versions;
+adding raw-action instrumentation did not change the comparison worlds.
+
+The experimental manifest pins the selected PPO, unchanged v8 diffusion and
+critic hashes. Its banner says **89.3% growth retention; 90% required; unseen
+validation pending**. Live readiness, model hashes, warning and JPEG stream
+were verified; port 8080 still serves the exact accepted-v3 model hashes.
+
+```bash
+python scripts/play_agar_web.py --port 8081 \
+  --policy-dir outputs/balanced_split_v11/experimental
+
+python -m src.evaluate_balanced_ppo \
+  --candidate outputs/balanced_split_v11/training/ppo_30720.pt \
+  --output /tmp/reproduced_development.json \
+  --seeds 6400001 6400038 6400075 6400112 --workers 4
+```
+
+## Next useful work and approaches to avoid
+
+- Improve temporal credit assignment before simply extending the same run.
+  Gamma gives a 20-second reward discount horizon, but lambda .98 gives
+  direct GAE traces about 1.52 seconds; 256-step rollouts span 8.53 seconds.
+  Longer consequences currently depend heavily on the learned critic.
+  Test longer rollouts and traces against this frozen development benchmark,
+  with new training seeds and no change to physical-only split execution.
+- Consider longer full-match paired split/hold outcomes for correcting the
+  head's false positives. Initial two-second encounter labels alone do not
+  establish long-match value. Keep useful split opportunities in the audit
+  so an all-hold policy cannot masquerade as better learned splitting.
+- Do not remove movement assistance and declare the raw actor improved:
+  both full-neural movement trials regressed. Distillation helped the initial
+  controller, but subsequent PPO updates did not preserve that improvement.
+- Do not change the 90% threshold to turn 89.34% into a pass, promote the
+  numerically invalid trial, relabel consumed seeds unseen, or confuse zero
+  execution-contract violations with zero risky actions.
+- Keep fresh families 6,500,001 (paired), 6,600,001 (encounters) and 6,700,001
+  (league) reserved until a candidate clears development. Preserve v3 and
+  the original failed-v8 reports. The current result is a measured
+  development improvement over v8, not an accepted or proven general gain.

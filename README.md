@@ -4,7 +4,7 @@
 
 Agents steer through an Agar-style arena, collect food, grow, avoid hazards, and decide when to split to capture smaller opponents. The project brings **PPO**, **action diffusion**, and **rule-based opponents** into the same simulator—and lets you play against the trained agents in a browser.
 
-**Experimental learned splits:** [v8 results and how to try it](docs/learned_split_risk.md#fresh-v8-results-and-playable-candidate). Splits are constrained only by mass, piece capacity and cooldown. Both policies gained mean final mass in fresh retention matches, but PPO had more deaths and failed its survival gate; v8 is **not the accepted default**.
+**Experimental learned splits:** [balanced PPO results and preview](docs/balanced_ppo.md). The best split-head continuation reached 65.74 mean mass versus v8's 58.21, with one death for each on the same eight development cases. It still misses the 90% growth-retention gate and is **not the accepted default**. Splits have only physical constraints; movement assistance remains explicit. [Earlier fresh v8 results](docs/learned_split_risk.md#fresh-v8-results-and-playable-candidate).
 
 [![Watch the agents navigate and compete](docs/media/showcase/gameplay.gif)](docs/media/showcase/gameplay.mp4)
 
@@ -69,7 +69,7 @@ flowchart LR
     E --> S
 ```
 
-PPO uses imitation initialization followed by reinforcement learning. Diffusion learns short action sequences from demonstrations; a return critic ranks candidates, and the agent executes a short prefix before replanning. Both use separately trained binary split decisions and a safety layer that can reject unsafe splits or alter movement near immediate hazards. Splitting is supervised using paired physical trials in which splitting captures a target earlier than holding.
+In accepted v3, PPO uses imitation initialization followed by reinforcement learning. Diffusion learns short action sequences from demonstrations; a return critic ranks candidates, and the agent executes a short prefix before replanning. Both use separately trained binary split decisions and a safety layer that can reject unsafe splits or alter movement near immediate hazards. Splitting is supervised using paired physical trials in which splitting captures a target earlier than holding. The experimental branch removes nonphysical split vetoes and continues learning from growth and death rewards; it retains movement assistance.
 
 The models share the same observation contract and physics. Benchmark runs record seeds, individual agent outcomes, model hashes, and source hashes. The shared-match demonstration extends the first benchmark seed to 120 simulator seconds. The paired comparison uses seed 4200001. These active recordings are separate from the twelve 60-second benchmark matches.
 
@@ -86,6 +86,14 @@ Open **[localhost:8080](http://localhost:8080/)**. Move the mouse to steer, hold
 
 Accepted weights are included in the repository. The server checks the deployment manifest and rejects missing, incompatible, or checksum-mismatched models. `/status` exposes readiness, model hashes, and the control timestep. The GitHub videos are recordings; the interactive game runs locally.
 
+To try the unaccepted balanced split checkpoint separately:
+
+```bash
+python scripts/play_agar_web.py --port 8081 --policy-dir outputs/balanced_split_v11/experimental
+```
+
+Open [localhost:8081](http://localhost:8081/). Its banner explicitly shows the failed development growth gate; no unseen acceptance result is claimed.
+
 ## Reproduce and explore
 
 | Resource | What it contains |
@@ -94,6 +102,7 @@ Accepted weights are included in the repository. The server checks the deploymen
 | [Current benchmarks](docs/benchmarks.md) | Absolute metrics, test definitions, raw data, and commands |
 | [Navigation training and checkpoint history](docs/checkpoint_history_2026-10-27.md) | Training recipes and historical comparisons |
 | [Split training and limitations](docs/split_combat_results_2026-10-27.md) | Paired split/hold curriculum, acceptance gates, and failure modes |
+| [Balanced PPO continuation](docs/balanced_ppo.md) | Controlled same-seat comparisons, rejected movement trials, split learning and experimental preview |
 | [Current benchmark data](outputs/showcase_v1/benchmark.json) | All twelve match results, time series, seeds, and hashes |
 | [Training and simulator source](src/) | PPO, diffusion, inference wrappers, benchmarks, and diagnostics |
 

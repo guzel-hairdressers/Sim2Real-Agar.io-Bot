@@ -1,0 +1,1390 @@
+{
+  "purpose": "development",
+  "candidate_path": "outputs/balanced_split_v11/stable_training/ppo_90112.pt",
+  "candidate_sha256": "5676268f8a8e06edd13fb1bebc550169c9ba30131efd485ca2218900465572d0",
+  "baseline_sha256": "edbe9776f665c148e3e9a0411ef17345cfccabf6c115c67f1045c03893071da6",
+  "source_hashes": {
+    "src/evaluate_balanced_ppo.py": "400ee4fd610ac97edb092f0486e4bc79a6fbe7a67b1c479bff713321b0f866f0",
+    "src/balanced_policies.py": "fd75c3bc0c45210afae9b0e4e63d7934372af9d7f9cb41f2ea5c8ef78818fc5a",
+    "src/learned_risk.py": "30d272ce16b3a28bc5b44c9930eb20d820c21e9dafc62c5df2b6cdbc885c18cc",
+    "src/arena_policies.py": "fd6af4acb965f1db2cdc7dd8a7ee9707570c51f73fb4532d96bda152bc243118",
+    "src/arena_tactics.py": "648368c367d4381d444de834db390229b08fecbdba92992614adce8ecf603083",
+    "src/train_champion_ppo.py": "cf80816a826cf9a731e2d47041e9a1bfe8416c972bf67be09ccc967100db794b",
+    "src/split_head.py": "03d06794483b592b2511d098dd1d9f92865bdd6bf7b6e38aca52f589120921a9",
+    "src/heuristic_agent.py": "bf4ab693b7df66397ee837b4508d2db5bd1768d5db5d138720ff3ca354c22bd9",
+    "envs/arena_config.py": "3118bb710bd651243cd93bdb210ed182d7c24f6e85d911f141666394c5de19fa",
+    "envs/agar_env.py": "ff77a8ef2321a4c4768940cf3bda190d1339accac123a435803f23a54f778e3d"
+  },
+  "config": {
+    "arena_size": 18.0,
+    "num_players": 7,
+    "num_food": 180,
+    "num_viruses": 7,
+    "total_world_mass": 550.0,
+    "dt": 0.03333333333333333,
+    "max_steps": 1800,
+    "max_pieces": 4,
+    "observation_version": 2
+  },
+  "control_audit_scope": "Split-bit equality is audited for all PPO controllers. Full command equality is audited only for BalancedPPO. Assisted movement full-command counter: null (not measured).",
+  "protocol": {
+    "seeds": [
+      6400001,
+      6400038,
+      6400075,
+      6400112
+    ],
+    "steps": 1800,
+    "workers": 4,
+    "observation_hz": 30,
+    "all_observations_processed": true,
+    "roster": "Control: four v3 PPO + three heuristics; replace only one focus seat per world",
+    "focus_seats_per_seed": 2,
+    "worlds_per_seed": 3,
+    "seed_cluster_bootstrap": true
+  },
+  "wall_seconds": 164.926371375,
+  "rows": [
+    {
+      "seed": 6400001,
+      "initial_observations_sha256": "b2d6195c131d11f6320031faede2e533bd3c8fef790aa35de520e10d9274c504",
+      "control_world": {
+        "player_0": {
+          "final_mass": 41.97858729139796,
+          "full_deaths": 0,
+          "captures": 5,
+          "splits": 2,
+          "projectile_captures": 1,
+          "wall_contact_frames": 151,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_1": {
+          "final_mass": 55.20830332234428,
+          "full_deaths": 0,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 0,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_2": {
+          "final_mass": 19.285000000000142,
+          "full_deaths": 2,
+          "captures": 1,
+          "splits": 1,
+          "projectile_captures": 0,
+          "wall_contact_frames": 423,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_3": {
+          "final_mass": 16.0,
+          "full_deaths": 3,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 285,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_4": {
+          "final_mass": 94.85144833755194,
+          "full_deaths": 0,
+          "captures": 3,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 3,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_5": {
+          "final_mass": 69.63185524894274,
+          "full_deaths": 0,
+          "captures": 1,
+          "splits": 1,
+          "projectile_captures": 1,
+          "wall_contact_frames": 13,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 91,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_6": {
+          "final_mass": 16.817713955977503,
+          "full_deaths": 0,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 0,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        }
+      },
+      "cases": [
+        {
+          "focus": "player_5",
+          "baseline": {
+            "final_mass": 69.63185524894274,
+            "full_deaths": 0,
+            "captures": 1,
+            "splits": 1,
+            "projectile_captures": 1,
+            "wall_contact_frames": 13,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 91,
+            "control_mode": "historical_assisted",
+            "nonphysical_overrides": null
+          },
+          "candidate": {
+            "final_mass": 70.9200318561473,
+            "full_deaths": 0,
+            "captures": 1,
+            "splits": 1,
+            "projectile_captures": 0,
+            "wall_contact_frames": 3,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "assisted_movement_learned_split",
+            "nonphysical_overrides": null
+          },
+          "latency_ms": {
+            "mean": 0.7563132772222482,
+            "p95": 1.0188124999999104
+          },
+          "replacement_world": {
+            "player_0": {
+              "final_mass": 41.98127348253914,
+              "full_deaths": 0,
+              "captures": 5,
+              "splits": 2,
+              "projectile_captures": 1,
+              "wall_contact_frames": 165,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_1": {
+              "final_mass": 55.213263996402446,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 0,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_2": {
+              "final_mass": 18.785000000000142,
+              "full_deaths": 2,
+              "captures": 1,
+              "splits": 1,
+              "projectile_captures": 0,
+              "wall_contact_frames": 423,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_3": {
+              "final_mass": 17.5,
+              "full_deaths": 3,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 322,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_4": {
+              "final_mass": 95.34818307518636,
+              "full_deaths": 0,
+              "captures": 3,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 3,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_5": {
+              "final_mass": 70.9200318561473,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 1,
+              "projectile_captures": 0,
+              "wall_contact_frames": 3,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "assisted_movement_learned_split",
+              "nonphysical_overrides": null
+            },
+            "player_6": {
+              "final_mass": 16.817713955977503,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 0,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            }
+          }
+        },
+        {
+          "focus": "player_4",
+          "baseline": {
+            "final_mass": 94.85144833755194,
+            "full_deaths": 0,
+            "captures": 3,
+            "splits": 0,
+            "projectile_captures": 0,
+            "wall_contact_frames": 3,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "historical_assisted",
+            "nonphysical_overrides": null
+          },
+          "candidate": {
+            "final_mass": 53.334044584729995,
+            "full_deaths": 0,
+            "captures": 1,
+            "splits": 3,
+            "projectile_captures": 0,
+            "wall_contact_frames": 51,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "assisted_movement_learned_split",
+            "nonphysical_overrides": null
+          },
+          "latency_ms": {
+            "mean": 0.522212988333095,
+            "p95": 0.8183812500071497
+          },
+          "replacement_world": {
+            "player_0": {
+              "final_mass": 24.68018791497227,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 67,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_1": {
+              "final_mass": 64.60499880307346,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 0,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_2": {
+              "final_mass": 21.75695385861346,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 1,
+              "projectile_captures": 0,
+              "wall_contact_frames": 54,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_3": {
+              "final_mass": 23.724017350078572,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 156,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_4": {
+              "final_mass": 53.334044584729995,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 3,
+              "projectile_captures": 0,
+              "wall_contact_frames": 51,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "assisted_movement_learned_split",
+              "nonphysical_overrides": null
+            },
+            "player_5": {
+              "final_mass": 47.49530293632857,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 0,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 2,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_6": {
+              "final_mass": 39.100076657063134,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 32,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "seed": 6400038,
+      "initial_observations_sha256": "882045e3c8b8530e396f0efdc774e9b9a29d310b4d27cc41f70d982089be0a5a",
+      "control_world": {
+        "player_0": {
+          "final_mass": 41.47087626362142,
+          "full_deaths": 0,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 0,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_1": {
+          "final_mass": 37.62086684499476,
+          "full_deaths": 0,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 42,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 10,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_2": {
+          "final_mass": 60.13155096982821,
+          "full_deaths": 0,
+          "captures": 2,
+          "splits": 2,
+          "projectile_captures": 0,
+          "wall_contact_frames": 205,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_3": {
+          "final_mass": 18.5,
+          "full_deaths": 2,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 33,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_4": {
+          "final_mass": 43.849538177761836,
+          "full_deaths": 0,
+          "captures": 1,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 107,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_5": {
+          "final_mass": 77.10168733660763,
+          "full_deaths": 0,
+          "captures": 2,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 90,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 80,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_6": {
+          "final_mass": 14.0,
+          "full_deaths": 3,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 374,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        }
+      },
+      "cases": [
+        {
+          "focus": "player_5",
+          "baseline": {
+            "final_mass": 77.10168733660763,
+            "full_deaths": 0,
+            "captures": 2,
+            "splits": 0,
+            "projectile_captures": 0,
+            "wall_contact_frames": 90,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 80,
+            "control_mode": "historical_assisted",
+            "nonphysical_overrides": null
+          },
+          "candidate": {
+            "final_mass": 82.13086765738626,
+            "full_deaths": 0,
+            "captures": 2,
+            "splits": 4,
+            "projectile_captures": 0,
+            "wall_contact_frames": 48,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "assisted_movement_learned_split",
+            "nonphysical_overrides": null
+          },
+          "latency_ms": {
+            "mean": 0.7546277005552327,
+            "p95": 1.0029246500010913
+          },
+          "replacement_world": {
+            "player_0": {
+              "final_mass": 39.775097903195764,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 0,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_1": {
+              "final_mass": 52.92401845635068,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 38,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_2": {
+              "final_mass": 48.25930532905985,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 1,
+              "projectile_captures": 0,
+              "wall_contact_frames": 204,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_3": {
+              "final_mass": 26.61776973671004,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 0,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_4": {
+              "final_mass": 21.640976601671525,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 1,
+              "projectile_captures": 0,
+              "wall_contact_frames": 211,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_5": {
+              "final_mass": 82.13086765738626,
+              "full_deaths": 0,
+              "captures": 2,
+              "splits": 4,
+              "projectile_captures": 0,
+              "wall_contact_frames": 48,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "assisted_movement_learned_split",
+              "nonphysical_overrides": null
+            },
+            "player_6": {
+              "final_mass": 16.5,
+              "full_deaths": 2,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 382,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            }
+          }
+        },
+        {
+          "focus": "player_0",
+          "baseline": {
+            "final_mass": 41.47087626362142,
+            "full_deaths": 0,
+            "captures": 0,
+            "splits": 0,
+            "projectile_captures": 0,
+            "wall_contact_frames": 0,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "historical_assisted",
+            "nonphysical_overrides": null
+          },
+          "candidate": {
+            "final_mass": 63.913152487577584,
+            "full_deaths": 0,
+            "captures": 1,
+            "splits": 1,
+            "projectile_captures": 0,
+            "wall_contact_frames": 27,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "assisted_movement_learned_split",
+            "nonphysical_overrides": null
+          },
+          "latency_ms": {
+            "mean": 0.5156446988890985,
+            "p95": 0.8167770499852622
+          },
+          "replacement_world": {
+            "player_0": {
+              "final_mass": 63.913152487577584,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 1,
+              "projectile_captures": 0,
+              "wall_contact_frames": 27,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "assisted_movement_learned_split",
+              "nonphysical_overrides": null
+            },
+            "player_1": {
+              "final_mass": 39.10218939413523,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 40,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 10,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_2": {
+              "final_mass": 29.589876564625886,
+              "full_deaths": 0,
+              "captures": 2,
+              "splits": 2,
+              "projectile_captures": 0,
+              "wall_contact_frames": 231,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_3": {
+              "final_mass": 16.0,
+              "full_deaths": 2,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 50,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_4": {
+              "final_mass": 44.198437456842576,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 108,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_5": {
+              "final_mass": 77.56414876728695,
+              "full_deaths": 0,
+              "captures": 2,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 91,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 81,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_6": {
+              "final_mass": 15.0,
+              "full_deaths": 3,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 374,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "seed": 6400075,
+      "initial_observations_sha256": "3c54c825951269f8770ee3dd7ac2b671d17c43fdbff390cb62d3389734cfe16d",
+      "control_world": {
+        "player_0": {
+          "final_mass": 17.5,
+          "full_deaths": 1,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 285,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_1": {
+          "final_mass": 54.253528149770055,
+          "full_deaths": 0,
+          "captures": 1,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 40,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_2": {
+          "final_mass": 65.55123712162029,
+          "full_deaths": 0,
+          "captures": 2,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 2,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_3": {
+          "final_mass": 50.02862980635234,
+          "full_deaths": 0,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 0,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_4": {
+          "final_mass": 19.775000000000045,
+          "full_deaths": 1,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 584,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_5": {
+          "final_mass": 43.61181034579676,
+          "full_deaths": 0,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 1,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 10,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_6": {
+          "final_mass": 24.462765832011435,
+          "full_deaths": 1,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 499,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        }
+      },
+      "cases": [
+        {
+          "focus": "player_2",
+          "baseline": {
+            "final_mass": 65.55123712162029,
+            "full_deaths": 0,
+            "captures": 2,
+            "splits": 0,
+            "projectile_captures": 0,
+            "wall_contact_frames": 2,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "historical_assisted",
+            "nonphysical_overrides": null
+          },
+          "candidate": {
+            "final_mass": 22.205051122657277,
+            "full_deaths": 1,
+            "captures": 1,
+            "splits": 1,
+            "projectile_captures": 0,
+            "wall_contact_frames": 7,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "assisted_movement_learned_split",
+            "nonphysical_overrides": null
+          },
+          "latency_ms": {
+            "mean": 0.7404803122223629,
+            "p95": 1.009562850005352
+          },
+          "replacement_world": {
+            "player_0": {
+              "final_mass": 27.54269887735856,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 413,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_1": {
+              "final_mass": 81.59082167195494,
+              "full_deaths": 0,
+              "captures": 2,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 138,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_2": {
+              "final_mass": 22.205051122657277,
+              "full_deaths": 1,
+              "captures": 1,
+              "splits": 1,
+              "projectile_captures": 0,
+              "wall_contact_frames": 7,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "assisted_movement_learned_split",
+              "nonphysical_overrides": null
+            },
+            "player_3": {
+              "final_mass": 45.83161408781816,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 15,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_4": {
+              "final_mass": 21.504157529109897,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 584,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_5": {
+              "final_mass": 49.76303686874232,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 1,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 10,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_6": {
+              "final_mass": 19.06739777291041,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 812,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            }
+          }
+        },
+        {
+          "focus": "player_3",
+          "baseline": {
+            "final_mass": 50.02862980635234,
+            "full_deaths": 0,
+            "captures": 0,
+            "splits": 0,
+            "projectile_captures": 0,
+            "wall_contact_frames": 0,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "historical_assisted",
+            "nonphysical_overrides": null
+          },
+          "candidate": {
+            "final_mass": 67.76318071700683,
+            "full_deaths": 0,
+            "captures": 0,
+            "splits": 4,
+            "projectile_captures": 0,
+            "wall_contact_frames": 68,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "assisted_movement_learned_split",
+            "nonphysical_overrides": null
+          },
+          "latency_ms": {
+            "mean": 0.5184074038885377,
+            "p95": 0.8197922999976014
+          },
+          "replacement_world": {
+            "player_0": {
+              "final_mass": 53.66364001118582,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 101,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_1": {
+              "final_mass": 56.616374864373405,
+              "full_deaths": 0,
+              "captures": 1,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 95,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_2": {
+              "final_mass": 30.27219022835073,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 0,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_3": {
+              "final_mass": 67.76318071700683,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 4,
+              "projectile_captures": 0,
+              "wall_contact_frames": 68,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "assisted_movement_learned_split",
+              "nonphysical_overrides": null
+            },
+            "player_4": {
+              "final_mass": 18.0,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 1053,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_5": {
+              "final_mass": 46.01058715451315,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 155,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_6": {
+              "final_mass": 23.27320822131253,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 797,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "seed": 6400112,
+      "initial_observations_sha256": "2c658b981c08f7de24268648cef13358321469c25d89e66719832283c3fdb94a",
+      "control_world": {
+        "player_0": {
+          "final_mass": 91.85877552140772,
+          "full_deaths": 0,
+          "captures": 3,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 45,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_1": {
+          "final_mass": 52.208155456591975,
+          "full_deaths": 1,
+          "captures": 2,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 4,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_2": {
+          "final_mass": 14.0,
+          "full_deaths": 3,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 225,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_3": {
+          "final_mass": 14.0,
+          "full_deaths": 1,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 64,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        },
+        "player_4": {
+          "final_mass": 25.11923706019335,
+          "full_deaths": 2,
+          "captures": 0,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 451,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_5": {
+          "final_mass": 28.30296129278021,
+          "full_deaths": 0,
+          "captures": 1,
+          "splits": 1,
+          "projectile_captures": 0,
+          "wall_contact_frames": 186,
+          "physical_violations": 0,
+          "nonphysical_split_changes": null,
+          "control_mode": "heuristic",
+          "nonphysical_overrides": null
+        },
+        "player_6": {
+          "final_mass": 98.16124246526631,
+          "full_deaths": 0,
+          "captures": 2,
+          "splits": 0,
+          "projectile_captures": 0,
+          "wall_contact_frames": 4,
+          "physical_violations": 0,
+          "nonphysical_split_changes": 0,
+          "control_mode": "historical_assisted",
+          "nonphysical_overrides": null
+        }
+      },
+      "cases": [
+        {
+          "focus": "player_0",
+          "baseline": {
+            "final_mass": 91.85877552140772,
+            "full_deaths": 0,
+            "captures": 3,
+            "splits": 0,
+            "projectile_captures": 0,
+            "wall_contact_frames": 45,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "historical_assisted",
+            "nonphysical_overrides": null
+          },
+          "candidate": {
+            "final_mass": 82.92634796548427,
+            "full_deaths": 0,
+            "captures": 2,
+            "splits": 7,
+            "projectile_captures": 0,
+            "wall_contact_frames": 98,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "assisted_movement_learned_split",
+            "nonphysical_overrides": null
+          },
+          "latency_ms": {
+            "mean": 0.8039882550001486,
+            "p95": 1.0005100999926242
+          },
+          "replacement_world": {
+            "player_0": {
+              "final_mass": 82.92634796548427,
+              "full_deaths": 0,
+              "captures": 2,
+              "splits": 7,
+              "projectile_captures": 0,
+              "wall_contact_frames": 98,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "assisted_movement_learned_split",
+              "nonphysical_overrides": null
+            },
+            "player_1": {
+              "final_mass": 70.2939390846008,
+              "full_deaths": 0,
+              "captures": 2,
+              "splits": 1,
+              "projectile_captures": 1,
+              "wall_contact_frames": 15,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 58,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_2": {
+              "final_mass": 30.441519174777078,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 149,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_3": {
+              "final_mass": 23.58608696564953,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 61,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_4": {
+              "final_mass": 28.713833675195367,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 630,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_5": {
+              "final_mass": 33.78098410829737,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 88,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_6": {
+              "final_mass": 39.76285477867384,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 32,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            }
+          }
+        },
+        {
+          "focus": "player_6",
+          "baseline": {
+            "final_mass": 98.16124246526631,
+            "full_deaths": 0,
+            "captures": 2,
+            "splits": 0,
+            "projectile_captures": 0,
+            "wall_contact_frames": 4,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "historical_assisted",
+            "nonphysical_overrides": null
+          },
+          "candidate": {
+            "final_mass": 27.357031083212163,
+            "full_deaths": 0,
+            "captures": 0,
+            "splits": 2,
+            "projectile_captures": 0,
+            "wall_contact_frames": 62,
+            "physical_violations": 0,
+            "nonphysical_split_changes": 0,
+            "control_mode": "assisted_movement_learned_split",
+            "nonphysical_overrides": null
+          },
+          "latency_ms": {
+            "mean": 0.5229532694443704,
+            "p95": 0.8266288500195174
+          },
+          "replacement_world": {
+            "player_0": {
+              "final_mass": 76.07374670590605,
+              "full_deaths": 0,
+              "captures": 3,
+              "splits": 1,
+              "projectile_captures": 1,
+              "wall_contact_frames": 68,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 194,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_1": {
+              "final_mass": 71.77131253298326,
+              "full_deaths": 0,
+              "captures": 2,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 0,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_2": {
+              "final_mass": 17.9950000000001,
+              "full_deaths": 1,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 446,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_3": {
+              "final_mass": 80.5527109882918,
+              "full_deaths": 0,
+              "captures": 3,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 57,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "historical_assisted",
+              "nonphysical_overrides": null
+            },
+            "player_4": {
+              "final_mass": 14.0,
+              "full_deaths": 4,
+              "captures": 0,
+              "splits": 0,
+              "projectile_captures": 0,
+              "wall_contact_frames": 682,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_5": {
+              "final_mass": 35.58095154465475,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 1,
+              "projectile_captures": 0,
+              "wall_contact_frames": 173,
+              "physical_violations": 0,
+              "nonphysical_split_changes": null,
+              "control_mode": "heuristic",
+              "nonphysical_overrides": null
+            },
+            "player_6": {
+              "final_mass": 27.357031083212163,
+              "full_deaths": 0,
+              "captures": 0,
+              "splits": 2,
+              "projectile_captures": 0,
+              "wall_contact_frames": 62,
+              "physical_violations": 0,
+              "nonphysical_split_changes": 0,
+              "control_mode": "assisted_movement_learned_split",
+              "nonphysical_overrides": null
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "seed_clusters": 4,
+    "paired_focus_cases": 8,
+    "candidate": {
+      "mean_final_mass": 58.81871343427521,
+      "death_free_runs": 7,
+      "full_deaths": 1,
+      "captures": 8,
+      "splits": 23,
+      "projectile_captures": 0,
+      "wall_contact_frames": 364,
+      "physical_violations": 0,
+      "nonphysical_overrides": null,
+      "nonphysical_split_changes": 0
+    },
+    "baseline": {
+      "mean_final_mass": 73.5819690126713,
+      "death_free_runs": 8,
+      "full_deaths": 0,
+      "captures": 13,
+      "splits": 1,
+      "projectile_captures": 1,
+      "wall_contact_frames": 157,
+      "physical_violations": 0,
+      "nonphysical_overrides": null,
+      "nonphysical_split_changes": 171
+    },
+    "mean_final_mass_difference": -14.763255578396087,
+    "mass_difference_seed_bootstrap_95_ci": [
+      -33.102693987780164,
+      5.2731428110733765
+    ],
+    "balance_thresholds_met": false,
+    "control_contract_verified": true,
+    "retention_thresholds_met": false,
+    "passed": false
+  }
+}
